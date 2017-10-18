@@ -1,5 +1,6 @@
 package com.jujucecedudu.androidcomm;
 
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -9,12 +10,17 @@ import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ProgressBar;
 
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_ENABLE_BLUETOOTH = 12;
+    //private static final int REQUEST_DISCOVERABLE = 22;
+
+    private ProgressDialog progressDialog;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BLUETOOTH);
         }
 
+        //make the device discoverable
+        /*Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE);
+        Log.i("BLUETOOTH_TEST", "Discoverable");*/
+
         //get paired devices
         Set<BluetoothDevice> pairedDevices = myBluetoothAdapter.getBondedDevices();
         if(pairedDevices.size() > 0){
@@ -45,23 +56,27 @@ public class MainActivity extends AppCompatActivity {
             Log.i("BLUETOOTH_TEST", "No paired device");
         }
 
-        //Get info about discovered devices
+        /*Get info about discovered devices
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(myReceiver, filter);
+        registerReceiver(myReceiver, filter);*/
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Scanning...");
+        progressDialog.setCancelable(false);
 
         //discover devices
         if(myBluetoothAdapter.startDiscovery()) {
             Log.i("BLUETOOTH_TEST", "Launched discovery");
-            Log.i("BLUETOOTH_TEST", "Currently discovering ? " + myBluetoothAdapter.isDiscovering());
+            //it is asynchronous so the discovery is not instantaneous
         }
         else{
             Log.i("BLUETOOTH_TEST", "Discovery could not launch");
         }
 
-        switch (myBluetoothAdapter.getState()){
+        /*switch (myBluetoothAdapter.getState()){
             case BluetoothAdapter.STATE_OFF:
                 Log.i("BLUETOOTH_TEST", "Current state : Off");
                 break;
@@ -88,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Log.i("BLUETOOTH_TEST", "Currently enabled ? " + myBluetoothAdapter.isEnabled());
-        Log.i("BLUETOOTH_TEST", "Currently discovering ? " + myBluetoothAdapter.isDiscovering());
+        Log.i("BLUETOOTH_TEST", "Currently discovering ? " + myBluetoothAdapter.isDiscovering());*/
 
         //here should pair to a device
 
@@ -109,9 +124,11 @@ public class MainActivity extends AppCompatActivity {
             }
             else if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)){
                 Log.i("BLUETOOTH_TEST", "onReceive, discovery started");
+                progressDialog.show();
             }
             else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
                 Log.i("BLUETOOTH_TEST", "onReceive, discovery finished");
+                progressDialog.dismiss();
             }
             else{
                 Log.i("BLUETOOTH_TEST", "onReceive, action is not handled : " + action);
