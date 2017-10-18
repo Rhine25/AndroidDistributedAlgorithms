@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
     //private static final int REQUEST_DISCOVERABLE = 22;
 
     private ProgressDialog progressDialog;
-    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +55,12 @@ public class MainActivity extends AppCompatActivity {
             Log.i("BLUETOOTH_TEST", "No paired device");
         }
 
-        /*Get info about discovered devices
+        //Get info about discovered devices
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(myReceiver, filter);*/
+        registerReceiver(myReceiver, filter);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Scanning...");
