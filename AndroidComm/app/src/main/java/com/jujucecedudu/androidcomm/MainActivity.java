@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.Set;
 import java.util.UUID;
@@ -23,18 +24,26 @@ public class MainActivity extends AppCompatActivity {
     private static final int APP_DISCOVERY = 0;
     private static final int APP_DISCOVERABLE = 1;
     private static final int APP_CONNECT = 2;
+    private static final int APP_ACCEPT = 3;
 
-    private static final int MODE = APP_CONNECT;
+    private static final String[] modes = {"discovery", "discoverable", "connect", "accept"};
+
+    private static final int MODE = APP_ACCEPT;
 
     private static final int REQUEST_ENABLE_BLUETOOTH = 12;
     private static final int REQUEST_DISCOVERABLE = 22;
 
     private ProgressDialog progressDialog;
 
+    private TextView versions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        versions = (TextView) findViewById(R.id.text);
+        versions.setText("Current mode is " + modes[MODE]);
 
         BluetoothAdapter myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(myBluetoothAdapter == null){
@@ -91,9 +100,19 @@ public class MainActivity extends AppCompatActivity {
             //here should pair to a device after stopping discovery process
         }
 
-        if(MODE == APP_CONNECT && pairedDevices.size() > 0){
-            Log.i(TAG, "I'm gonna connect");
-
+        if((MODE == APP_CONNECT || MODE == APP_ACCEPT) && pairedDevices.size() > 0){
+            BluetoothDevice target = pairedDevices.iterator().next(); //Ugh, gross
+            Log.i(TAG, "Target is : " + target.getName());
+            if(MODE == APP_CONNECT){
+                Log.i(TAG, "I'm gonna connect");
+                ConnectThread connectThread = new ConnectThread(target, myBluetoothAdapter);
+                connectThread.run();
+            }
+            else if(MODE == APP_ACCEPT) {
+                Log.i(TAG, "I'm gonna accept");
+                AcceptThread acceptThread = new AcceptThread(myBluetoothAdapter);
+                acceptThread.run();
+            }
         }
     }
 
