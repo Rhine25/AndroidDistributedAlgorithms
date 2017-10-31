@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String[] modes = {"discovery", "discoverable", "connect", "accept"};
 
-    private static final int MODE = APP_ACCEPT;
+    private static final int MODE = APP_CONNECT;
 
     private static final int REQUEST_ENABLE_BLUETOOTH = 12;
     private static final int REQUEST_DISCOVERABLE = 22;
@@ -106,12 +106,12 @@ public class MainActivity extends AppCompatActivity {
             if(MODE == APP_CONNECT){
                 Log.i(TAG, "I'm gonna connect");
                 ConnectThread connectThread = new ConnectThread(target, myBluetoothAdapter);
-                connectThread.run();
+                //connectThread.start();
             }
             else if(MODE == APP_ACCEPT) {
                 Log.i(TAG, "I'm gonna accept");
                 AcceptThread acceptThread = new AcceptThread(myBluetoothAdapter);
-                acceptThread.run();
+                acceptThread.start();
             }
         }
     }
