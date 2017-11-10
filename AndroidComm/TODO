@@ -4,3 +4,6 @@ communiquer avec un appareil déjà appairé
     -> send file from app to phone
     -> receive file from app sent by phone
     -> send and receive from app to app
+
+
+Quand on clear les pairedDevice il faudrait clear le textView du début

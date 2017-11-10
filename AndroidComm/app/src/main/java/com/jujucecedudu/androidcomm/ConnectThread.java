@@ -43,6 +43,7 @@ class ConnectThread extends Thread {
             // until it succeeds or throws an exception.
             mmSocket.connect();
             Log.i(TAG, "Client is connected on a server");
+
         } catch (IOException connectException) {
             // Unable to connect; close the socket and return.
             try {

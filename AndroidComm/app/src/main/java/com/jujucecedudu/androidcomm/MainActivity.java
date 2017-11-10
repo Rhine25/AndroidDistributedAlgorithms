@@ -10,11 +10,19 @@ import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ProgressBar;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
+
+import static android.bluetooth.BluetoothDevice.BOND_BONDED;
+import static android.bluetooth.BluetoothDevice.BOND_BONDING;
+import static android.bluetooth.BluetoothDevice.BOND_NONE;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "BLUETOOTH_TEST_MAIN";
@@ -35,15 +43,21 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-    private TextView versions;
+    private TextView currentModeText;
+    private TextView pairedDevicesText;
+    private TextView currentTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        versions = (TextView) findViewById(R.id.text);
-        versions.setText("Current mode is " + modes[MODE]);
+        currentModeText = (TextView) findViewById(R.id.tv_mode_text);
+        currentModeText.setText("Current mode is " + modes[MODE]);
+
+        currentTask = (TextView) findViewById(R.id.tv_current_task);
+
+        pairedDevicesText = (TextView) findViewById(R.id.tv_paired_devices);
 
         BluetoothAdapter myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(myBluetoothAdapter == null){
@@ -62,10 +76,23 @@ public class MainActivity extends AppCompatActivity {
             for(BluetoothDevice device : pairedDevices){
                 String deviceName = device.getName();
                 String deviceMAC = device.getAddress();
+                int bondState = device.getBondState();
+                pairedDevicesText.append(deviceName + " " + deviceMAC);
+                if(bondState == BOND_NONE){
+                    pairedDevicesText.append(" Not bonded");
+                }
+                else if(bondState == BOND_BONDED){
+                    pairedDevicesText.append(" Bonded");
+                }
+                else{
+                    pairedDevicesText.append(" Bonding ? " + bondState);
+                }
+                pairedDevicesText.append("\n");
                 Log.i(TAG, "Paired device : " + deviceName + " " + deviceMAC);
             }
         }
         else{
+            pairedDevicesText.setText("No paired device");
             Log.i(TAG, "No paired device");
         }
 
@@ -74,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE);
             Log.i(TAG, "Discoverable");
+            currentTask.setText("Set discoverable");
         }
 
         //Register to get info about system discovering devices
@@ -91,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         if(MODE == APP_DISCOVERY) {
             if (myBluetoothAdapter.startDiscovery()) {
                 Log.i(TAG, "Launched discovery");
+                currentTask.setText("Launched discovery");
                 //it is asynchronous so the discovery is not instantaneous
             } else {
                 Log.i(TAG, "Discovery could not launch");
@@ -106,12 +135,14 @@ public class MainActivity extends AppCompatActivity {
             if(MODE == APP_CONNECT){
                 Log.i(TAG, "I'm gonna connect");
                 ConnectThread connectThread = new ConnectThread(target, myBluetoothAdapter);
-                //connectThread.start();
+                connectThread.start();
+                currentTask.setText("Going to connect");
             }
             else if(MODE == APP_ACCEPT) {
                 Log.i(TAG, "I'm gonna accept");
                 AcceptThread acceptThread = new AcceptThread(myBluetoothAdapter);
                 acceptThread.start();
+                currentTask.setText("Going to accept");
             }
         }
     }
@@ -147,5 +178,34 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(myReceiver);
 
         Log.i(TAG, "Unregistered receiver");
+    }
+
+    public void toggleBluetooth(View view){
+        BluetoothAdapter myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(myBluetoothAdapter.isEnabled()){
+            myBluetoothAdapter.disable();
+        }
+        else{
+            myBluetoothAdapter.enable();
+        }
+        Log.i(TAG, "toggle BT");
+    }
+
+    public void clearPairedDevices(View view){
+        BluetoothAdapter myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        Set<BluetoothDevice> pairedDevices = myBluetoothAdapter.getBondedDevices();
+        for (BluetoothDevice device : pairedDevices){
+            Method m = null;
+            try {
+                m = device.getClass().getMethod("removeBond", (Class[]) null);
+                m.invoke(device, (Object[]) null);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
