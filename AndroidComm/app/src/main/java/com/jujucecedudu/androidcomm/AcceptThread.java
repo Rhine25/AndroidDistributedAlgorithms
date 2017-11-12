@@ -46,7 +46,7 @@ class AcceptThread extends Thread {
             if (socket != null) {
                 // A connection was accepted. Perform work associated with
                 // the connection in a separate thread.
-                //TODO manageMyConnectedSocket(socket);
+                manageMyConnectedSocket(socket);
                 Log.i(TAG, "Server accepted a client");
                 nbConnections ++;
                 try {
@@ -65,5 +65,10 @@ class AcceptThread extends Thread {
         } catch (IOException e) {
             Log.e(TAG, "Could not close the connect socket", e);
         }
+    }
+
+    public void manageMyConnectedSocket(BluetoothSocket socket){
+        //MyBluetoothService.ConnectedThread = new MyBluetoothService.ConnectedThread(socket);
+
     }
 }
