@@ -34,35 +34,23 @@ public class MainActivity extends AppCompatActivity {
 
     public static final UUID MY_UUID = UUID.fromString("7255562d-a5db-43d8-a38d-874453bc589b");
 
-    private static final int APP_DISCOVERY = 0;
-    private static final int APP_DISCOVERABLE = 1;
-    private static final int APP_CONNECT = 2;
-    private static final int APP_ACCEPT = 3;
-
-    private static final String[] modes = {"discovery", "discoverable", "connect", "accept"};
-
-    private static final int MODE = APP_CONNECT;
-
     private static final int REQUEST_ENABLE_BLUETOOTH = 12;
     private static final int REQUEST_DISCOVERABLE = 22;
     private static final int LOCATION = 70;
 
     private ProgressDialog mProgressDialog;
-
-    private TextView mCurrentModeText;
+    private TextView mDiscoveredDevicesText;
     private TextView mPairedDevicesText;
-    private TextView mCurrentTask;
-
     private BluetoothAdapter mBluetoothAdapter;
+
+    private BluetoothDevice mBluetoothFriend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mCurrentModeText = (TextView) findViewById(R.id.tv_mode_text);
-        mCurrentModeText.setText("Current mode is " + modes[MODE]);
-        mCurrentTask = (TextView) findViewById(R.id.tv_current_task);
+        mDiscoveredDevicesText = (TextView) findViewById(R.id.tv_available_devices);
         mPairedDevicesText = (TextView) findViewById(R.id.tv_paired_devices);
 
         mProgressDialog = new ProgressDialog(this);
@@ -84,27 +72,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         listPairedDevices();
-
-        if(MODE == APP_DISCOVERABLE) {
-            makeDiscoverable();
-        }
-
         registerForDiscoveryInfo();
 
-        //discover devices
-        if(MODE == APP_DISCOVERY) {
-            discover();
-        }
-
-        Set<BluetoothDevice> pairedDevices = getPairedDevices();
-        if((MODE == APP_CONNECT || MODE == APP_ACCEPT) && pairedDevices.size() > 0){
-            if(MODE == APP_CONNECT){
-                connect();
-            }
-            else if(MODE == APP_ACCEPT) {
-                accept();
-            }
-        }
     }
 
     private void askForPermission(String permission, Integer requestCode) {
@@ -122,9 +91,11 @@ public class MainActivity extends AppCompatActivity {
             switch (action) {
                 case BluetoothDevice.ACTION_FOUND:
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    mBluetoothFriend = device;
                     String deviceName = device.getName();
                     String deviceMAC = device.getAddress();
                     Log.i(TAG, "Discovered device : " + deviceName + " " + deviceMAC);
+                    mDiscoveredDevicesText.append(deviceName + " " + deviceMAC + "\n");
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
                     Log.i(TAG, "onReceive, discovery started");
@@ -166,6 +137,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_discoverable:
                 makeDiscoverable();
                 return true;
+            case R.id.action_connect:
+                connect();
+                return true;
+            case R.id.action_accept:
+                accept();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -200,10 +177,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setCurrentTaskText(String text){
-        mCurrentTask.setText(text);
-    }
-
     private void enableBluetooth(){
         Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BLUETOOTH);
@@ -214,13 +187,11 @@ public class MainActivity extends AppCompatActivity {
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE);
         Log.i(TAG, "Discoverable");
-        mCurrentTask.setText("Set discoverable");
     }
 
     private void discover(){
         if (mBluetoothAdapter.startDiscovery()) {
             Log.i(TAG, "Launched discovery");
-            mCurrentTask.setText("Launched discovery");
             //it is asynchronous so the discovery is not instantaneous
         } else {
             Log.i(TAG, "Discovery could not launch");
@@ -235,19 +206,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void connect(){
-        Log.i(TAG, "I'm gonna connect");
-        BluetoothDevice target = getPairedDevices().iterator().next(); //Ugh, gross
-        Log.i(TAG, "Target is : " + target.getName());
-        ConnectThread connectThread = new ConnectThread(target, mBluetoothAdapter);
-        connectThread.start();
-        mCurrentTask.setText("Going to connect");
+        Set<BluetoothDevice> pairedDevices = getPairedDevices();
+        if(pairedDevices.size() > 0) {
+            Log.i(TAG, "I'm gonna connect");
+            BluetoothDevice target = getPairedDevices().iterator().next(); //Ugh, gross
+            Log.i(TAG, "Target is : " + target.getName());
+            ConnectThread connectThread = new ConnectThread(target, mBluetoothAdapter);
+            connectThread.start();
+        }
+        else if(mBluetoothFriend != null) {
+            Log.i(TAG, "Don't know any friends yet");
+            Log.i(TAG, "I'm gonna try to pair and connect");
+            Log.i(TAG, "Target is : " + mBluetoothFriend.getName());
+            ConnectThread connectThread = new ConnectThread(mBluetoothFriend, mBluetoothAdapter);
+            connectThread.start();
+        }
+        else{
+            Log.i(TAG, "Can't connect, don't see anyone yet");
+        }
     }
 
     private void accept(){
         Log.i(TAG, "I'm gonna accept");
         AcceptThread acceptThread = new AcceptThread(mBluetoothAdapter);
         acceptThread.start();
-        mCurrentTask.setText("Going to accept");
     }
 
     private void sendMessage(){
@@ -281,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else{
-            mPairedDevicesText.setText("No paired device");
+            //mPairedDevicesText.setText("No paired device");
             Log.i(TAG, "No paired device");
         }
     }

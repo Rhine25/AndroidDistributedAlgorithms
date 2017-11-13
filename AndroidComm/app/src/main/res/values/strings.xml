@@ -5,4 +5,5 @@
     <string name="action_discoverale">Make discoverable</string>
     <string name="action_pair">Pair</string>
     <string name="action_connect">Connect</string>
+    <string name="action_accept">Accept</string>
 </resources>
