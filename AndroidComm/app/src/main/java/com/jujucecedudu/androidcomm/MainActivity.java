@@ -1,5 +1,6 @@
 package com.jujucecedudu.androidcomm;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,11 +8,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_ENABLE_BLUETOOTH = 12;
     private static final int REQUEST_DISCOVERABLE = 22;
+    private static final int LOCATION = 70;
 
     private ProgressDialog mProgressDialog;
 
@@ -63,10 +71,12 @@ public class MainActivity extends AppCompatActivity {
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        askForPermission(Manifest.permission.ACCESS_COARSE_LOCATION, LOCATION);
 
         if(mBluetoothAdapter == null){
             //device does not support bluetooth
             //TODO display text error message
+            Log.d(TAG, "Bluetooth adapter is null");
         }
 
         if(!mBluetoothAdapter.isEnabled()){
@@ -94,6 +104,14 @@ public class MainActivity extends AppCompatActivity {
             else if(MODE == APP_ACCEPT) {
                 accept();
             }
+        }
+    }
+
+    private void askForPermission(String permission, Integer requestCode) {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
+        } else {
+            Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -130,6 +148,27 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(myReceiver);
 
         Log.i(TAG, "Unregistered receiver");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId) {
+            case R.id.action_discover:
+                discover();
+                return true;
+            case R.id.action_discoverable:
+                makeDiscoverable();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public void toggleBluetooth(View view){

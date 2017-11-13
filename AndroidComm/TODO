@@ -7,3 +7,5 @@ communiquer avec un appareil déjà appairé
 
 
 Quand on clear les pairedDevice il faudrait clear le textView du début
+Faire bien pour modifier le currentTask textview
+nettoyer un peu le code parce qu'il est cracra dette technique, usual stuff, voilà quoi

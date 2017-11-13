@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">AndroidComm</string>
     <string name="bluetooth_not_supported">Bluetooth is not supported on this device</string>
+    <string name="action_discover">Discover</string>
+    <string name="action_discoverale">Make discoverable</string>
+    <string name="action_pair">Pair</string>
+    <string name="action_connect">Connect</string>
 </resources>
