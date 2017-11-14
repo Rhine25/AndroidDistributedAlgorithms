@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_discover"
+        android:orderInCategory="1"
+        android:title="@string/action_discover"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_discoverable"
+        android:orderInCategory="2"
+        android:title="@string/action_discoverale"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_connect"
+        android:orderInCategory="3"
+        android:title="@string/action_connect"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_accept"
+        android:orderInCategory="4"
+        android:title="@string/action_accept"
+        app:showAsAction="ifRoom"/>
+</menu>
