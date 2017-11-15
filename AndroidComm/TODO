@@ -1,11 +1,1 @@
-s'appairer apres avoir trouvé un pote
-se connecter à un pair
-communiquer avec un appareil déjà appairé
-    -> send file from app to phone
-    -> receive file from app sent by phone
-    -> send and receive from app to app
-
-
-Quand on clear les pairedDevice il faudrait clear le textView du début
-Faire bien pour modifier le currentTask textview
-nettoyer un peu le code parce qu'il est cracra dette technique, usual stuff, voilà quoi
+pas besoin du bluetoothAdapter dans le mainactivity, tout doit passer par le service bluetooth

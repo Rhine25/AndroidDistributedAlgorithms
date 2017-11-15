@@ -16,15 +16,6 @@
             android:layout_height="wrap_content"
             android:text="Discovered devices :\n"/>
     </ScrollView>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/tv_paired_devices"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Paired devices :\n"/>
-    </ScrollView>
 
     <TextView
         android:layout_width="wrap_content"
@@ -38,15 +29,9 @@
         android:layout_height="wrap_content"
         android:onClick="toggleBluetooth"/>
     <Button
-        android:id="@+id/bt_search"
-        android:text="Search for devices"
+        android:id="@+id/bt_write"
+        android:text="Say hello"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
-    <Button
-        android:id="@+id/bt_clear_paired"
-        android:text="Clear paired devices"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="clearPairedDevices"/>
+        android:onClick="sayHello"/>
 </LinearLayout>
