@@ -13,34 +13,22 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.RecursiveAction;
 
-import static android.bluetooth.BluetoothDevice.BOND_BONDED;
-import static android.bluetooth.BluetoothDevice.BOND_BONDING;
-import static android.bluetooth.BluetoothDevice.BOND_NONE;
-import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DEVICE_NAME;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
-import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_STATE_CHANGE;
-import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_TOAST;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
-import static com.jujucecedudu.androidcomm.MyBluetoothService.STATE_CONNECTED;
-import static com.jujucecedudu.androidcomm.MyBluetoothService.STATE_CONNECTING;
-import static com.jujucecedudu.androidcomm.MyBluetoothService.STATE_LISTEN;
-import static com.jujucecedudu.androidcomm.MyBluetoothService.STATE_NONE;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "BLUETOOTH_TEST_MAIN";
@@ -52,10 +40,11 @@ public class MainActivity extends AppCompatActivity {
     private static final int LOCATION = 70;
 
     private ProgressDialog mProgressDialog;
-    private TextView mDiscoveredDevicesText;
+    //private TextView mDiscoveredDevicesText;
+    private RecyclerView mRecyclerView;
+    private DeviceAdapter mDeviceAdapter;
 
     private BluetoothAdapter mBluetoothAdapter;
-
     private MyBluetoothService myBluetoothService;
 
     @SuppressLint("HandlerLeak")
@@ -67,54 +56,19 @@ public class MainActivity extends AppCompatActivity {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
+                    Log.i(TAG, "Sent : " + writeMessage + " to my friend");
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
+                    Log.i(TAG, "Read " + readMessage + " from my friend");
                     break;
             }
         }
     };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        mDiscoveredDevicesText = (TextView) findViewById(R.id.tv_available_devices);
-
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage("Scanning...");
-        mProgressDialog.setCancelable(false);
-
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        myBluetoothService = new MyBluetoothService(this, mHandler);
-
-        askForPermission(Manifest.permission.ACCESS_COARSE_LOCATION, LOCATION);
-
-        if(mBluetoothAdapter == null){
-            //device does not support bluetooth
-            //TODO display text error message
-            Log.d(TAG, "Bluetooth adapter is null");
-        }
-
-        if(!mBluetoothAdapter.isEnabled()){
-            enableBluetooth();
-        }
-        registerForDiscoveryInfo();
-
-    }
-
-    private void askForPermission(String permission, Integer requestCode) {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
-        } else {
-            Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private final BroadcastReceiver myReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -126,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
                     String deviceName = device.getName();
                     String deviceMAC = device.getAddress();
                     Log.i(TAG, "Discovered device : " + deviceName + " " + deviceMAC);
-                    mDiscoveredDevicesText.append(deviceName + " " + deviceMAC + "\n");
+                    //mDiscoveredDevicesText.append(deviceName + " " + deviceMAC + "\n");
+                    mDeviceAdapter.addDeviceData(device);
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
                     Log.i(TAG, "onReceive, discovery started");
@@ -144,11 +99,42 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        //mDiscoveredDevicesText = (TextView) findViewById(R.id.tv_available_devices);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_available_devices);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mDeviceAdapter = new DeviceAdapter();
+        mRecyclerView.setAdapter(mDeviceAdapter);
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage("Scanning for devices...");
+        mProgressDialog.setCancelable(false);
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        myBluetoothService = new MyBluetoothService(this, mHandler);
+
+        if(mBluetoothAdapter == null){
+            //device does not support bluetooth
+            //TODO display text error message
+            Log.d(TAG, "Bluetooth adapter is null");
+        }
+        else{
+            askForPermission(Manifest.permission.ACCESS_COARSE_LOCATION, LOCATION);
+            enableBluetooth();
+            registerForDiscoveryInfo();
+        }
+    }
+
+    @Override
     protected void onDestroy(){
         super.onDestroy();
-
-        unregisterReceiver(myReceiver);
-
+        unregisterReceiver(mReceiver);
         Log.i(TAG, "Unregistered receiver");
     }
 
@@ -179,10 +165,57 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "onActivityResult " + requestCode + ", " + resultCode);
+        if(requestCode == REQUEST_ENABLE_BLUETOOTH){
+            if(resultCode != RESULT_OK){
+                Log.d(TAG, "Bluetooth was not enabled");
+            }
+            else{
+                Log.i(TAG, "Bluetooth enabled");
+            }
+        }
+        else if(requestCode == REQUEST_DISCOVERABLE){
+            if(requestCode != RESULT_OK){
+                Log.d(TAG, "Device was not made discoverable");
+            }
+            else{
+                Log.i(TAG, "Device made discoverable");
+            }
+        }
+    }
+
+    private void askForPermission(String permission, int requestCode) {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
+        }
+    }
+
+    private void registerForDiscoveryInfo(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(mReceiver, filter);
+    }
+
     private void enableBluetooth(){
-        Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BLUETOOTH);
+        if(!mBluetoothAdapter.isEnabled()) {
+            Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BLUETOOTH);
+        }
         //TODO check what the result is
+    }
+
+    public void toggleBluetooth(View view){
+        if(mBluetoothAdapter.isEnabled()){
+            mBluetoothAdapter.disable();
+        }
+        else{
+            mBluetoothAdapter.enable();
+        }
+        Log.i(TAG, "toggle BT");
     }
 
     void makeDiscoverable(){
@@ -191,26 +224,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "Discoverable");
     }
 
-    public void toggleBluetooth(View view){
-        BluetoothAdapter myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(myBluetoothAdapter.isEnabled()){
-            myBluetoothAdapter.disable();
-        }
-        else{
-            myBluetoothAdapter.enable();
-        }
-        Log.i(TAG, "toggle BT");
-    }
-
     public void sayHello(View view){
         myBluetoothService.sendMessage("Hello !".getBytes());
-    }
-
-    private void registerForDiscoveryInfo(){
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(myReceiver, filter);
     }
 }
