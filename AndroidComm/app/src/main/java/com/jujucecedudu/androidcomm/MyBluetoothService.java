@@ -34,15 +34,9 @@ public class MyBluetoothService {
     private ConnectedThread mConnectThread;
     private ConnectedThread mConnectedThread;
 
-    private BluetoothDevice mBluetoothFriend;
-
     public MyBluetoothService(Context context, Handler handler){
         mmBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mHandler = handler;
-    }
-
-    public void setBluetoothFriend(BluetoothDevice mBluetoothFriend) {
-        this.mBluetoothFriend = mBluetoothFriend;
     }
 
     void discover(){
@@ -57,16 +51,11 @@ public class MyBluetoothService {
         //here should pair to a device after stopping discovery process
     }
 
-    void connect(){
-        if(mBluetoothFriend != null) {
-            Log.i(TAG, "I'm gonna try to pair and connect");
-            Log.i(TAG, "Target is : " + mBluetoothFriend.getName());
-            ConnectThread connectThread = new ConnectThread(mBluetoothFriend);
-            connectThread.start();
-        }
-        else{
-            Log.i(TAG, "Can't connect, don't see anyone yet");
-        }
+    void connect(BluetoothDevice device){
+        Log.i(TAG, "I'm gonna try to pair and connect");
+        Log.i(TAG, "Target is : " + device.getName());
+        ConnectThread connectThread = new ConnectThread(device);
+        connectThread.start();
     }
 
     void accept(){

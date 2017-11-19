@@ -11,11 +11,11 @@
         android:orderInCategory="2"
         android:title="@string/action_discoverale"
         app:showAsAction="ifRoom"/>
-    <item
+    <!--<item
         android:id="@+id/action_connect"
         android:orderInCategory="3"
         android:title="@string/action_connect"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"/>-->
     <item
         android:id="@+id/action_accept"
         android:orderInCategory="4"

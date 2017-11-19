@@ -22,11 +22,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.UUID;
-import java.util.concurrent.RecursiveAction;
 
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private DeviceAdapter mDeviceAdapter;
 
     private BluetoothAdapter mBluetoothAdapter;
-    private MyBluetoothService myBluetoothService;
+    private MyBluetoothService mBluetoothService;
 
     private Toast mToast;
 
@@ -79,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                 case BluetoothDevice.ACTION_FOUND:
                     mProgressDialog.dismiss();
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    myBluetoothService.setBluetoothFriend(device);
                     String deviceName = device.getName();
                     String deviceMAC = device.getAddress();
                     Log.i(TAG, "Discovered device : " + deviceName + " " + deviceMAC);
@@ -120,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         mProgressDialog.setCancelable(false);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        myBluetoothService = new MyBluetoothService(this, mHandler);
+        mBluetoothService = new MyBluetoothService(this, mHandler);
 
         if(mBluetoothAdapter == null){
             //device does not support bluetooth
@@ -152,16 +149,13 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_discover:
-                myBluetoothService.discover();
+                mBluetoothService.discover();
                 return true;
             case R.id.action_discoverable:
                 makeDiscoverable();
                 return true;
-            case R.id.action_connect:
-                myBluetoothService.connect();
-                return true;
             case R.id.action_accept:
-                myBluetoothService.accept();
+                mBluetoothService.accept();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -228,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     }
 
     public void sayHello(View view){
-        myBluetoothService.sendMessage("Hello !".getBytes());
+        mBluetoothService.sendMessage("Hello !".getBytes());
     }
 
     @Override
@@ -239,5 +233,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         String text = device.getName() + " " + device.getAddress() + " clicked";
         mToast = Toast.makeText(this, text, Toast.LENGTH_LONG);
         mToast.show();
+
+        mBluetoothService.connect(device);
     }
 }
