@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.UUID;
 import java.util.concurrent.RecursiveAction;
@@ -30,7 +31,7 @@ import java.util.concurrent.RecursiveAction;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DeviceAdapter.ListItemClickListener{
     private static final String TAG = "BLUETOOTH_TEST_MAIN";
 
     public static final UUID MY_UUID = UUID.fromString("7255562d-a5db-43d8-a38d-874453bc589b");
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter mBluetoothAdapter;
     private MyBluetoothService myBluetoothService;
+
+    private Toast mToast;
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
@@ -109,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mDeviceAdapter = new DeviceAdapter();
+        mDeviceAdapter = new DeviceAdapter(this);
         mRecyclerView.setAdapter(mDeviceAdapter);
 
         mProgressDialog = new ProgressDialog(this);
@@ -226,5 +229,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void sayHello(View view){
         myBluetoothService.sendMessage("Hello !".getBytes());
+    }
+
+    @Override
+    public void onListItemClick(BluetoothDevice device) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        String text = device.getName() + " " + device.getAddress() + " clicked";
+        mToast = Toast.makeText(this, text, Toast.LENGTH_LONG);
+        mToast.show();
     }
 }

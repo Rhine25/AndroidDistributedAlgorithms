@@ -1,9 +1,11 @@
 package com.jujucecedudu.androidcomm;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,15 +20,33 @@ import java.util.List;
  */
 
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceAdapterViewHolder>{
+    private static final String TAG = "BLUETOOTH_TEST_ADAPTER";
 
-    private ArrayList<BluetoothDevice> mAvailableDevices = new ArrayList<BluetoothDevice>();
+    private ArrayList<BluetoothDevice> mAvailableDevices;
 
-    public class DeviceAdapterViewHolder extends RecyclerView.ViewHolder{
+    private final ListItemClickListener mOnClickListener;
+
+    public interface ListItemClickListener{
+        void onListItemClick(BluetoothDevice device);
+    }
+
+    public DeviceAdapter(ListItemClickListener listener){
+        mAvailableDevices = new ArrayList<>();
+        mOnClickListener = listener;
+    }
+
+    public class DeviceAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public final TextView mDeviceTextView;
 
         public DeviceAdapterViewHolder(View view){
             super(view);
             mDeviceTextView = (TextView) view.findViewById(R.id.tv_available_device);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            mOnClickListener.onListItemClick(mAvailableDevices.get(getAdapterPosition()));
         }
     }
 
