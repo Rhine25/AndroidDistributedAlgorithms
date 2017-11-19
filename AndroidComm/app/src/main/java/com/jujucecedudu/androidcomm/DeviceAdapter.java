@@ -7,8 +7,10 @@ import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +19,7 @@ import java.util.List;
 
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceAdapterViewHolder>{
 
-    private BluetoothDevice[] mAvailableDevices;
+    private ArrayList<BluetoothDevice> mAvailableDevices = new ArrayList<BluetoothDevice>();
 
     public class DeviceAdapterViewHolder extends RecyclerView.ViewHolder{
         public final TextView mDeviceTextView;
@@ -40,8 +42,10 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceAdap
 
     @Override
     public void onBindViewHolder(DeviceAdapterViewHolder holder, int position) {
-        BluetoothDevice device = mAvailableDevices[position];
-        holder.mDeviceTextView.setText(device.getName() + " " + device.getAddress());
+        BluetoothDevice device = mAvailableDevices.get(position);
+        if(device != null){
+            holder.mDeviceTextView.setText(device.getName() + " " + device.getAddress());
+        }
     }
 
     @Override
@@ -49,16 +53,16 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceAdap
         if(null == mAvailableDevices){
             return 0;
         }
-        return mAvailableDevices.length;
+        return mAvailableDevices.size();
     }
 
-    public void setDeviceData(BluetoothDevice[] deviceData){
+    public void setDeviceData(ArrayList deviceData){
         mAvailableDevices = deviceData;
         notifyDataSetChanged();
     }
 
     public void addDeviceData(BluetoothDevice deviceData){
-        mAvailableDevices[mAvailableDevices.length] = deviceData;
+        mAvailableDevices.add(deviceData);
         notifyDataSetChanged();
     }
 }
