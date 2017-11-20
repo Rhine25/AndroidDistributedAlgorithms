@@ -23,11 +23,6 @@
         android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_mode_text"/>
-
     <Button
         android:id="@+id/bt_toggle_bluetooth"
         android:text="Toggle Bluetooth"
@@ -40,4 +35,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="sayHello"/>
+    <Button
+        android:id="@+id/bt_clear_messages"
+        android:text="Clear messages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="clearMessages"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_messages"/>
+    </ScrollView>
 </LinearLayout>

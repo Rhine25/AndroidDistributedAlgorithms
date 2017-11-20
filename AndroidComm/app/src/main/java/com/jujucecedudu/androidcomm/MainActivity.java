@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,10 +23,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.UUID;
 
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DEVICE_NAME;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
 
@@ -39,10 +42,10 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private static final int LOCATION = 70;
 
     private ProgressDialog mProgressDialog;
-    //private TextView mDiscoveredDevicesText;
     private RecyclerView mRecyclerView;
-    private DeviceAdapter mDeviceAdapter;
+    private TextView mMessages;
 
+    private DeviceAdapter mDeviceAdapter;
     private BluetoothAdapter mBluetoothAdapter;
     private MyBluetoothService mBluetoothService;
 
@@ -54,17 +57,17 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    Log.i(TAG, "Sent : " + writeMessage + " to my friend");
+                    String writeBuf = (String) msg.obj;
+                    Log.i(TAG, "Sent : " + writeBuf);
+                    mMessages.append("Sent : " + writeBuf + "\n");
                     break;
                 case MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    Log.i(TAG, "Read " + readMessage + " from my friend");
+                    String readBuf = (String) msg.obj;
+                    Log.i(TAG, "Read " + readBuf);
+                    mMessages.append("Read " + readBuf + "\n");
                     break;
+                case MESSAGE_DEVICE_NAME:
+                    Log.i(TAG, "Connected to " + msg.obj);
             }
         }
     };
@@ -103,8 +106,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //mDiscoveredDevicesText = (TextView) findViewById(R.id.tv_available_devices);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_available_devices);
+        mMessages = (TextView) findViewById(R.id.tv_messages);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -223,6 +226,10 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
     public void sayHello(View view){
         mBluetoothService.sendMessage("Hello !".getBytes());
+    }
+
+    public void clearMessages(View view){
+        mMessages.setText("");
     }
 
     @Override

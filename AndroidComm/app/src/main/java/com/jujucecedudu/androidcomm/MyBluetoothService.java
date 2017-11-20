@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,7 +13,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Set;
+import java.util.LinkedList;
 
 /**
  * Created by rhine on 23/10/17.
@@ -32,11 +31,12 @@ public class MyBluetoothService {
     private BluetoothAdapter mmBluetoothAdapter;
     private AcceptThread mAcceptThread;
     private ConnectedThread mConnectThread;
-    private ConnectedThread mConnectedThread;
+    private LinkedList<ConnectedThread> mConnectedThreads;
 
     public MyBluetoothService(Context context, Handler handler){
         mmBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mHandler = handler;
+        mConnectedThreads = new LinkedList<>();
     }
 
     void discover(){
@@ -65,12 +65,23 @@ public class MyBluetoothService {
     }
 
     void sendMessage(byte[] out){
-        if(mConnectedThread == null){
-            Log.d(TAG, "connected thread is null");
+        for(ConnectedThread connectedThread : mConnectedThreads) {
+            if (connectedThread == null) {
+                Log.d(TAG, "connected thread is null");
+            } else {
+                connectedThread.write(out);
+            }
         }
-        else {
-            mConnectedThread.write(out);
-        }
+    }
+
+    void setConnection(BluetoothSocket socket){
+        ConnectedThread thread = new ConnectedThread(socket);
+        thread.start();
+        mConnectedThreads.add(thread);
+    }
+
+    LinkedList<ConnectedThread> getConnectedThreads(){
+        return mConnectedThreads;
     }
 
     // Defines several constants used when transmitting messages between the
@@ -119,7 +130,7 @@ public class MyBluetoothService {
                 if (socket != null) {
                     // A connection was accepted. Perform work associated with
                     // the connection in a separate thread.
-                    manageMyConnectedSocket(socket);
+                    setConnection(socket);
                     Log.i(TAG, "Server accepted a client");
                     nbConnections ++;
                     try {
@@ -138,11 +149,6 @@ public class MyBluetoothService {
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the connect socket", e);
             }
-        }
-
-        public void manageMyConnectedSocket(BluetoothSocket socket){
-            mConnectedThread = new ConnectedThread(socket);
-            mConnectedThread.start();
         }
     }
 
@@ -191,7 +197,7 @@ public class MyBluetoothService {
 
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
-            manageMyConnectedSocket(mmSocket);
+            setConnection(mmSocket);
         }
 
         // Closes the client socket and causes the thread to finish.
@@ -201,11 +207,6 @@ public class MyBluetoothService {
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the client socket", e);
             }
-        }
-
-        public void manageMyConnectedSocket(BluetoothSocket socket){
-            mConnectedThread = new ConnectedThread(socket);
-            mConnectedThread.start();
         }
     }
 
@@ -235,6 +236,10 @@ public class MyBluetoothService {
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
+
+            Message connectedMsg = mHandler.obtainMessage(
+                    MessageConstants.MESSAGE_DEVICE_NAME, mmSocket.getRemoteDevice().getName());
+            connectedMsg.sendToTarget();
         }
 
         public void run() {
@@ -247,9 +252,9 @@ public class MyBluetoothService {
                     // Read from the InputStream.
                     numBytes = mmInStream.read(mmBuffer);
                     // Send the obtained bytes to the UI activity.
+                    String msgStr = new String(mmBuffer, 0, numBytes);
                     Message readMsg = mHandler.obtainMessage(
-                            MessageConstants.MESSAGE_READ, numBytes, -1,
-                            mmBuffer);
+                            MessageConstants.MESSAGE_READ, msgStr + " from " + mmSocket.getRemoteDevice().getName());
                     readMsg.sendToTarget();
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
@@ -263,8 +268,10 @@ public class MyBluetoothService {
             try {
                 mmOutStream.write(bytes);
                 // Share the sent message with the UI activity.
+                String msgStr = new String(bytes);
+                //TODO try with mmBuffer instead of bytes
                 Message writtenMsg = mHandler.obtainMessage(
-                        MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
+                        MessageConstants.MESSAGE_WRITE, msgStr + " to " + mmSocket.getRemoteDevice().getName());
                 writtenMsg.sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when sending data", e);
@@ -287,6 +294,10 @@ public class MyBluetoothService {
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the connect socket", e);
             }
+        }
+
+        public BluetoothDevice getRemoteDevice(){
+            return mmSocket.getRemoteDevice();
         }
     }
 }
