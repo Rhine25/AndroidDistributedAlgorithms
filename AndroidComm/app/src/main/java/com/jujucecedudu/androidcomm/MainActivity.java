@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private ProgressDialog mProgressDialog;
     private RecyclerView mRecyclerView;
     private TextView mMessages;
+    private TextView mConnections;
 
     private DeviceAdapter mDeviceAdapter;
     private BluetoothAdapter mBluetoothAdapter;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     break;
                 case MESSAGE_DEVICE_NAME:
                     Log.i(TAG, "Connected to " + msg.obj);
+                    mConnections.append(msg.obj + "\n");
             }
         }
     };
@@ -78,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
             String action = intent.getAction();
             switch (action) {
                 case BluetoothDevice.ACTION_FOUND:
-                    mProgressDialog.dismiss();
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     String deviceName = device.getName();
                     String deviceMAC = device.getAddress();
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_available_devices);
         mMessages = (TextView) findViewById(R.id.tv_messages);
+        mConnections = (TextView) findViewById(R.id.tv_connections);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -152,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_discover:
+                mDeviceAdapter.clearDevices();
                 mBluetoothService.discover();
                 return true;
             case R.id.action_discoverable:

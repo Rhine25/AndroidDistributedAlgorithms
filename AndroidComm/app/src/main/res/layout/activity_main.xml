@@ -7,47 +7,52 @@
     android:paddingTop="16dp"
     tools:context="com.jujucecedudu.androidcomm.MainActivity">
 
-    <!--<ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/tv_available_devices"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Discovered devices :\n"/>
-    </ScrollView>-->
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_available_devices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>
 
-    <Button
-        android:id="@+id/bt_toggle_bluetooth"
-        android:text="Toggle Bluetooth"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="toggleBluetooth"/>
-    <Button
-        android:id="@+id/bt_write"
-        android:text="Say hello"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="sayHello"/>
-    <Button
-        android:id="@+id/bt_clear_messages"
-        android:text="Clear messages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="clearMessages"/>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <TextView
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/bt_toggle_bluetooth"
+            android:text="Toggle BT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_messages"/>
-    </ScrollView>
+            android:onClick="toggleBluetooth"/>
+        <Button
+            android:id="@+id/bt_write"
+            android:text="Say hello"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="sayHello"/>
+        <Button
+            android:id="@+id/bt_clear_messages"
+            android:text="Clear msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="clearMessages"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_messages"/>
+        </ScrollView>
+        <TextView
+            android:id="@+id/tv_connections"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"/>
+    </LinearLayout>
 </LinearLayout>

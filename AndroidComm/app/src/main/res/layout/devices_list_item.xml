@@ -5,7 +5,7 @@
     <TextView
         android:id="@+id/tv_available_device"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="30dp"
         android:textAlignment="center"/>
     <View
         android:layout_width="match_parent"

@@ -85,4 +85,9 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceAdap
         mAvailableDevices.add(deviceData);
         notifyDataSetChanged();
     }
+
+    public void clearDevices(){
+        mAvailableDevices.clear();
+        notifyDataSetChanged();
+    }
 }

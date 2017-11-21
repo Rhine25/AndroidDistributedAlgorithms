@@ -25,6 +25,7 @@ public class MyBluetoothService {
     public static final int STATE_LISTEN = 1;     // now listening for incoming connections
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+    public static final int NEW_CONNECTION = 4;
 
     private static final String TAG = "BLUETOOTH_TEST_SERVICE";
     private Handler mHandler; // handler that gets info from Bluetooth service
@@ -100,7 +101,6 @@ public class MyBluetoothService {
         private static final String TAG = "BLUETOOTH_TEST_ACCEPT";
 
         private final BluetoothServerSocket mmServerSocket;
-        //private final BluetoothAdapter mBluetoothAdapter;
 
         public AcceptThread() {
             // Use a temporary object that is later assigned to mmServerSocket
@@ -119,7 +119,7 @@ public class MyBluetoothService {
             Log.i(TAG, "run");
             BluetoothSocket socket = null;
             int nbConnections = 0;
-            while (nbConnections < 1) {
+            while (true) {
                 try {
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
