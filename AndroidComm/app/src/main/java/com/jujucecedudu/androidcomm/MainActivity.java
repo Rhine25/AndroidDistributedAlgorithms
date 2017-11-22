@@ -30,6 +30,7 @@ import java.util.UUID;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_CONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
 
 public class MainActivity extends AppCompatActivity implements DeviceAdapter.ListItemClickListener{
@@ -52,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
     private Toast mToast;
 
-    private RoutingTable mRoutingTable;
-
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -70,14 +69,22 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     mMessages.append("Read " + readBuf + "\n");
                     break;
                 case MESSAGE_CONNECTION:
-                    Log.i(TAG, "Connected to " + msg.obj);
-                    mConnections.append(msg.obj + "\n");
-                    //git diffmRoutingTable.addEntry();
+                    BluetoothDevice device = (BluetoothDevice)msg.obj;
+                    String deviceName = device.getName();
+                    Log.i(TAG, "Connected to " + deviceName);
+                    mConnections.append(deviceName + "\n");
+                    mBluetoothService.addRoutingEntry(device.getAddress(), 1, device.getAddress());
+                    Log.d(TAG, "Routage : \n" + mBluetoothService.getRoutingTableStr());
+                    mBluetoothService.sendRoutingTable(device);
                     break;
                 case MESSAGE_DISCONNECTION:
                     Log.i(TAG, msg.obj + " disconnected ");
                     mConnections.append("-" + msg.obj + "\n");
+                    //TODO remove entry from routingtable
                     break;
+                case MESSAGE_ROUTING_TABLE:
+                    Log.i(TAG, "Received routing table " + msg.obj);
+                    //TODO add new entries to routing table
             }
         }
     };
@@ -142,8 +149,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
             enableBluetooth();
             registerForDiscoveryInfo();
         }
-
-        mRoutingTable = new RoutingTable();
     }
 
     @Override

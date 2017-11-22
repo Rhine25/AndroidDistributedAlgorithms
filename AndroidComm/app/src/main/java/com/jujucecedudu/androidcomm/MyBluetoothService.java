@@ -10,8 +10,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
 
@@ -35,11 +39,13 @@ public class MyBluetoothService {
     private AcceptThread mAcceptThread;
     private ConnectedThread mConnectThread;
     private LinkedList<ConnectedThread> mConnectedThreads;
+    private RoutingTable mRoutingTable;
 
     public MyBluetoothService(Context context, Handler handler){
         mmBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mHandler = handler;
         mConnectedThreads = new LinkedList<>();
+        mRoutingTable = new RoutingTable();
     }
 
     void discover(){
@@ -77,10 +83,59 @@ public class MyBluetoothService {
         }
     }
 
+    void sendMessage(byte[] out, BluetoothDevice dest){
+        for(ConnectedThread connectedThread : mConnectedThreads) {
+            if (connectedThread == null) {
+                Log.d(TAG, "connected thread is null");
+            } else {
+                if(connectedThread.mmSocket.getRemoteDevice() == dest)
+                connectedThread.write(out);
+            }
+        }
+    }
+
+    void sendRoutingTable(BluetoothDevice dest){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(out);
+            oos.writeObject(mRoutingTable);
+            byte[] bytes = out.toByteArray();
+            sendMessage(bytes, dest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    RoutingTable receiveRoutingTable(byte[] bytes){
+        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(in);
+            try {
+                RoutingTable table = (RoutingTable) ois.readObject();
+                return table;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     void setConnection(BluetoothSocket socket){
         ConnectedThread thread = new ConnectedThread(socket);
         thread.start();
         mConnectedThreads.add(thread);
+    }
+
+    void addRoutingEntry(String targetMAC, int cost, String nextHopMAC){
+        mRoutingTable.addEntry(targetMAC, cost, nextHopMAC);
+    }
+
+    String getRoutingTableStr(){
+        return mRoutingTable.toString();
     }
 
     LinkedList<ConnectedThread> getConnectedThreads(){
@@ -96,6 +151,7 @@ public class MyBluetoothService {
         public static final int MESSAGE_CONNECTION = 4;
         public static final int MESSAGE_TOAST = 5;
         public static final int MESSAGE_DISCONNECTION = 6;
+        public static final int MESSAGE_ROUTING_TABLE = 7;
 
         // ... (Add other message types here as needed.)
     }
@@ -241,13 +297,28 @@ public class MyBluetoothService {
             mmOutStream = tmpOut;
 
             Message connectedMsg = mHandler.obtainMessage(
-                    MessageConstants.MESSAGE_CONNECTION, mmSocket.getRemoteDevice().getName());
+                    MessageConstants.MESSAGE_CONNECTION, mmSocket.getRemoteDevice());
             connectedMsg.sendToTarget();
         }
 
         public void run() {
+            Log.d(TAG, "Connected thread running");
             mmBuffer = new byte[1024];
             int numBytes; // bytes returned from read()
+
+            //receive routingtable, but we're not sure that's the first thing we receive
+            try {
+                Log.d(TAG, "Connected thread waiting for routing table");
+                numBytes = mmInStream.read(mmBuffer);
+                RoutingTable table = receiveRoutingTable(mmBuffer);
+                Message readMsg = mHandler.obtainMessage(
+                        MessageConstants.MESSAGE_ROUTING_TABLE, table.toString());
+                readMsg.sendToTarget();
+            } catch (IOException e) {
+                Log.d(TAG, "Error while receiving routing table", e);
+                e.printStackTrace();
+            }
+            Log.d(TAG, "Received routing table, waiting for standard messages from friends");
 
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
@@ -283,6 +354,7 @@ public class MyBluetoothService {
                 Log.e(TAG, "Error occurred when sending data", e);
 
                 // Send a failure message back to the activity.
+                //TODO maybe register to receive those ? 0:)
                 Message writeErrorMsg =
                         mHandler.obtainMessage(MessageConstants.MESSAGE_TOAST);
                 Bundle bundle = new Bundle();
