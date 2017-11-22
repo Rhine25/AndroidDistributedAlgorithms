@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +27,8 @@ import android.widget.Toast;
 
 import java.util.UUID;
 
-import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DEVICE_NAME;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_CONNECTION;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
 
@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
     private Toast mToast;
 
+    private RoutingTable mRoutingTable;
+
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -67,9 +69,15 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     Log.i(TAG, "Read " + readBuf);
                     mMessages.append("Read " + readBuf + "\n");
                     break;
-                case MESSAGE_DEVICE_NAME:
+                case MESSAGE_CONNECTION:
                     Log.i(TAG, "Connected to " + msg.obj);
                     mConnections.append(msg.obj + "\n");
+                    //git diffmRoutingTable.addEntry();
+                    break;
+                case MESSAGE_DISCONNECTION:
+                    Log.i(TAG, msg.obj + " disconnected ");
+                    mConnections.append("-" + msg.obj + "\n");
+                    break;
             }
         }
     };
@@ -134,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
             enableBluetooth();
             registerForDiscoveryInfo();
         }
+
+        mRoutingTable = new RoutingTable();
     }
 
     @Override

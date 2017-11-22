@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
 
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
+
 /**
  * Created by rhine on 23/10/17.
  */
@@ -91,8 +93,9 @@ public class MyBluetoothService {
         public static final int MESSAGE_STATE_CHANGE = 1;
         public static final int MESSAGE_READ = 2;
         public static final int MESSAGE_WRITE = 3;
-        public static final int MESSAGE_DEVICE_NAME = 4;
+        public static final int MESSAGE_CONNECTION = 4;
         public static final int MESSAGE_TOAST = 5;
+        public static final int MESSAGE_DISCONNECTION = 6;
 
         // ... (Add other message types here as needed.)
     }
@@ -133,11 +136,11 @@ public class MyBluetoothService {
                     setConnection(socket);
                     Log.i(TAG, "Server accepted a client");
                     nbConnections ++;
-                    try {
+                    /*try {
                         mmServerSocket.close(); //or let it be if we want to accept other connections
                     } catch (IOException e) {
                         Log.e(TAG, "Could not close the connect socket", e);
-                    }
+                    }*/
                 }
             }
         }
@@ -238,7 +241,7 @@ public class MyBluetoothService {
             mmOutStream = tmpOut;
 
             Message connectedMsg = mHandler.obtainMessage(
-                    MessageConstants.MESSAGE_DEVICE_NAME, mmSocket.getRemoteDevice().getName());
+                    MessageConstants.MESSAGE_CONNECTION, mmSocket.getRemoteDevice().getName());
             connectedMsg.sendToTarget();
         }
 
@@ -258,6 +261,9 @@ public class MyBluetoothService {
                     readMsg.sendToTarget();
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
+                    Message readMsg = mHandler.obtainMessage(
+                            MESSAGE_DISCONNECTION, mmSocket.getRemoteDevice().getName());
+                    readMsg.sendToTarget();
                     break;
                 }
             }
