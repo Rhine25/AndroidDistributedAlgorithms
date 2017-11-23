@@ -95,19 +95,23 @@ public class MyBluetoothService {
     }
 
     void sendRoutingTable(BluetoothDevice dest){
+        sendMessage(serializeRoutingTable(mRoutingTable), dest); //TODO should check not null serialize
+    }
+
+    byte[] serializeRoutingTable(RoutingTable table){
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream oos = null;
         try {
             oos = new ObjectOutputStream(out);
-            oos.writeObject(mRoutingTable);
-            byte[] bytes = out.toByteArray();
-            sendMessage(bytes, dest);
+            oos.writeObject(table);
+            return out.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    RoutingTable receiveRoutingTable(byte[] bytes){
+    RoutingTable deserializeRoutingTable(byte[] bytes){
         ByteArrayInputStream in = new ByteArrayInputStream(bytes);
         ObjectInputStream ois = null;
         try {
@@ -132,6 +136,10 @@ public class MyBluetoothService {
 
     void addRoutingEntry(String targetMAC, int cost, String nextHopMAC){
         mRoutingTable.addEntry(targetMAC, cost, nextHopMAC);
+    }
+
+    void updateRoutingFrom(String fromMAC, RoutingTable neighbourTable){
+        mRoutingTable.updateFrom(fromMAC, neighbourTable);
     }
 
     String getRoutingTableStr(){
@@ -310,9 +318,11 @@ public class MyBluetoothService {
             try {
                 Log.d(TAG, "Connected thread waiting for routing table");
                 numBytes = mmInStream.read(mmBuffer);
-                RoutingTable table = receiveRoutingTable(mmBuffer);
                 Message readMsg = mHandler.obtainMessage(
-                        MessageConstants.MESSAGE_ROUTING_TABLE, table.toString());
+                        MessageConstants.MESSAGE_ROUTING_TABLE, mmBuffer);
+                Bundle bundle = new Bundle();
+                bundle.putString("from", mmSocket.getRemoteDevice().getAddress());
+                readMsg.setData(bundle);
                 readMsg.sendToTarget();
             } catch (IOException e) {
                 Log.d(TAG, "Error while receiving routing table", e);

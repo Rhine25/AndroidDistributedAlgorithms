@@ -83,8 +83,10 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     //TODO remove entry from routingtable
                     break;
                 case MESSAGE_ROUTING_TABLE:
-                    Log.i(TAG, "Received routing table " + msg.obj);
-                    //TODO add new entries to routing table
+                    RoutingTable table = mBluetoothService.deserializeRoutingTable((byte[])msg.obj);
+                    Log.i(TAG, "Received routing table " + table);
+                    mBluetoothService.updateRoutingFrom(msg.getData().getString("from"), table);
+
             }
         }
     };
