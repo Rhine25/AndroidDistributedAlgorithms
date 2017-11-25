@@ -2,6 +2,7 @@ package com.jujucecedudu.androidcomm;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -36,60 +37,18 @@ import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.M
 public class MainActivity extends AppCompatActivity implements DeviceAdapter.ListItemClickListener{
     private static final String TAG = "BLUETOOTH_TEST_MAIN";
 
-    public static final UUID MY_UUID = UUID.fromString("7255562d-a5db-43d8-a38d-874453bc589b");
-
     private static final int REQUEST_ENABLE_BLUETOOTH = 12;
     private static final int REQUEST_DISCOVERABLE = 22;
     private static final int LOCATION = 70;
 
+    private DeviceAdapter mDeviceAdapter;
+    private BluetoothAdapter mBluetoothAdapter;
+    private MyBluetoothService mBluetoothService;
     private ProgressDialog mProgressDialog;
     private RecyclerView mRecyclerView;
     private TextView mMessages;
     private TextView mConnections;
-
-    private DeviceAdapter mDeviceAdapter;
-    private BluetoothAdapter mBluetoothAdapter;
-    private MyBluetoothService mBluetoothService;
-
     private Toast mToast;
-
-    @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MESSAGE_WRITE:
-                    String writeBuf = (String) msg.obj;
-                    Log.i(TAG, "Sent : " + writeBuf);
-                    mMessages.append("Sent : " + writeBuf + "\n");
-                    break;
-                case MESSAGE_READ:
-                    String readBuf = (String) msg.obj;
-                    Log.i(TAG, "Read " + readBuf);
-                    mMessages.append("Read " + readBuf + "\n");
-                    break;
-                case MESSAGE_CONNECTION:
-                    BluetoothDevice device = (BluetoothDevice)msg.obj;
-                    String deviceName = device.getName();
-                    Log.i(TAG, "Connected to " + deviceName);
-                    mConnections.append(deviceName + "\n");
-                    mBluetoothService.addRoutingEntry(device.getAddress(), 1, device.getAddress());
-                    Log.d(TAG, "Routage : \n" + mBluetoothService.getRoutingTableStr());
-                    mBluetoothService.sendRoutingTable(device);
-                    break;
-                case MESSAGE_DISCONNECTION:
-                    Log.i(TAG, msg.obj + " disconnected ");
-                    mConnections.append("-" + msg.obj + "\n");
-                    //TODO remove entry from routingtable
-                    break;
-                case MESSAGE_ROUTING_TABLE:
-                    RoutingTable table = mBluetoothService.deserializeRoutingTable((byte[])msg.obj);
-                    Log.i(TAG, "Received routing table " + table);
-                    mBluetoothService.updateRoutingFrom(msg.getData().getString("from"), table);
-
-            }
-        }
-    };
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -119,6 +78,45 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         }
     };
 
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MESSAGE_WRITE:
+                    String writeBuf = (String) msg.obj;
+                    Log.i(TAG, "Sent : " + writeBuf);
+                    mMessages.append("Sent : " + writeBuf + "\n");
+                    break;
+                case MESSAGE_READ:
+                    String readBuf = (String) msg.obj;
+                    Log.i(TAG, "Read " + readBuf);
+                    mMessages.append("Read " + readBuf + "\n");
+                    break;
+                case MESSAGE_CONNECTION:
+                    BluetoothDevice device = (BluetoothDevice)msg.obj;
+                    String deviceName = device.getName();
+                    Log.i(TAG, "Connected to " + deviceName);
+                    mConnections.append(deviceName + "\n");
+                    //mBluetoothService.addRoutingEntry(device.getAddress(), 1, device.getAddress());
+                    Log.d(TAG, "My initial routing : \n" + mBluetoothService.getRoutingTableStr());
+                    mBluetoothService.sendRoutingTable(device);
+                    break;
+                case MESSAGE_DISCONNECTION:
+                    Log.i(TAG, msg.obj + " disconnected ");
+                    mConnections.append("-" + msg.obj + "\n");
+                    //TODO remove entry from routingtable
+                    break;
+                case MESSAGE_ROUTING_TABLE:
+                    RoutingTable table = mBluetoothService.deserializeRoutingTable((byte[])msg.obj);
+                    Log.i(TAG, "Received routing table " + table);
+                    mBluetoothService.updateRoutingFrom(msg.getData().getString("from"), table);
+                    Log.i(TAG, "Updated my table to : " + mBluetoothService.getRoutingTableStr());
+
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,6 +138,9 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mBluetoothService = new MyBluetoothService(this, mHandler);
+
+        android.support.v7.app.ActionBar ab = getSupportActionBar();
+        ab.setTitle(mBluetoothService.getAddress());
 
         if(mBluetoothAdapter == null){
             //device does not support bluetooth
@@ -225,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
             Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BLUETOOTH);
         }
-        //TODO check what the result is
     }
 
     public void toggleBluetooth(View view){
