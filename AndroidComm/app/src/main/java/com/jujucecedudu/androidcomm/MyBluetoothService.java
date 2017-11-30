@@ -18,10 +18,13 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.UUID;
 
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
 
 /**
  * Created by rhine on 23/10/17.
@@ -46,6 +49,9 @@ public class MyBluetoothService {
         public static final int MESSAGE_DISCONNECTION = 6;
         public static final int MESSAGE_ROUTING_TABLE = 7;
 
+        byte TYPE_STRING = 0x00;
+        byte TYPE_ROUTING_TABLE = 0x01;
+
         public static final String FROM = "from";
     }
 
@@ -68,11 +74,6 @@ public class MyBluetoothService {
         mHandler = handler;
         mConnectedThreads = new LinkedList<>();
         mRoutingTable = new RoutingTable();
-        mRoutingTable.addEntry(getAddress(), 0, mmBluetoothAdapter.getAddress());
-    }
-
-    String getAddress(){
-        return mmBluetoothAdapter.getAddress();
     }
 
     void discover(){
@@ -131,18 +132,32 @@ public class MyBluetoothService {
         if(serializedTable == null){
             Log.d(TAG, "Can't send routing table, is null");
         }
-        else {
-            sendMessage(serializedTable, dest);
+        else {;
+            sendMessage(getConstructedMessage(TYPE_ROUTING_TABLE, serializedTable), dest);
         }
     }
 
+    byte[] getConstructedMessage(byte type, byte[] data){
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+        try {
+            outputStream.write(type);
+            outputStream.write(data);
+            byte msg[] = outputStream.toByteArray( );
+            return msg;
+        } catch (IOException e) {
+            Log.e(TAG, "Couldn't construct hello msg", e);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     byte[] serializeRoutingTable(RoutingTable table){
-        //TODO c'est pas l'objet qu'on veu tserialiser c'est l'arraylist table
+        //TODO c'est pas l'objet qu'on veut serialiser c'est l'arraylist table
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream oos = null;
         try {
             oos = new ObjectOutputStream(out);
-            oos.writeObject(table);
+            oos.writeObject(table.getTable());
             return out.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
@@ -157,8 +172,8 @@ public class MyBluetoothService {
         try {
             ois = new ObjectInputStream(in);
             try {
-                RoutingTable table = (RoutingTable) ois.readObject();
-                return table;
+                ArrayList<Object[]> table = (ArrayList<Object[]>) ois.readObject();
+                return new RoutingTable(table);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -173,11 +188,15 @@ public class MyBluetoothService {
     }
 
     void updateRoutingFrom(String fromMAC, RoutingTable neighbourTable){
-        mRoutingTable.updateFrom(fromMAC, neighbourTable);
+        mRoutingTable.updateFrom(fromMAC, neighbourTable.getTable());
     }
 
     String getRoutingTableStr(){
         return mRoutingTable.toString();
+    }
+
+    String getRoutingBindingsStr(){
+        return mRoutingTable.getMACToNameBindings();
     }
 
     class AcceptThread extends Thread {
@@ -311,28 +330,23 @@ public class MyBluetoothService {
             mmBuffer = new byte[1024];
             int numBytes;
 
-            //receive routingtable, but we're not sure that's the first thing we receive
-            try {
-                Log.d(TAG, "Connected thread waiting for routing table");
+            while (true) try {
                 numBytes = mmInStream.read(mmBuffer);
-                getInfoToUIThread(MessageConstants.MESSAGE_ROUTING_TABLE, mmBuffer
-                        , MessageConstants.FROM, mmDevice.getAddress());
-            } catch (IOException e) {
-                Log.d(TAG, "Error while receiving routing table", e);
-                e.printStackTrace();
-            }
-            Log.d(TAG, "Received routing table, waiting for standard messages from friends");
-
-            while (true) {
-                try {
-                    numBytes = mmInStream.read(mmBuffer);
-                    String msgStr = new String(mmBuffer, 0, numBytes);
+                byte msgType = mmBuffer[0];
+                if (msgType == TYPE_STRING) {
+                    String msgStr = new String(mmBuffer, 1, numBytes-1);
                     getInfoToUIThread(MessageConstants.MESSAGE_READ, msgStr + " from " + mmDevice.getName());
-                } catch (IOException e) {
-                    Log.d(TAG, "Input stream was disconnected", e);
-                    getInfoToUIThread(MESSAGE_DISCONNECTION, mmDevice.getName());
-                    break;
+                } else if (msgType == TYPE_ROUTING_TABLE) {
+                    byte[] byteTable = new byte[mmBuffer.length-1];
+                    System.arraycopy(mmBuffer, 1, byteTable, 0, mmBuffer.length-1);
+                    getInfoToUIThread(MessageConstants.MESSAGE_ROUTING_TABLE, byteTable
+                            , MessageConstants.FROM, mmDevice.getAddress());
+                    Log.d(TAG, "Received routing table from " + mmDevice.getName());
                 }
+            } catch (IOException e) {
+                Log.e(TAG, "Input stream was disconnected", e);
+                getInfoToUIThread(MESSAGE_DISCONNECTION, mmDevice.getName());
+                break;
             }
         }
 

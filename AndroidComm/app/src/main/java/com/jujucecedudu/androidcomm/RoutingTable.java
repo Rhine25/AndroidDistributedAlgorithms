@@ -30,6 +30,10 @@ public class RoutingTable implements Serializable{
         mNbDevices = 0;
     }
 
+    public RoutingTable(ArrayList<Object[]> table){
+        this.table = table;
+    }
+
     public void addEntry(String targetMAC, int cost, String nextHopMAC){ //TODO third element might be the connectedThread ?
         Object[] entry = {targetMAC, cost, nextHopMAC};
         table.add(entry);
@@ -44,8 +48,12 @@ public class RoutingTable implements Serializable{
         //TODO les chemins par lui ont un coup de -1
     }
 
-    public void updateFrom(String neighbourMAC, RoutingTable neighbourTable){
-        for (Object[] entry : neighbourTable.getTable()) {
+    public void updateFrom(String neighbourMAC, ArrayList<Object[]> neighbourTable){
+        if(!knownPathToHost(neighbourMAC)) {
+            Log.d(TAG, "Don't know a path to host : " + neighbourMAC);
+            addEntry(neighbourMAC, 1, neighbourMAC);
+        }
+        for (Object[] entry : neighbourTable) {
             String targetMAC = (String)entry[0];
             if(!knownPathToHost(targetMAC)) {
                 Log.d(TAG, "Don't know a path to host : " + targetMAC);
@@ -99,6 +107,14 @@ public class RoutingTable implements Serializable{
         return null;
     }
 
+    public String getMACToNameBindings(){
+        String str = "";
+        for(Pair<String, String> entry : mMACToName){
+            str += entry.first + " is " + entry.second + "\n";
+        }
+        return str;
+    }
+
     public ArrayList<Object[]> getTable() {
         return table;
     }
@@ -106,8 +122,15 @@ public class RoutingTable implements Serializable{
     @Override
     public String toString() {
         String str = "";
-        for(Object[] entry : table){
-            str += getHostNumber((String)entry[0]) + "/" + entry[1] + " -> " + getHostNumber((String)entry[2]) + "\n";
+        if(mMACToName == null){
+            for(Object[] entry : table){
+                str += entry[0] + "/" + entry[1] + " -> " + entry[2] + "\n";
+            }
+        }
+        else {
+            for (Object[] entry : table) {
+                str += getHostNumber((String) entry[0]) + "/" + entry[1] + " -> " + getHostNumber((String) entry[2]) + "\n";
+            }
         }
         return str;
     }

@@ -23,9 +23,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.UUID;
 
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_CONNECTION;
@@ -33,6 +36,7 @@ import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.M
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
 
 public class MainActivity extends AppCompatActivity implements DeviceAdapter.ListItemClickListener{
     private static final String TAG = "BLUETOOTH_TEST_MAIN";
@@ -44,10 +48,12 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private DeviceAdapter mDeviceAdapter;
     private BluetoothAdapter mBluetoothAdapter;
     private MyBluetoothService mBluetoothService;
-    private ProgressDialog mProgressDialog;
+    private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private TextView mMessages;
     private TextView mConnections;
+    private TextView mRoutingTable;
+    private TextView mRoutingBindings;
     private Toast mToast;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -65,11 +71,11 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
                     Log.i(TAG, "onReceive, discovery started");
-                    mProgressDialog.show();
+                    mProgressBar.setVisibility(View.VISIBLE);
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
                     Log.i(TAG, "onReceive, discovery finished");
-                    mProgressDialog.dismiss();
+                    mProgressBar.setVisibility(View.GONE);
                     break;
                 default:
                     Log.i(TAG, "onReceive, action is not handled : " + action);
@@ -109,10 +115,19 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     break;
                 case MESSAGE_ROUTING_TABLE:
                     RoutingTable table = mBluetoothService.deserializeRoutingTable((byte[])msg.obj);
-                    Log.i(TAG, "Received routing table " + table);
-                    mBluetoothService.updateRoutingFrom(msg.getData().getString("from"), table);
-                    Log.i(TAG, "Updated my table to : " + mBluetoothService.getRoutingTableStr());
-
+                    if(table != null) {
+                        Log.i(TAG, "Received routing table " + table);
+                        mBluetoothService.updateRoutingFrom(msg.getData().getString("from"), table);
+                        String updatedTableStr = mBluetoothService.getRoutingTableStr();
+                        Log.i(TAG, "Updated my table to : " + updatedTableStr);
+                        mRoutingTable.setText(updatedTableStr);
+                        mRoutingBindings.setText(mBluetoothService.getRoutingBindingsStr());
+                    }
+                    else{
+                        String errorMsg = "Routing table received null";
+                        Log.d(TAG, errorMsg);
+                        mToast = Toast.makeText(getBaseContext(), errorMsg, Toast.LENGTH_LONG);
+                    }
             }
         }
     };
@@ -122,9 +137,12 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mProgressBar = (ProgressBar) findViewById(R.id.pb_progress_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_available_devices);
         mMessages = (TextView) findViewById(R.id.tv_messages);
         mConnections = (TextView) findViewById(R.id.tv_connections);
+        mRoutingTable = (TextView) findViewById(R.id.tv_routing_table);
+        mRoutingBindings = (TextView) findViewById(R.id.tv_routing_bindings);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -132,15 +150,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         mDeviceAdapter = new DeviceAdapter(this);
         mRecyclerView.setAdapter(mDeviceAdapter);
 
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage("Scanning for devices...");
-        mProgressDialog.setCancelable(false);
-
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mBluetoothService = new MyBluetoothService(this, mHandler);
-
-        android.support.v7.app.ActionBar ab = getSupportActionBar();
-        ab.setTitle(mBluetoothService.getAddress());
 
         if(mBluetoothAdapter == null){
             //device does not support bluetooth
@@ -245,7 +256,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     }
 
     public void sayHello(View view){
-        mBluetoothService.sendMessage("Hello !".getBytes());
+        byte[] str = "Hello !".getBytes();
+        mBluetoothService.sendMessage(mBluetoothService.getConstructedMessage(TYPE_STRING, str));
     }
 
     public void clearMessages(View view){
