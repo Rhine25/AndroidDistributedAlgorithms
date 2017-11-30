@@ -107,8 +107,7 @@ public class MyBluetoothService {
                 Log.d(TAG, "connected thread is null");
             } else {
                 connectedThread.write(out);
-                String msgStr = new String(out);
-                getInfoToUIThread(MessageConstants.MESSAGE_WRITE, msgStr + " to " + connectedThread.mmDevice.getName());
+                getInfoToUIThread(MessageConstants.MESSAGE_WRITE, out, "to", connectedThread.mmDevice.getName());
             }
         }
     }
@@ -120,8 +119,7 @@ public class MyBluetoothService {
             } else {
                 if(connectedThread.getRemoteDevice() == dest)
                 connectedThread.write(out);
-                String msgStr = new String(out);
-                getInfoToUIThread(MessageConstants.MESSAGE_WRITE, msgStr + " to " + connectedThread.mmDevice.getName());
+                getInfoToUIThread(MessageConstants.MESSAGE_WRITE, out, "to", connectedThread.mmDevice.getName());
                 return;
             }
         }
@@ -132,7 +130,7 @@ public class MyBluetoothService {
         if(serializedTable == null){
             Log.d(TAG, "Can't send routing table, is null");
         }
-        else {;
+        else {
             sendMessage(getConstructedMessage(TYPE_ROUTING_TABLE, serializedTable), dest);
         }
     }
@@ -149,6 +147,12 @@ public class MyBluetoothService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    byte[] extractDataFromMessage(byte[] message){
+        byte[] byteTable = new byte[message.length - 1];
+        System.arraycopy(message, 1, byteTable, 0, message.length - 1);
+        return byteTable;
     }
 
     byte[] serializeRoutingTable(RoutingTable table){
@@ -333,15 +337,19 @@ public class MyBluetoothService {
             while (true) try {
                 numBytes = mmInStream.read(mmBuffer);
                 byte msgType = mmBuffer[0];
-                if (msgType == TYPE_STRING) {
-                    String msgStr = new String(mmBuffer, 1, numBytes-1);
-                    getInfoToUIThread(MessageConstants.MESSAGE_READ, msgStr + " from " + mmDevice.getName());
-                } else if (msgType == TYPE_ROUTING_TABLE) {
-                    byte[] byteTable = new byte[mmBuffer.length-1];
-                    System.arraycopy(mmBuffer, 1, byteTable, 0, mmBuffer.length-1);
-                    getInfoToUIThread(MessageConstants.MESSAGE_ROUTING_TABLE, byteTable
-                            , MessageConstants.FROM, mmDevice.getAddress());
-                    Log.d(TAG, "Received routing table from " + mmDevice.getName());
+                switch (msgType) {
+                    case TYPE_STRING:
+                        getInfoToUIThread(MessageConstants.MESSAGE_READ, mmBuffer, "from", mmDevice.getName());
+                        break;
+                    case TYPE_ROUTING_TABLE:
+                        byte[] byteTable = extractDataFromMessage(mmBuffer);
+                        getInfoToUIThread(MessageConstants.MESSAGE_ROUTING_TABLE, byteTable
+                                , MessageConstants.FROM, mmDevice.getAddress());
+                        Log.d(TAG, "Received routing table from " + mmDevice.getName());
+                        break;
+                    default:
+                        Log.d(TAG, "received unkwown message type " + msgType);
+                        break;
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Input stream was disconnected", e);

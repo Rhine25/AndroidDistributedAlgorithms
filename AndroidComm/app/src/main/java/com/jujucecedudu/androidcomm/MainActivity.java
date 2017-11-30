@@ -36,6 +36,7 @@ import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.M
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
 
 public class MainActivity extends AppCompatActivity implements DeviceAdapter.ListItemClickListener{
@@ -90,14 +91,36 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MESSAGE_WRITE:
-                    String writeBuf = (String) msg.obj;
-                    Log.i(TAG, "Sent : " + writeBuf);
-                    mMessages.append("Sent : " + writeBuf + "\n");
+                    byte[] byteMsgW = (byte[]) msg.obj;
+                    byte msgTypeW = byteMsgW[0];
+                    byte[] dataW = mBluetoothService.extractDataFromMessage(byteMsgW);
+                    Bundle to = msg.getData();
+                    String dest = to.getString("to");
+                    String readableMsgW;
+                    if(msgTypeW == TYPE_ROUTING_TABLE){
+                        readableMsgW = "routing table";
+                    }
+                    else{
+                        readableMsgW = new String(dataW);
+                    }
+                    Log.i(TAG, "Sent : " + readableMsgW + " to " + dest);
+                    mMessages.append("Sent : " + readableMsgW + " to " + dest + "\n");
                     break;
                 case MESSAGE_READ:
-                    String readBuf = (String) msg.obj;
-                    Log.i(TAG, "Read " + readBuf);
-                    mMessages.append("Read " + readBuf + "\n");
+                    byte[] byteMsgR = (byte[]) msg.obj;
+                    byte msgTypeR = byteMsgR[0];
+                    byte[] dataR = mBluetoothService.extractDataFromMessage(byteMsgR);
+                    Bundle from = msg.getData();
+                    String exped = from.getString("from");
+                    String readableMsgR;
+                    if(msgTypeR == TYPE_ROUTING_TABLE){
+                        readableMsgR = "routing table";
+                    }
+                    else{
+                        readableMsgR = new String(dataR);
+                    }
+                    Log.i(TAG, "Read " + readableMsgR + " from " + exped);
+                    mMessages.append("Read " + readableMsgR + " from " + exped + "\n");
                     break;
                 case MESSAGE_CONNECTION:
                     BluetoothDevice device = (BluetoothDevice)msg.obj;
