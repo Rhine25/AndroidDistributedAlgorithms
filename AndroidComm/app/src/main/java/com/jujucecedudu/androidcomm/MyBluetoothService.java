@@ -96,7 +96,7 @@ public class MyBluetoothService {
         mAcceptThread.start();
     }
 
-    void setConnection(BluetoothSocket socket){
+    private void setConnection(BluetoothSocket socket){
         ConnectedThread thread = new ConnectedThread(socket);
         thread.start();
         mConnectedThreads.add(thread);
@@ -127,76 +127,13 @@ public class MyBluetoothService {
     }
 
     void sendRoutingTable(BluetoothDevice dest){
-        byte[] serializedTable = serializeRoutingTable(mRoutingTable);
+        byte[] serializedTable = Utils.serializeRoutingTable(mRoutingTable);
         if(serializedTable == null){
             Log.d(TAG, "Can't send routing table, is null");
         }
         else {
-            sendMessage(getConstructedMessage(TYPE_ROUTING_TABLE, serializedTable), dest);
+            sendMessage(Utils.getConstructedMessage(TYPE_ROUTING_TABLE, serializedTable), dest);
         }
-    }
-
-    byte[] getConstructedMessage(byte type, byte[] data){
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-        try {
-            outputStream.write(type);
-            outputStream.write(data);
-            byte msg[] = outputStream.toByteArray( );
-            return msg;
-        } catch (IOException e) {
-            Log.e(TAG, "Couldn't construct hello msg", e);
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    byte[] extractDataFromMessage(byte[] message){
-        byte[] byteTable = new byte[message.length - 1];
-        System.arraycopy(message, 1, byteTable, 0, message.length - 1);
-        Log.d(TAG, "read or write length is " + message.length);
-        Log.d(TAG, "Original message is : " + Arrays.toString(message));
-        Log.d(TAG, "Extracted message is : " + Arrays.toString(byteTable));
-        return byteTable;
-    }
-
-    byte[] extractDataFromMessage(byte[] message, int length){
-        byte[] byteTable = new byte[length - 1];
-        System.arraycopy(message, 1, byteTable, 0, length - 1);
-        Log.d(TAG, "buffer length is " + length);
-        Log.d(TAG, "Original message is : " + Arrays.toString(message));
-        Log.d(TAG, "Extracted message is : " + Arrays.toString(byteTable));
-        return byteTable;
-    }
-
-    byte[] serializeRoutingTable(RoutingTable table){
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream oos = null;
-        try {
-            oos = new ObjectOutputStream(out);
-            oos.writeObject(table.getTable());
-            return out.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, "Routing table couldn't be serialized "+ e);
-        }
-        return null;
-    }
-
-    RoutingTable deserializeRoutingTable(byte[] bytes){
-        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = null;
-        try {
-            ois = new ObjectInputStream(in);
-            try {
-                ArrayList<Object[]> table = (ArrayList<Object[]>) ois.readObject();
-                return new RoutingTable(table);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     void addRoutingEntry(String targetMAC, int cost, String nextHopMAC){
@@ -357,7 +294,7 @@ public class MyBluetoothService {
                         getInfoToUIThread(MessageConstants.MESSAGE_READ, data, "from", mmDevice.getName());
                         break;
                     case TYPE_ROUTING_TABLE:
-                        byte[] byteTable = extractDataFromMessage(mmBuffer, numBytes);
+                        byte[] byteTable = Utils.extractDataFromMessage(mmBuffer, numBytes);
                         getInfoToUIThread(MessageConstants.MESSAGE_ROUTING_TABLE, byteTable
                                 , MessageConstants.FROM, mmDevice.getAddress());
                         Log.d(TAG, "Received routing table from " + mmDevice.getName());

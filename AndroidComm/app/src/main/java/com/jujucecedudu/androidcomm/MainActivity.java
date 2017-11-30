@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                 case MESSAGE_WRITE:
                     byte[] byteMsgW = (byte[]) msg.obj;
                     byte msgTypeW = byteMsgW[0];
-                    byte[] dataW = mBluetoothService.extractDataFromMessage(byteMsgW);
+                    byte[] dataW = Utils.extractDataFromMessage(byteMsgW);
                     Bundle to = msg.getData();
                     String dest = to.getString("to");
                     String readableMsgW;
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                 case MESSAGE_READ:
                     byte[] byteMsgR = (byte[]) msg.obj;
                     byte msgTypeR = byteMsgR[0];
-                    byte[] dataR = mBluetoothService.extractDataFromMessage(byteMsgR);
+                    byte[] dataR = Utils.extractDataFromMessage(byteMsgR);
                     Bundle from = msg.getData();
                     String exped = from.getString("from");
                     String readableMsgR;
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     //TODO remove entry from routingtable
                     break;
                 case MESSAGE_ROUTING_TABLE:
-                    RoutingTable table = mBluetoothService.deserializeRoutingTable((byte[])msg.obj);
+                    RoutingTable table = Utils.deserializeRoutingTable((byte[])msg.obj);
                     if(table != null) {
                         Log.i(TAG, "Received routing table " + table);
                         mBluetoothService.updateRoutingFrom(msg.getData().getString("from"), table);
@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
     public void sayHello(View view){
         byte[] str = "Hello !".getBytes();
-        mBluetoothService.sendMessage(mBluetoothService.getConstructedMessage(TYPE_STRING, str));
+        mBluetoothService.sendMessage(Utils.getConstructedMessage(TYPE_STRING, str));
     }
 
     public void clearMessages(View view){
