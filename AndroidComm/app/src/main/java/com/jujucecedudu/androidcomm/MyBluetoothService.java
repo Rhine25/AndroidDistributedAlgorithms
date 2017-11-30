@@ -118,10 +118,11 @@ public class MyBluetoothService {
             if (connectedThread == null) {
                 Log.d(TAG, "connected thread is null");
             } else {
-                if(connectedThread.getRemoteDevice() == dest)
-                connectedThread.write(out);
-                getInfoToUIThread(MessageConstants.MESSAGE_WRITE, out, "to", connectedThread.mmDevice.getName());
-                return;
+                if(connectedThread.getRemoteDevice() == dest) {
+                    connectedThread.write(out);
+                    getInfoToUIThread(MessageConstants.MESSAGE_WRITE, out, "to", connectedThread.mmDevice.getName());
+                    return;
+                }
             }
         }
     }
@@ -285,7 +286,6 @@ public class MyBluetoothService {
 
             while (true) try {
                 numBytes = mmInStream.read(mmBuffer);
-                Log.d(TAG, "Received " + numBytes + " bytes");
                 byte msgType = mmBuffer[0];
                 switch (msgType) {
                     case TYPE_STRING:
@@ -300,7 +300,7 @@ public class MyBluetoothService {
                         Log.d(TAG, "Received routing table from " + mmDevice.getName());
                         break;
                     default:
-                        Log.d(TAG, "received unkwown message type " + msgType);
+                        Log.e(TAG, "received unkwown message type " + msgType);
                         break;
                 }
             } catch (IOException e) {
@@ -313,8 +313,6 @@ public class MyBluetoothService {
         public void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
-                //TODO try with mmBuffer instead of bytes
-                Log.d(TAG, "Sent " + bytes.length + " bytes");
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when sending data", e);
                 Toast.makeText(mActivity, "Error sending message", Toast.LENGTH_LONG).show();

@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     Log.i(TAG, "Connected to " + deviceName);
                     mConnections.append(deviceName + "\n");
                     //mBluetoothService.addRoutingEntry(device.getAddress(), 1, device.getAddress());
-                    Log.d(TAG, "My initial routing : \n" + mBluetoothService.getRoutingTableStr());
+                    Log.d(TAG, "My initial routing : \n'" + mBluetoothService.getRoutingTableStr() + "'");
                     mBluetoothService.sendRoutingTable(device);
                     break;
                 case MESSAGE_DISCONNECTION:
