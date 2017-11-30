@@ -19,6 +19,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.UUID;
 
@@ -152,11 +153,22 @@ public class MyBluetoothService {
     byte[] extractDataFromMessage(byte[] message){
         byte[] byteTable = new byte[message.length - 1];
         System.arraycopy(message, 1, byteTable, 0, message.length - 1);
+        Log.d(TAG, "read or write length is " + message.length);
+        Log.d(TAG, "Original message is : " + Arrays.toString(message));
+        Log.d(TAG, "Extracted message is : " + Arrays.toString(byteTable));
+        return byteTable;
+    }
+
+    byte[] extractDataFromMessage(byte[] message, int length){
+        byte[] byteTable = new byte[length - 1];
+        System.arraycopy(message, 1, byteTable, 0, length - 1);
+        Log.d(TAG, "buffer length is " + length);
+        Log.d(TAG, "Original message is : " + Arrays.toString(message));
+        Log.d(TAG, "Extracted message is : " + Arrays.toString(byteTable));
         return byteTable;
     }
 
     byte[] serializeRoutingTable(RoutingTable table){
-        //TODO c'est pas l'objet qu'on veut serialiser c'est l'arraylist table
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream oos = null;
         try {
@@ -336,13 +348,16 @@ public class MyBluetoothService {
 
             while (true) try {
                 numBytes = mmInStream.read(mmBuffer);
+                Log.d(TAG, "Received " + numBytes + " bytes");
                 byte msgType = mmBuffer[0];
                 switch (msgType) {
                     case TYPE_STRING:
-                        getInfoToUIThread(MessageConstants.MESSAGE_READ, mmBuffer, "from", mmDevice.getName());
+                        byte[] data = new byte[numBytes];
+                        System.arraycopy(mmBuffer, 0, data, 0, numBytes);
+                        getInfoToUIThread(MessageConstants.MESSAGE_READ, data, "from", mmDevice.getName());
                         break;
                     case TYPE_ROUTING_TABLE:
-                        byte[] byteTable = extractDataFromMessage(mmBuffer);
+                        byte[] byteTable = extractDataFromMessage(mmBuffer, numBytes);
                         getInfoToUIThread(MessageConstants.MESSAGE_ROUTING_TABLE, byteTable
                                 , MessageConstants.FROM, mmDevice.getAddress());
                         Log.d(TAG, "Received routing table from " + mmDevice.getName());
@@ -362,6 +377,7 @@ public class MyBluetoothService {
             try {
                 mmOutStream.write(bytes);
                 //TODO try with mmBuffer instead of bytes
+                Log.d(TAG, "Sent " + bytes.length + " bytes");
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when sending data", e);
                 Toast.makeText(mActivity, "Error sending message", Toast.LENGTH_LONG).show();

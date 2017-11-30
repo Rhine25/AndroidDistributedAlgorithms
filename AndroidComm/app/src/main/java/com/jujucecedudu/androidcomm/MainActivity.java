@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_CONNECTION;
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     else{
                         readableMsgW = new String(dataW);
                     }
-                    Log.i(TAG, "Sent : " + readableMsgW + " to " + dest);
+                    Log.i(TAG, "Sent : " + Arrays.toString(dataW) + "/" + dataW.length + " to " + dest);
                     mMessages.append("Sent : " + readableMsgW + " to " + dest + "\n");
                     break;
                 case MESSAGE_READ:
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     else{
                         readableMsgR = new String(dataR);
                     }
-                    Log.i(TAG, "Read " + readableMsgR + " from " + exped);
+                    Log.i(TAG, "Read " + Arrays.toString(dataR) + "/" + dataR.length + " from " + exped);
                     mMessages.append("Read " + readableMsgR + " from " + exped + "\n");
                     break;
                 case MESSAGE_CONNECTION:
