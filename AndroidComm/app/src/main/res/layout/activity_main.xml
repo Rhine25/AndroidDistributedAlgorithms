@@ -6,6 +6,13 @@
     android:orientation="vertical"
     android:paddingTop="16dp"
     tools:context="com.jujucecedudu.androidcomm.MainActivity">
+    <Button
+        android:id="@+id/bt_token"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TOKEN"
+        android:visibility="gone"
+        android:onClick="sendToken"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_available_devices"

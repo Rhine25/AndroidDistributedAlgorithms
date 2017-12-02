@@ -26,6 +26,7 @@ import java.util.UUID;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_TOKEN;
 
 /**
  * Created by rhine on 23/10/17.
@@ -46,12 +47,13 @@ public class MyBluetoothService {
         public static final int MESSAGE_READ = 2;
         public static final int MESSAGE_WRITE = 3;
         public static final int MESSAGE_CONNECTION = 4;
-        public static final int MESSAGE_TOAST = 5;
         public static final int MESSAGE_DISCONNECTION = 6;
         public static final int MESSAGE_ROUTING_TABLE = 7;
+        public static final int MESSAGE_TOKEN = 8;
 
         byte TYPE_STRING = 0x00;
         byte TYPE_ROUTING_TABLE = 0x01;
+        byte TYPE_TOKEN = 0x02;
 
         public static final String FROM = "from";
     }
@@ -151,6 +153,15 @@ public class MyBluetoothService {
 
     String getRoutingBindingsStr(){
         return mRoutingTable.getMACToNameBindings();
+    }
+
+    boolean connectedDevice(BluetoothDevice device){
+        for(ConnectedThread connectedThread : mConnectedThreads) {
+            if(connectedThread.getRemoteDevice() == device){
+                return true;
+            }
+        }
+        return false;
     }
 
     class AcceptThread extends Thread {
@@ -299,6 +310,10 @@ public class MyBluetoothService {
                                 , MessageConstants.FROM, mmDevice.getAddress());
                         Log.d(TAG, "Received routing table from " + mmDevice.getName());
                         break;
+                    case TYPE_TOKEN:
+                        getInfoToUIThread(MessageConstants.MESSAGE_TOKEN, null);
+                        Log.d(TAG, "Received token from " + mmDevice.getName());
+                        break;
                     default:
                         Log.e(TAG, "received unkwown message type " + msgType);
                         break;
@@ -306,6 +321,7 @@ public class MyBluetoothService {
             } catch (IOException e) {
                 Log.e(TAG, "Input stream was disconnected", e);
                 getInfoToUIThread(MESSAGE_DISCONNECTION, mmDevice.getName());
+                mConnectedThreads.remove(this);
                 break;
             }
         }

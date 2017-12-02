@@ -2,8 +2,6 @@ package com.jujucecedudu.androidcomm;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -23,22 +21,22 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.UUID;
 
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_CONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_ROUTING_TABLE;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_TOKEN;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_TOKEN;
 
 public class MainActivity extends AppCompatActivity implements DeviceAdapter.ListItemClickListener{
     private static final String TAG = "BLUETOOTH_TEST_MAIN";
@@ -52,11 +50,14 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private MyBluetoothService mBluetoothService;
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
+    private Button mToken;
     private TextView mMessages;
     private TextView mConnections;
     private TextView mRoutingTable;
     private TextView mRoutingBindings;
     private Toast mToast;
+
+    private BluetoothDevice mNext;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -114,11 +115,13 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     Bundle from = msg.getData();
                     String exped = from.getString("from");
                     String readableMsgR;
-                    if(msgTypeR == TYPE_ROUTING_TABLE){
-                        readableMsgR = "routing table";
-                    }
-                    else{
-                        readableMsgR = new String(dataR);
+                    switch (msgTypeR) {
+                        case TYPE_STRING:
+                            readableMsgR = new String(dataR);
+                            break;
+                        default:
+                            readableMsgR = "";
+                            Log.e(TAG, "Read message that's not a string");
                     }
                     Log.i(TAG, "Read " + Arrays.toString(dataR) + "/" + dataR.length + " from " + exped);
                     mMessages.append("Read " + readableMsgR + " from " + exped + "\n");
@@ -152,6 +155,13 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                         Log.d(TAG, errorMsg);
                         mToast = Toast.makeText(getBaseContext(), errorMsg, Toast.LENGTH_LONG);
                     }
+                    break;
+                case MESSAGE_TOKEN:
+                    makeTokenVisible();
+                    break;
+                default:
+                    Log.e(TAG, "Received message of unknown type");
+                    break;
             }
         }
     };
@@ -163,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
         mProgressBar = (ProgressBar) findViewById(R.id.pb_progress_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_available_devices);
+        mToken = (Button) findViewById(R.id.bt_token);
         mMessages = (TextView) findViewById(R.id.tv_messages);
         mConnections = (TextView) findViewById(R.id.tv_connections);
         mRoutingTable = (TextView) findViewById(R.id.tv_routing_table);
@@ -186,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
             askForPermission(Manifest.permission.ACCESS_COARSE_LOCATION, LOCATION);
             enableBluetooth();
             registerForDiscoveryInfo();
+            mBluetoothService.accept();
         }
     }
 
@@ -215,6 +227,9 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                 return true;
             case R.id.action_accept:
                 mBluetoothService.accept();
+                return true;
+            case R.id.action_start_ring:
+                initRing();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -288,15 +303,48 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         mMessages.setText("");
     }
 
+    private void createToken(){
+        makeTokenVisible();
+    }
+
+    public void sendToken(View view){
+        byte[] token = new byte[]{TYPE_TOKEN};
+        mBluetoothService.sendMessage(token, mNext);
+        makeTokenInvisible();
+    }
+
+    private void makeTokenVisible(){
+        mToken.setVisibility(View.VISIBLE);
+    }
+
+    private void makeTokenInvisible(){
+        mToken.setVisibility(View.GONE);
+    }
+
+    private void initRing(){
+        createToken();
+    }
+
     @Override
     public void onListItemClick(BluetoothDevice device) {
         if (mToast != null) {
             mToast.cancel();
         }
-        String text = device.getName() + " " + device.getAddress() + " clicked";
+        String text;
+        if(!mBluetoothService.connectedDevice(device)) {
+            text = device.getName() + " " + device.getAddress() + " connecting to";
+            mBluetoothService.connect(device);
+        }
+        else{
+            text = device.getName() + " " + device.getAddress() + " set as next";
+            setNext(device);
+        }
+
         mToast = Toast.makeText(this, text, Toast.LENGTH_LONG);
         mToast.show();
+    }
 
-        mBluetoothService.connect(device);
+    private void setNext(BluetoothDevice device) {
+        mNext = device;
     }
 }

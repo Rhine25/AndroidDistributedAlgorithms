@@ -11,14 +11,9 @@
         android:orderInCategory="2"
         android:title="@string/action_discoverale"
         app:showAsAction="ifRoom"/>
-    <!--<item
-        android:id="@+id/action_connect"
-        android:orderInCategory="3"
-        android:title="@string/action_connect"
-        app:showAsAction="ifRoom"/>-->
     <item
-        android:id="@+id/action_accept"
-        android:orderInCategory="4"
-        android:title="@string/action_accept"
+        android:id="@+id/action_start_ring"
+        android:orderInCategory="3"
+        android:title="Start Ring"
         app:showAsAction="ifRoom"/>
 </menu>
