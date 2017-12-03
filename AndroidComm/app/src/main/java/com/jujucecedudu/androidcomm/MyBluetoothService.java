@@ -160,7 +160,7 @@ public class MyBluetoothService {
 
     boolean connectedDevice(BluetoothDevice device){
         for(ConnectedThread connectedThread : mConnectedThreads) {
-            if(connectedThread.getRemoteDevice().getAddress() == device.getAddress()){
+            if(connectedThread.getRemoteDevice().getAddress().equals(device.getAddress())){
                 return true;
             }
         }

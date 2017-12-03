@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                             readableMsgR = new String(dataR);
                             break;
                         case TYPE_ROUTING_TABLE:
+                            readableMsgR = "routing table";
                             RoutingTable table = Utils.deserializeRoutingTable(dataR);
                             if(table != null) {
                                 Log.i(TAG, "Received routing table " + table);
@@ -144,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                             }
                             break;
                         case TYPE_TOKEN:
+                            readableMsgR = "token";
                             makeTokenVisible();
                             break;
                         default:
@@ -159,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     String deviceName = device.getName();
                     Log.i(TAG, "Connected to " + deviceName);
                     mConnections.append(deviceName + "\n");
-                    //mBluetoothService.addRoutingEntry(device.getAddress(), 1, device.getAddress());
                     Log.d(TAG, "My initial routing : \n'" + mBluetoothService.getRoutingTableStr() + "'");
                     mBluetoothService.sendRoutingTable(device);
                     mConnectedThreads.setText(mBluetoothService.getConnectedThreadsStr());

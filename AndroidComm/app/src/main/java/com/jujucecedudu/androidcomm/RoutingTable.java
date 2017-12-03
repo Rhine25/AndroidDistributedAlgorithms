@@ -49,15 +49,16 @@ public class RoutingTable implements Serializable{
     }
 
     public void updateFrom(String neighbourMAC, ArrayList<Object[]> neighbourTable){
+        //TODO don't add yourself to the list dummy, but how do I know my MAC so I don"t add it again ?
         if(!knownPathToHost(neighbourMAC)) {
             Log.d(TAG, "Don't know a path to connected host : " + neighbourMAC);
             addEntry(neighbourMAC, 1, neighbourMAC);
         }
         for (Object[] entry : neighbourTable) {
-            String targetMAC = (String)entry[0];
+            String targetMAC = getTargetMAC(entry);
             if(!knownPathToHost(targetMAC)) {
                 Log.d(TAG, "Don't know a path to host : " + targetMAC);
-                addEntry(targetMAC, (int) entry[1] + 1, neighbourMAC);
+                addEntry(targetMAC, getCost(entry) + 1, neighbourMAC);
             }
             else{
                 Log.d(TAG, "Already know path to host : " + targetMAC);
@@ -67,9 +68,16 @@ public class RoutingTable implements Serializable{
     }
 
     private boolean knownPathToHost(String deviceMAC){
+        Log.d(TAG, "KnowPathToHost ? " + deviceMAC);
         for (Object[] entry : table) {
-            if((String)entry[0] == deviceMAC){
+            String entryMAC = getTargetMAC(entry);
+            Log.d(TAG, "Host : " + entryMAC);
+            if(entryMAC.equals(deviceMAC)){
+                Log.d(TAG, "yes");
                 return true;
+            }
+            else{
+                Log.d(TAG, "no");
             }
         }
         return false;
@@ -77,7 +85,7 @@ public class RoutingTable implements Serializable{
 
     private boolean knownHost(String deviceMAC){
         for(Pair pair : mMACToName){
-            if(pair.first == deviceMAC){
+            if(pair.first.equals(deviceMAC)){
                 return true;
             }
         }
@@ -91,7 +99,7 @@ public class RoutingTable implements Serializable{
 
     private String getHostNumber(String hostMAC){
         for(Pair pair : mMACToName){
-            if(pair.first == hostMAC){
+            if(pair.first.equals(hostMAC)){
                 return (String)pair.second;
             }
         }
@@ -100,8 +108,8 @@ public class RoutingTable implements Serializable{
 
     public String getNextHopMAC(String targetMAC){
         for(Object[] entry : table){
-            if((String)entry[0] == targetMAC){
-                return (String)entry[2];
+            if(getTargetMAC(entry).equals(targetMAC)){
+                return getNextHopMAC(entry);
             }
         }
         return null;
@@ -119,17 +127,29 @@ public class RoutingTable implements Serializable{
         return table;
     }
 
+    private String getTargetMAC(Object[] entry){
+        return (String)entry[0];
+    }
+
+    private int getCost(Object[] entry){
+        return (int)entry[1];
+    }
+
+    private String getNextHopMAC(Object[] entry){
+        return (String)entry[2];
+    }
+
     @Override
     public String toString() {
         String str = "";
         if(mMACToName == null){
             for(Object[] entry : table){
-                str += entry[0] + "/" + entry[1] + " -> " + entry[2] + "\n";
+                str += getTargetMAC(entry) + "/" + getCost(entry) + " -> " + getNextHopMAC(entry) + "\n";
             }
         }
         else {
             for (Object[] entry : table) {
-                str += getHostNumber((String) entry[0]) + "/" + entry[1] + " -> " + getHostNumber((String) entry[2]) + "\n";
+                str += getHostNumber(getTargetMAC(entry)) + "/" + getCost(entry) + " -> " + getHostNumber(getNextHopMAC(entry)) + "\n";
             }
         }
         return str;
