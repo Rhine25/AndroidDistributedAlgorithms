@@ -28,6 +28,8 @@ import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.M
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_TOKEN;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_WHATS_MY_MAC;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_YOUR_MAC;
 
 /**
  * Created by rhine on 23/10/17.
@@ -53,6 +55,8 @@ public class MyBluetoothService {
         byte TYPE_STRING = 0x00;
         byte TYPE_ROUTING_TABLE = 0x01;
         byte TYPE_TOKEN = 0x02;
+        byte TYPE_WHATS_MY_MAC = 0x03;
+        byte TYPE_YOUR_MAC = 0x04;
 
         public static final String FROM = "from";
     }
@@ -165,6 +169,10 @@ public class MyBluetoothService {
             }
         }
         return false;
+    }
+
+    boolean knowMAC(){
+        return !mRoutingTable.getMyMAC().equals("");
     }
 
     class AcceptThread extends Thread {
@@ -316,6 +324,13 @@ public class MyBluetoothService {
                         getInfoToUIThread(MessageConstants.MESSAGE_READ, data);
                         Log.d(TAG, "Received token from " + mmDevice.getName());
                         break;
+                    case TYPE_WHATS_MY_MAC:
+                        sendMessage(Utils.getConstructedMessage(TYPE_YOUR_MAC, mmDevice.getAddress().getBytes()), mmDevice);
+                        Log.d(TAG, "Received mac request from " + mmDevice.getName());
+                        break;
+                    case TYPE_YOUR_MAC:
+                        mRoutingTable.setMyMAC(new String(Utils.extractDataFromMessage(data)));
+                        Log.d(TAG, "Received my mac from " + mmDevice.getName() + " : " + mRoutingTable.getMyMAC());
                     default:
                         Log.e(TAG, "received unkwown message type " + msgType);
                         break;

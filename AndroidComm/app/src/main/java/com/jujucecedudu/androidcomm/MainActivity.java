@@ -36,6 +36,7 @@ import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.M
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_TOKEN;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_WHATS_MY_MAC;
 
 public class MainActivity extends AppCompatActivity implements DeviceAdapter.ListItemClickListener{
     private static final String TAG = "BLUETOOTH_TEST_MAIN";
@@ -164,6 +165,10 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     Log.d(TAG, "My initial routing : \n'" + mBluetoothService.getRoutingTableStr() + "'");
                     mBluetoothService.sendRoutingTable(device);
                     mConnectedThreads.setText(mBluetoothService.getConnectedThreadsStr());
+                    if (!mBluetoothService.knowMAC()){
+                        byte[] request = new byte[]{TYPE_WHATS_MY_MAC};
+                        mBluetoothService.sendMessage(request, device);
+                    }
                     break;
                 case MESSAGE_DISCONNECTION:
                     Log.i(TAG, msg.obj + " disconnected ");

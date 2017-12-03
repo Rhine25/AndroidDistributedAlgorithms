@@ -1,17 +1,10 @@
 package com.jujucecedudu.androidcomm;
 
-import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 import android.util.Pair;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Created by Rhine on 22/11/2017.
@@ -23,11 +16,13 @@ public class RoutingTable implements Serializable{
     private ArrayList<Object[]> table; //CHECKME maybe this should be a set ?
     private ArrayList<Pair<String, String>> mMACToName;
     private int mNbDevices;
+    private String mMAC;
 
     public RoutingTable() {
         table = new ArrayList<>();
         mMACToName = new ArrayList<>();
         mNbDevices = 0;
+        mMAC = "";
     }
 
     public RoutingTable(ArrayList<Object[]> table){
@@ -49,7 +44,6 @@ public class RoutingTable implements Serializable{
     }
 
     public void updateFrom(String neighbourMAC, ArrayList<Object[]> neighbourTable){
-        //TODO don't add yourself to the list dummy, but how do I know my MAC so I don"t add it again ?
         if(!knownPathToHost(neighbourMAC)) {
             Log.d(TAG, "Don't know a path to connected host : " + neighbourMAC);
             addEntry(neighbourMAC, 1, neighbourMAC);
@@ -68,28 +62,32 @@ public class RoutingTable implements Serializable{
     }
 
     private boolean knownPathToHost(String deviceMAC){
-        Log.d(TAG, "KnowPathToHost ? " + deviceMAC);
+        if (itsMe(deviceMAC)){
+            return true;
+        }
         for (Object[] entry : table) {
             String entryMAC = getTargetMAC(entry);
-            Log.d(TAG, "Host : " + entryMAC);
             if(entryMAC.equals(deviceMAC)){
-                Log.d(TAG, "yes");
                 return true;
-            }
-            else{
-                Log.d(TAG, "no");
             }
         }
         return false;
     }
 
     private boolean knownHost(String deviceMAC){
+        if (itsMe(deviceMAC)){
+            return true;
+        }
         for(Pair pair : mMACToName){
             if(pair.first.equals(deviceMAC)){
                 return true;
             }
         }
         return false;
+    }
+
+    private boolean itsMe(String deviceMAC){
+        return deviceMAC.equals(mMAC);
     }
 
     private void addNewHost(String hostMAC){
@@ -121,6 +119,14 @@ public class RoutingTable implements Serializable{
             str += entry.first + " is " + entry.second + "\n";
         }
         return str;
+    }
+
+    public String getMyMAC(){
+        return mMAC;
+    }
+
+    public void setMyMAC(String mAC){
+        mMAC = mAC;
     }
 
     public ArrayList<Object[]> getTable() {

@@ -39,12 +39,6 @@ public class Utils {
         return byteTable;
     }
 
-    static byte[] extractDataFromMessage(byte[] message, int length){
-        byte[] byteTable = new byte[length - 1];
-        System.arraycopy(message, 1, byteTable, 0, length - 1);
-        return byteTable;
-    }
-
     static byte[] serializeRoutingTable(RoutingTable table){
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream oos = null;
