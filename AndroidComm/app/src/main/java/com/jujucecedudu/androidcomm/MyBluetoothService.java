@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.UUID;
 
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.FROM;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
@@ -48,8 +49,6 @@ public class MyBluetoothService {
         public static final int MESSAGE_WRITE = 3;
         public static final int MESSAGE_CONNECTION = 4;
         public static final int MESSAGE_DISCONNECTION = 6;
-        public static final int MESSAGE_ROUTING_TABLE = 7;
-        public static final int MESSAGE_TOKEN = 8;
 
         byte TYPE_STRING = 0x00;
         byte TYPE_ROUTING_TABLE = 0x01;
@@ -139,10 +138,6 @@ public class MyBluetoothService {
         }
     }
 
-    void addRoutingEntry(String targetMAC, int cost, String nextHopMAC){
-        mRoutingTable.addEntry(targetMAC, cost, nextHopMAC);
-    }
-
     void updateRoutingFrom(String fromMAC, RoutingTable neighbourTable){
         mRoutingTable.updateFrom(fromMAC, neighbourTable.getTable());
     }
@@ -155,9 +150,17 @@ public class MyBluetoothService {
         return mRoutingTable.getMACToNameBindings();
     }
 
+    String getConnectedThreadsStr(){
+        String str = "";
+        for(ConnectedThread connectedThread : mConnectedThreads) {
+            str += connectedThread.toString() + "\n";
+        }
+        return str;
+    }
+
     boolean connectedDevice(BluetoothDevice device){
         for(ConnectedThread connectedThread : mConnectedThreads) {
-            if(connectedThread.getRemoteDevice() == device){
+            if(connectedThread.getRemoteDevice().getAddress() == device.getAddress()){
                 return true;
             }
         }
@@ -298,20 +301,19 @@ public class MyBluetoothService {
             while (true) try {
                 numBytes = mmInStream.read(mmBuffer);
                 byte msgType = mmBuffer[0];
+                byte[] data = new byte[numBytes];
+                System.arraycopy(mmBuffer, 0, data, 0, numBytes);
                 switch (msgType) {
                     case TYPE_STRING:
-                        byte[] data = new byte[numBytes];
-                        System.arraycopy(mmBuffer, 0, data, 0, numBytes);
-                        getInfoToUIThread(MessageConstants.MESSAGE_READ, data, "from", mmDevice.getName());
+                        getInfoToUIThread(MessageConstants.MESSAGE_READ, data, FROM, mmDevice.getName());
                         break;
                     case TYPE_ROUTING_TABLE:
-                        byte[] byteTable = Utils.extractDataFromMessage(mmBuffer, numBytes);
-                        getInfoToUIThread(MessageConstants.MESSAGE_ROUTING_TABLE, byteTable
-                                , MessageConstants.FROM, mmDevice.getAddress());
+                        getInfoToUIThread(MessageConstants.MESSAGE_READ, data
+                                , FROM, mmDevice.getAddress());
                         Log.d(TAG, "Received routing table from " + mmDevice.getName());
                         break;
                     case TYPE_TOKEN:
-                        getInfoToUIThread(MessageConstants.MESSAGE_TOKEN, null);
+                        getInfoToUIThread(MessageConstants.MESSAGE_READ, data);
                         Log.d(TAG, "Received token from " + mmDevice.getName());
                         break;
                     default:
@@ -345,6 +347,11 @@ public class MyBluetoothService {
 
         public BluetoothDevice getRemoteDevice(){
             return mmDevice;
+        }
+
+        @Override
+        public String toString() {
+            return "Connected to " + mmDevice.getName();
         }
     }
 }

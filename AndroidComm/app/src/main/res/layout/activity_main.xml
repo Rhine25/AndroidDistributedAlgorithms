@@ -88,5 +88,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_routing_bindings"/>
         </ScrollView>
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="40dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_connected_threads"/>
+        </ScrollView>
     </LinearLayout>
 </LinearLayout>

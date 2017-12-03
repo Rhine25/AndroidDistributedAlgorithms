@@ -28,11 +28,10 @@ import android.widget.Toast;
 
 import java.util.Arrays;
 
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.FROM;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_CONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
-import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_ROUTING_TABLE;
-import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_TOKEN;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
@@ -55,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private TextView mConnections;
     private TextView mRoutingTable;
     private TextView mRoutingBindings;
+    private TextView mConnectedThreads;
     private Toast mToast;
 
     private BluetoothDevice mNext;
@@ -99,11 +99,19 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     Bundle to = msg.getData();
                     String dest = to.getString("to");
                     String readableMsgW;
-                    if(msgTypeW == TYPE_ROUTING_TABLE){
-                        readableMsgW = "routing table";
-                    }
-                    else{
-                        readableMsgW = new String(dataW);
+                    switch (msgTypeW) {
+                        case TYPE_ROUTING_TABLE:
+                            readableMsgW = "routing table";
+                            break;
+                        case TYPE_STRING:
+                            readableMsgW = new String(dataW);
+                            break;
+                        case TYPE_TOKEN:
+                            readableMsgW = "token";
+                            break;
+                        default:
+                            readableMsgW = "";
+                            break;
                     }
                     Log.i(TAG, "Sent : " + Arrays.toString(dataW) + "/" + dataW.length + " to " + dest);
                     mMessages.append("Sent : " + readableMsgW + " to " + dest + "\n");
@@ -113,15 +121,35 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     byte msgTypeR = byteMsgR[0];
                     byte[] dataR = Utils.extractDataFromMessage(byteMsgR);
                     Bundle from = msg.getData();
-                    String exped = from.getString("from");
+                    String exped = from.getString(FROM);
                     String readableMsgR;
                     switch (msgTypeR) {
                         case TYPE_STRING:
                             readableMsgR = new String(dataR);
                             break;
+                        case TYPE_ROUTING_TABLE:
+                            RoutingTable table = Utils.deserializeRoutingTable(dataR);
+                            if(table != null) {
+                                Log.i(TAG, "Received routing table " + table);
+                                mBluetoothService.updateRoutingFrom(msg.getData().getString(FROM), table);
+                                String updatedTableStr = mBluetoothService.getRoutingTableStr();
+                                Log.i(TAG, "Updated my table to : " + updatedTableStr);
+                                mRoutingTable.setText(updatedTableStr);
+                                mRoutingBindings.setText(mBluetoothService.getRoutingBindingsStr());
+                            }
+                            else{
+                                String errorMsg = "Routing table received null";
+                                Log.d(TAG, errorMsg);
+                                mToast = Toast.makeText(getBaseContext(), errorMsg, Toast.LENGTH_LONG);
+                            }
+                            break;
+                        case TYPE_TOKEN:
+                            makeTokenVisible();
+                            break;
                         default:
                             readableMsgR = "";
                             Log.e(TAG, "Read message that's not a string");
+                            break;
                     }
                     Log.i(TAG, "Read " + Arrays.toString(dataR) + "/" + dataR.length + " from " + exped);
                     mMessages.append("Read " + readableMsgR + " from " + exped + "\n");
@@ -134,30 +162,13 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     //mBluetoothService.addRoutingEntry(device.getAddress(), 1, device.getAddress());
                     Log.d(TAG, "My initial routing : \n'" + mBluetoothService.getRoutingTableStr() + "'");
                     mBluetoothService.sendRoutingTable(device);
+                    mConnectedThreads.setText(mBluetoothService.getConnectedThreadsStr());
                     break;
                 case MESSAGE_DISCONNECTION:
                     Log.i(TAG, msg.obj + " disconnected ");
                     mConnections.append("-" + msg.obj + "\n");
+                    mConnectedThreads.setText(mBluetoothService.getConnectedThreadsStr());
                     //TODO remove entry from routingtable
-                    break;
-                case MESSAGE_ROUTING_TABLE:
-                    RoutingTable table = Utils.deserializeRoutingTable((byte[])msg.obj);
-                    if(table != null) {
-                        Log.i(TAG, "Received routing table " + table);
-                        mBluetoothService.updateRoutingFrom(msg.getData().getString("from"), table);
-                        String updatedTableStr = mBluetoothService.getRoutingTableStr();
-                        Log.i(TAG, "Updated my table to : " + updatedTableStr);
-                        mRoutingTable.setText(updatedTableStr);
-                        mRoutingBindings.setText(mBluetoothService.getRoutingBindingsStr());
-                    }
-                    else{
-                        String errorMsg = "Routing table received null";
-                        Log.d(TAG, errorMsg);
-                        mToast = Toast.makeText(getBaseContext(), errorMsg, Toast.LENGTH_LONG);
-                    }
-                    break;
-                case MESSAGE_TOKEN:
-                    makeTokenVisible();
                     break;
                 default:
                     Log.e(TAG, "Received message of unknown type");
@@ -178,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         mConnections = (TextView) findViewById(R.id.tv_connections);
         mRoutingTable = (TextView) findViewById(R.id.tv_routing_table);
         mRoutingBindings = (TextView) findViewById(R.id.tv_routing_bindings);
+        mConnectedThreads = (TextView) findViewById(R.id.tv_connected_threads);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -224,9 +236,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                 return true;
             case R.id.action_discoverable:
                 makeDiscoverable();
-                return true;
-            case R.id.action_accept:
-                mBluetoothService.accept();
                 return true;
             case R.id.action_start_ring:
                 initRing();
