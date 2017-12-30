@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.util.Pair;
 import android.widget.Toast;
 
 import java.io.ByteArrayInputStream;
@@ -107,7 +108,7 @@ public class MyBluetoothService {
         mConnectedThreads.add(thread);
     }
 
-    void sendMessage(byte[] out){
+    void sendMessage(byte[] out){ //send message to all directly connected devices
         for(ConnectedThread connectedThread : mConnectedThreads) {
             if (connectedThread == null) {
                 Log.d(TAG, "connected thread is null");
@@ -118,7 +119,13 @@ public class MyBluetoothService {
         }
     }
 
-    void sendMessage(byte[] out, BluetoothDevice dest){
+    void sendMessageBroadcast(byte[] out){ //broadcast message to all devices on the network
+        for(Pair pair : mRoutingTable.getMACToName()){
+            //TODO send message to device
+        }
+    }
+
+    void sendMessage(byte[] out, BluetoothDevice dest){ //send message to a specific directly connected device
         for(ConnectedThread connectedThread : mConnectedThreads) {
             if (connectedThread == null) {
                 Log.d(TAG, "connected thread is null");
@@ -132,6 +139,11 @@ public class MyBluetoothService {
         }
     }
 
+    void sendMessage_(byte[] out, BluetoothDevice dest){ //send message to any device on the network
+        Object[] entry = mRoutingTable.getShortestPathTo(dest.getAddress());
+        //TODO add dest to messages
+    }
+
     void sendRoutingTable(BluetoothDevice dest){
         byte[] serializedTable = Utils.serializeRoutingTable(mRoutingTable);
         if(serializedTable == null){
@@ -142,8 +154,8 @@ public class MyBluetoothService {
         }
     }
 
-    void updateRoutingFrom(String fromMAC, RoutingTable neighbourTable){
-        mRoutingTable.updateFrom(fromMAC, neighbourTable.getTable());
+    RoutingTable updateRoutingFrom(String fromMAC, RoutingTable neighbourTable){
+        return mRoutingTable.updateFrom(fromMAC, neighbourTable.getTable());
     }
 
     String getRoutingTableStr(){
@@ -171,7 +183,7 @@ public class MyBluetoothService {
         return false;
     }
 
-    boolean knowMAC(){
+    boolean knowMyMAC(){
         return !mRoutingTable.getMyMAC().equals("");
     }
 

@@ -51,11 +51,11 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private Button mToken;
-    private TextView mMessages;
-    private TextView mConnections;
-    private TextView mRoutingTable;
-    private TextView mRoutingBindings;
-    private TextView mConnectedThreads;
+    private TextView mMessagesTextView;
+    private TextView mConnectionsTextView;
+    private TextView mRoutingTableTextView;
+    private TextView mRoutingBindingsTextView;
+    private TextView mConnectedThreadsTextView;
     private Toast mToast;
 
     private BluetoothDevice mNext;
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                             break;
                     }
                     Log.i(TAG, "Sent : " + Arrays.toString(dataW) + "/" + dataW.length + " to " + dest);
-                    mMessages.append("Sent : " + readableMsgW + " to " + dest + "\n");
+                    mMessagesTextView.append("Sent : " + readableMsgW + " to " + dest + "\n");
                     break;
                 case MESSAGE_READ:
                     byte[] byteMsgR = (byte[]) msg.obj;
@@ -133,11 +133,15 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                             RoutingTable table = Utils.deserializeRoutingTable(dataR);
                             if(table != null) {
                                 Log.i(TAG, "Received routing table " + table);
-                                mBluetoothService.updateRoutingFrom(msg.getData().getString(FROM), table);
+                                RoutingTable newEntries = mBluetoothService.updateRoutingFrom(msg.getData().getString(FROM), table);
+                                if(newEntries.getNbEntries() > 0){
+                                    //update others about the new entry(ies) in the routing table
+                                    mBluetoothService.sendMessage(Utils.getConstructedMessage(TYPE_ROUTING_TABLE, Utils.serializeRoutingTable(newEntries)));
+                                }
                                 String updatedTableStr = mBluetoothService.getRoutingTableStr();
                                 Log.i(TAG, "Updated my table to : " + updatedTableStr);
-                                mRoutingTable.setText(updatedTableStr);
-                                mRoutingBindings.setText(mBluetoothService.getRoutingBindingsStr());
+                                mRoutingTableTextView.setText(updatedTableStr);
+                                mRoutingBindingsTextView.setText(mBluetoothService.getRoutingBindingsStr());
                             }
                             else{
                                 String errorMsg = "Routing table received null";
@@ -155,26 +159,26 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                             break;
                     }
                     Log.i(TAG, "Read " + Arrays.toString(dataR) + "/" + dataR.length + " from " + exped);
-                    mMessages.append("Read " + readableMsgR + " from " + exped + "\n");
+                    mMessagesTextView.append("Read " + readableMsgR + " from " + exped + "\n");
                     break;
                 case MESSAGE_CONNECTION:
                     BluetoothDevice device = (BluetoothDevice)msg.obj;
                     String deviceName = device.getName();
                     Log.i(TAG, "Connected to " + deviceName);
-                    mConnections.append(deviceName + "\n");
+                    mConnectionsTextView.append(deviceName + "\n");
                     Log.d(TAG, "My initial routing : \n'" + mBluetoothService.getRoutingTableStr() + "'");
                     mBluetoothService.sendRoutingTable(device);
-                    mConnectedThreads.setText(mBluetoothService.getConnectedThreadsStr());
-                    if (!mBluetoothService.knowMAC()){
+                    mConnectedThreadsTextView.setText(mBluetoothService.getConnectedThreadsStr());
+                    if (!mBluetoothService.knowMyMAC()){
                         byte[] request = new byte[]{TYPE_WHATS_MY_MAC};
                         mBluetoothService.sendMessage(request, device);
                     }
                     break;
                 case MESSAGE_DISCONNECTION:
                     Log.i(TAG, msg.obj + " disconnected ");
-                    mConnections.append("-" + msg.obj + "\n");
-                    mConnectedThreads.setText(mBluetoothService.getConnectedThreadsStr());
-                    //TODO remove entry from routingtable
+                    mConnectionsTextView.append("-" + msg.obj + "\n");
+                    mConnectedThreadsTextView.setText(mBluetoothService.getConnectedThreadsStr());
+                    //TODO remove entry from routingtable and send update to others
                     break;
                 default:
                     Log.e(TAG, "Received message of unknown type");
@@ -191,11 +195,11 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         mProgressBar = (ProgressBar) findViewById(R.id.pb_progress_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_available_devices);
         mToken = (Button) findViewById(R.id.bt_token);
-        mMessages = (TextView) findViewById(R.id.tv_messages);
-        mConnections = (TextView) findViewById(R.id.tv_connections);
-        mRoutingTable = (TextView) findViewById(R.id.tv_routing_table);
-        mRoutingBindings = (TextView) findViewById(R.id.tv_routing_bindings);
-        mConnectedThreads = (TextView) findViewById(R.id.tv_connected_threads);
+        mMessagesTextView = (TextView) findViewById(R.id.tv_messages);
+        mConnectionsTextView = (TextView) findViewById(R.id.tv_connections);
+        mRoutingTableTextView = (TextView) findViewById(R.id.tv_routing_table);
+        mRoutingBindingsTextView = (TextView) findViewById(R.id.tv_routing_bindings);
+        mConnectedThreadsTextView = (TextView) findViewById(R.id.tv_connected_threads);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -315,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     }
 
     public void clearMessages(View view){
-        mMessages.setText("");
+        mMessagesTextView.setText("");
     }
 
     private void createToken(){

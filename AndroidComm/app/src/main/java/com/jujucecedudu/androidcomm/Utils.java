@@ -20,6 +20,7 @@ public class Utils {
     private static final String TAG = "BLUETOOTH_TEST_UTILS";
 
     static byte[] getConstructedMessage(byte type, byte[] data){
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         try {
             outputStream.write(type);
@@ -31,6 +32,12 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private byte[] getMACBytes(String deviceMAC){
+        Log.i(TAG, "String MAC address : " + deviceMAC);
+        Log.i(TAG, "Bytes MAC address : " + deviceMAC.getBytes());
+        return deviceMAC.getBytes();
     }
 
     static byte[] extractDataFromMessage(byte[] message){

@@ -14,7 +14,7 @@ public class RoutingTable implements Serializable{
     private static final String TAG = "BLUETOOTH_TEST_ROUTING";
 
     private ArrayList<Object[]> table; //CHECKME maybe this should be a set ?
-    private ArrayList<Pair<String, String>> mMACToName;
+    private ArrayList<Pair<String, String>> mMACToName; //<Mac, ID>
     private int mNbDevices;
     private String mMAC;
 
@@ -29,7 +29,7 @@ public class RoutingTable implements Serializable{
         this.table = table;
     }
 
-    public void addEntry(String targetMAC, int cost, String nextHopMAC){ //TODO third element might be the connectedThread ?
+    public void addEntry(String targetMAC, int cost, String nextHopMAC){ //CHECKME third element might be the connectedThread ?
         Object[] entry = {targetMAC, cost, nextHopMAC};
         table.add(entry);
         if(!knownHost(targetMAC)){
@@ -40,25 +40,43 @@ public class RoutingTable implements Serializable{
     public void deleteEntry(String deviceMAC){
         //TODO virer le chemin vers lui
 
-        //TODO les chemins par lui ont un coup de -1
+        //TODO les chemins par lui ont un coup de -1 ou alors les virer aussi
     }
 
-    public void updateFrom(String neighbourMAC, ArrayList<Object[]> neighbourTable){
+    public RoutingTable updateFrom(String neighbourMAC, ArrayList<Object[]> neighbourTable){
+        RoutingTable newEntriesTable = new RoutingTable();
         if(!knownPathToHost(neighbourMAC)) {
             Log.d(TAG, "Don't know a path to connected host : " + neighbourMAC);
             addEntry(neighbourMAC, 1, neighbourMAC);
+            newEntriesTable.addEntry(neighbourMAC, 1, neighbourMAC);
         }
         for (Object[] entry : neighbourTable) {
             String targetMAC = getTargetMAC(entry);
             if(!knownPathToHost(targetMAC)) {
                 Log.d(TAG, "Don't know a path to host : " + targetMAC);
-                addEntry(targetMAC, getCost(entry) + 1, neighbourMAC);
+                newEntriesTable.addEntry(targetMAC, getCost(entry) + 1, neighbourMAC);
             }
             else{
-                Log.d(TAG, "Already know path to host : " + targetMAC);
+                Log.d(TAG, "Already know path to host : " + targetMAC + " but adding the new path to it");
             }
-            //TODO get shortest path
+            addEntry(targetMAC, getCost(entry) + 1, neighbourMAC);
+            //TODO get shortest path method
         }
+        return newEntriesTable;
+    }
+
+    public Object[] getShortestPathTo(String deviceMAC){
+        Object[] bestEntry = null;
+        int bestCost = 100; //arbitrary value
+
+        for(Object[] entry : table){
+            if(getTargetMAC(entry).equals(deviceMAC) && getCost(entry) < bestCost){
+                bestEntry = entry;
+                bestCost = getCost(entry);
+            }
+        }
+
+        return bestEntry;
     }
 
     private boolean knownPathToHost(String deviceMAC){
@@ -133,16 +151,24 @@ public class RoutingTable implements Serializable{
         return table;
     }
 
-    private String getTargetMAC(Object[] entry){
+    public String getTargetMAC(Object[] entry){
         return (String)entry[0];
     }
 
-    private int getCost(Object[] entry){
+    public int getCost(Object[] entry){
         return (int)entry[1];
     }
 
-    private String getNextHopMAC(Object[] entry){
+    public String getNextHopMAC(Object[] entry){
         return (String)entry[2];
+    }
+
+    public ArrayList<Pair<String, String>> getMACToName() {
+        return mMACToName;
+    }
+
+    public int getNbEntries(){
+        return table.size();
     }
 
     @Override
