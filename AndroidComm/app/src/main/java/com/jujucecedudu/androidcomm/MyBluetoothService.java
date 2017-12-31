@@ -12,15 +12,9 @@ import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.UUID;
 
@@ -108,11 +102,12 @@ public class MyBluetoothService {
         mConnectedThreads.add(thread);
     }
 
-    void sendMessage(byte[] out){ //send message to all directly connected devices
+    void sendMessage(MessagePacket message){ //send message to all directly connected devices
         for(ConnectedThread connectedThread : mConnectedThreads) {
             if (connectedThread == null) {
                 Log.d(TAG, "connected thread is null");
             } else {
+                byte[] out = Utils.serializeMessage(message);
                 connectedThread.write(out);
                 getInfoToUIThread(MessageConstants.MESSAGE_WRITE, out, "to", connectedThread.mmDevice.getName());
             }
@@ -125,12 +120,13 @@ public class MyBluetoothService {
         }
     }
 
-    void sendMessage(byte[] out, BluetoothDevice dest){ //send message to a specific directly connected device
+    void sendMessage(MessagePacket message, BluetoothDevice dest){ //send message to a specific directly connected device
         for(ConnectedThread connectedThread : mConnectedThreads) {
             if (connectedThread == null) {
                 Log.d(TAG, "connected thread is null");
             } else {
                 if(connectedThread.getRemoteDevice() == dest) {
+                    byte[] out = Utils.serializeMessage(message);
                     connectedThread.write(out);
                     getInfoToUIThread(MessageConstants.MESSAGE_WRITE, out, "to", connectedThread.mmDevice.getName());
                     return;
@@ -150,7 +146,9 @@ public class MyBluetoothService {
             Log.d(TAG, "Can't send routing table, is null");
         }
         else {
-            sendMessage(Utils.getConstructedMessage(TYPE_ROUTING_TABLE, serializedTable), dest);
+            byte[] table = Utils.getConstructedMessage(TYPE_ROUTING_TABLE, serializedTable);
+            MessagePacket messagePacket = new MessagePacket(mRoutingTable.getMyMAC(), dest.getAddress(), table);
+            sendMessage(messagePacket, dest);
         }
     }
 
@@ -185,6 +183,10 @@ public class MyBluetoothService {
 
     boolean knowMyMAC(){
         return !mRoutingTable.getMyMAC().equals("");
+    }
+
+    String getMyMAC(){
+        return mRoutingTable.getMyMAC();
     }
 
     class AcceptThread extends Thread {
@@ -319,10 +321,12 @@ public class MyBluetoothService {
             int numBytes;
 
             while (true) try {
-                numBytes = mmInStream.read(mmBuffer);
-                byte msgType = mmBuffer[0];
+                mmInStream.read(mmBuffer);
+                MessagePacket message = Utils.deserializeMessage(mmBuffer);
+                numBytes = message.data.length;
+                byte msgType = message.data[0];
                 byte[] data = new byte[numBytes];
-                System.arraycopy(mmBuffer, 0, data, 0, numBytes);
+                System.arraycopy(message.data, 0, data, 0, numBytes);
                 switch (msgType) {
                     case TYPE_STRING:
                         getInfoToUIThread(MessageConstants.MESSAGE_READ, data, FROM, mmDevice.getName());
@@ -337,7 +341,9 @@ public class MyBluetoothService {
                         Log.d(TAG, "Received token from " + mmDevice.getName());
                         break;
                     case TYPE_WHATS_MY_MAC:
-                        sendMessage(Utils.getConstructedMessage(TYPE_YOUR_MAC, mmDevice.getAddress().getBytes()), mmDevice);
+                        byte[] msgData = Utils.getConstructedMessage(TYPE_YOUR_MAC, mmDevice.getAddress().getBytes());
+                        MessagePacket messagePacket = new MessagePacket(mRoutingTable.getMyMAC(), mmDevice.getAddress(), msgData);
+                        sendMessage(messagePacket, mmDevice);
                         Log.d(TAG, "Received mac request from " + mmDevice.getName());
                         break;
                     case TYPE_YOUR_MAC:

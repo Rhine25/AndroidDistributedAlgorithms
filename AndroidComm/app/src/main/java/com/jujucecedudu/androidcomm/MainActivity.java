@@ -136,7 +136,9 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                                 RoutingTable newEntries = mBluetoothService.updateRoutingFrom(msg.getData().getString(FROM), table);
                                 if(newEntries.getNbEntries() > 0){
                                     //update others about the new entry(ies) in the routing table
-                                    mBluetoothService.sendMessage(Utils.getConstructedMessage(TYPE_ROUTING_TABLE, Utils.serializeRoutingTable(newEntries)));
+                                    byte[] data = Utils.getConstructedMessage(TYPE_ROUTING_TABLE, Utils.serializeRoutingTable(newEntries));
+                                    MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), "ALL", data);
+                                    mBluetoothService.sendMessage(messagePacket);
                                 }
                                 String updatedTableStr = mBluetoothService.getRoutingTableStr();
                                 Log.i(TAG, "Updated my table to : " + updatedTableStr);
@@ -171,7 +173,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     mConnectedThreadsTextView.setText(mBluetoothService.getConnectedThreadsStr());
                     if (!mBluetoothService.knowMyMAC()){
                         byte[] request = new byte[]{TYPE_WHATS_MY_MAC};
-                        mBluetoothService.sendMessage(request, device);
+                        MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), device.getAddress(), request);
+                        mBluetoothService.sendMessage(messagePacket, device);
                     }
                     break;
                 case MESSAGE_DISCONNECTION:
@@ -315,7 +318,9 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
     public void sayHello(View view){
         byte[] str = "Hello !".getBytes();
-        mBluetoothService.sendMessage(Utils.getConstructedMessage(TYPE_STRING, str));
+        byte[] data = Utils.getConstructedMessage(TYPE_STRING, str);
+        MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), "ALL", data);
+        mBluetoothService.sendMessage(messagePacket);
     }
 
     public void clearMessages(View view){
@@ -328,7 +333,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
     public void sendToken(View view){
         byte[] token = new byte[]{TYPE_TOKEN};
-        mBluetoothService.sendMessage(token, mNext);
+        MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), mNext.getAddress(), token);
+        mBluetoothService.sendMessage(messagePacket, mNext);
         makeTokenInvisible();
     }
 

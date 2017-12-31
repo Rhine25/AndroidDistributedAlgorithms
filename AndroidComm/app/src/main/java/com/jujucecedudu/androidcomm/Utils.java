@@ -1,6 +1,5 @@
 package com.jujucecedudu.androidcomm;
 
-import android.os.Message;
 import android.util.Log;
 
 import java.io.ByteArrayInputStream;
@@ -9,7 +8,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by Rhine on 30/11/2017.
@@ -60,6 +58,20 @@ public class Utils {
         return null;
     }
 
+    static byte[] serializeMessage(MessagePacket message){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(out);
+            oos.writeObject(message);
+            return out.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Routing table couldn't be serialized "+ e);
+        }
+        return null;
+    }
+
     static RoutingTable deserializeRoutingTable(byte[] bytes){
         ByteArrayInputStream in = new ByteArrayInputStream(bytes);
         ObjectInputStream ois = null;
@@ -68,6 +80,23 @@ public class Utils {
             try {
                 ArrayList<Object[]> table = (ArrayList<Object[]>) ois.readObject();
                 return new RoutingTable(table);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    static MessagePacket deserializeMessage(byte[] bytes){
+        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(in);
+            try {
+                MessagePacket message = (MessagePacket) ois.readObject();
+                return message;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
