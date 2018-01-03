@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.T
  */
 public class MyBluetoothService {
     private static final UUID MY_UUID = UUID.fromString("7255562d-a5db-43d8-a38d-874453bc589b");
+    static final String ALL = "ALL";
     private static final String TAG = "BLUETOOTH_TEST_SERVICE";
 
     private Handler mHandler; // handler that gets info from Bluetooth service
@@ -102,36 +104,39 @@ public class MyBluetoothService {
         mConnectedThreads.add(thread);
     }
 
-    void sendMessage(MessagePacket message){ //send message to all directly connected devices
-        for(ConnectedThread connectedThread : mConnectedThreads) {
-            if (connectedThread == null) {
-                Log.d(TAG, "connected thread is null");
-            } else {
-                byte[] out = Utils.serializeMessage(message);
-                connectedThread.write(out);
-                getInfoToUIThread(MessageConstants.MESSAGE_WRITE, out, "to", connectedThread.mmDevice.getName());
+    void sendMessage(MessagePacket message){
+        if(message.destMAC.equals(ALL)){ //send message to all directly connected devices
+            for(ConnectedThread connectedThread : mConnectedThreads) {
+                if (connectedThread == null) {
+                    Log.d(TAG, "connected thread is null");
+                } else {
+                    byte[] out = Utils.serializeMessage(message);
+                    connectedThread.write(out);
+                    getInfoToUIThread(MessageConstants.MESSAGE_WRITE, out, "to", connectedThread.mmDevice.getName());
+                }
             }
         }
+        else{ //send message to a specific device
+            String nextHop = mRoutingTable.getNextHopMAC(message.destMAC);
+            for(ConnectedThread connectedThread : mConnectedThreads) {
+                if (connectedThread == null) {
+                    Log.d(TAG, "connected thread is null");
+                } else {
+                    if(connectedThread.getRemoteDevice().getAddress().equals(nextHop)) {
+                        byte[] out = Utils.serializeMessage(message);
+                        connectedThread.write(out);
+                        getInfoToUIThread(MessageConstants.MESSAGE_WRITE, out, "to", connectedThread.mmDevice.getName());
+                        return;
+                    }
+                }
+            }
+        }
+
     }
 
     void sendMessageBroadcast(byte[] out){ //broadcast message to all devices on the network
         for(Pair pair : mRoutingTable.getMACToName()){
             //TODO send message to device
-        }
-    }
-
-    void sendMessage(MessagePacket message, BluetoothDevice dest){ //send message to a specific directly connected device
-        for(ConnectedThread connectedThread : mConnectedThreads) {
-            if (connectedThread == null) {
-                Log.d(TAG, "connected thread is null");
-            } else {
-                if(connectedThread.getRemoteDevice() == dest) {
-                    byte[] out = Utils.serializeMessage(message);
-                    connectedThread.write(out);
-                    getInfoToUIThread(MessageConstants.MESSAGE_WRITE, out, "to", connectedThread.mmDevice.getName());
-                    return;
-                }
-            }
         }
     }
 
@@ -148,7 +153,7 @@ public class MyBluetoothService {
         else {
             byte[] table = Utils.getConstructedMessage(TYPE_ROUTING_TABLE, serializedTable);
             MessagePacket messagePacket = new MessagePacket(mRoutingTable.getMyMAC(), dest.getAddress(), table);
-            sendMessage(messagePacket, dest);
+            sendMessage(messagePacket);
         }
     }
 
@@ -323,10 +328,14 @@ public class MyBluetoothService {
             while (true) try {
                 mmInStream.read(mmBuffer);
                 MessagePacket message = Utils.deserializeMessage(mmBuffer);
+                if(!message.destMAC.equals(getMyMAC())){
+
+                }
                 numBytes = message.data.length;
                 byte msgType = message.data[0];
                 byte[] data = new byte[numBytes];
                 System.arraycopy(message.data, 0, data, 0, numBytes);
+                //TODO check if for me, if not, just send it to right person
                 switch (msgType) {
                     case TYPE_STRING:
                         getInfoToUIThread(MessageConstants.MESSAGE_READ, data, FROM, mmDevice.getName());
@@ -343,7 +352,7 @@ public class MyBluetoothService {
                     case TYPE_WHATS_MY_MAC:
                         byte[] msgData = Utils.getConstructedMessage(TYPE_YOUR_MAC, mmDevice.getAddress().getBytes());
                         MessagePacket messagePacket = new MessagePacket(mRoutingTable.getMyMAC(), mmDevice.getAddress(), msgData);
-                        sendMessage(messagePacket, mmDevice);
+                        sendMessage(messagePacket);
                         Log.d(TAG, "Received mac request from " + mmDevice.getName());
                         break;
                     case TYPE_YOUR_MAC:
