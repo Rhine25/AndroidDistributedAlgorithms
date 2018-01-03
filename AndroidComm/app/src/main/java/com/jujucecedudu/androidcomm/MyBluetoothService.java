@@ -104,7 +104,7 @@ public class MyBluetoothService {
         mConnectedThreads.add(thread);
     }
 
-    void sendMessage(MessagePacket message){
+    void sendMessage(MessagePacket message){ //TODO faire les petites fonctions
         if(message.destMAC.equals(ALL)){ //send message to all directly connected devices
             for(ConnectedThread connectedThread : mConnectedThreads) {
                 if (connectedThread == null) {
@@ -322,45 +322,46 @@ public class MyBluetoothService {
 
         public void run() {
             Log.d(TAG, "Connected thread running");
-            mmBuffer = new byte[1024];
+            mmBuffer = new byte[1024]; //WARNING buffer size should be larger than the max message size, or RIP
             int numBytes;
 
             while (true) try {
                 mmInStream.read(mmBuffer);
                 MessagePacket message = Utils.deserializeMessage(mmBuffer);
-                if(!message.destMAC.equals(getMyMAC())){
-
+                if(!message.destMAC.equals(getMyMAC())){ //transfer message
+                    sendMessage(message);
                 }
-                numBytes = message.data.length;
-                byte msgType = message.data[0];
-                byte[] data = new byte[numBytes];
-                System.arraycopy(message.data, 0, data, 0, numBytes);
-                //TODO check if for me, if not, just send it to right person
-                switch (msgType) {
-                    case TYPE_STRING:
-                        getInfoToUIThread(MessageConstants.MESSAGE_READ, data, FROM, mmDevice.getName());
-                        break;
-                    case TYPE_ROUTING_TABLE:
-                        getInfoToUIThread(MessageConstants.MESSAGE_READ, data
-                                , FROM, mmDevice.getAddress());
-                        Log.d(TAG, "Received routing table from " + mmDevice.getName());
-                        break;
-                    case TYPE_TOKEN:
-                        getInfoToUIThread(MessageConstants.MESSAGE_READ, data);
-                        Log.d(TAG, "Received token from " + mmDevice.getName());
-                        break;
-                    case TYPE_WHATS_MY_MAC:
-                        byte[] msgData = Utils.getConstructedMessage(TYPE_YOUR_MAC, mmDevice.getAddress().getBytes());
-                        MessagePacket messagePacket = new MessagePacket(mRoutingTable.getMyMAC(), mmDevice.getAddress(), msgData);
-                        sendMessage(messagePacket);
-                        Log.d(TAG, "Received mac request from " + mmDevice.getName());
-                        break;
-                    case TYPE_YOUR_MAC:
-                        mRoutingTable.setMyMAC(new String(Utils.extractDataFromMessage(data)));
-                        Log.d(TAG, "Received my mac from " + mmDevice.getName() + " : " + mRoutingTable.getMyMAC());
-                    default:
-                        Log.e(TAG, "received unkwown message type " + msgType);
-                        break;
+                else { //message is for me, treat it
+                    numBytes = message.data.length;
+                    byte msgType = message.data[0];
+                    byte[] data = new byte[numBytes];
+                    System.arraycopy(message.data, 0, data, 0, numBytes);
+                    switch (msgType) {
+                        case TYPE_STRING:
+                            getInfoToUIThread(MessageConstants.MESSAGE_READ, data, FROM, mmDevice.getName());
+                            break;
+                        case TYPE_ROUTING_TABLE:
+                            getInfoToUIThread(MessageConstants.MESSAGE_READ, data
+                                    , FROM, mmDevice.getAddress());
+                            Log.d(TAG, "Received routing table from " + mmDevice.getName());
+                            break;
+                        case TYPE_TOKEN:
+                            getInfoToUIThread(MessageConstants.MESSAGE_READ, data);
+                            Log.d(TAG, "Received token from " + mmDevice.getName());
+                            break;
+                        case TYPE_WHATS_MY_MAC:
+                            byte[] msgData = Utils.getConstructedMessage(TYPE_YOUR_MAC, mmDevice.getAddress().getBytes());
+                            MessagePacket messagePacket = new MessagePacket(mRoutingTable.getMyMAC(), mmDevice.getAddress(), msgData);
+                            sendMessage(messagePacket);
+                            Log.d(TAG, "Received mac request from " + mmDevice.getName());
+                            break;
+                        case TYPE_YOUR_MAC:
+                            mRoutingTable.setMyMAC(new String(Utils.extractDataFromMessage(data)));
+                            Log.d(TAG, "Received my mac from " + mmDevice.getName() + " : " + mRoutingTable.getMyMAC());
+                        default:
+                            Log.e(TAG, "received unkwown message type " + msgType);
+                            break;
+                    }
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Input stream was disconnected", e);
