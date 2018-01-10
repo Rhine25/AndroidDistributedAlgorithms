@@ -87,6 +87,10 @@ public class MyBluetoothService {
     }
 
     void connect(BluetoothDevice device){
+        if(connectedDevice(device)){
+            Log.d(TAG, "Already connected to device " + device.getName() +", won't connect to it again");
+            return;
+        }
         Log.d(TAG, "New connect thread launched");
         mConnectThread = new ConnectThread(device);
         mConnectThread.start();

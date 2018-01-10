@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private TextView mRoutingBindingsTextView;
     private TextView mConnectedThreadsTextView;
     private Toast mToast;
-
     private BluetoothDevice mNext;
+    private boolean autoConnect;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -71,8 +71,10 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     String deviceName = device.getName();
                     String deviceMAC = device.getAddress();
                     Log.i(TAG, "Discovered device : " + deviceName + " " + deviceMAC);
-                    //mDiscoveredDevicesText.append(deviceName + " " + deviceMAC + "\n");
                     mDeviceAdapter.addDeviceData(device);
+                    if(autoConnect){
+                        mBluetoothService.connect(device);
+                    }
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
                     Log.i(TAG, "onReceive, discovery started");
@@ -196,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        autoConnect = false;
+
         mProgressBar = (ProgressBar) findViewById(R.id.pb_progress_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_available_devices);
         mToken = (Button) findViewById(R.id.bt_token);
@@ -253,6 +257,12 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                 return true;
             case R.id.action_start_ring:
                 initRing();
+                return true;
+            case R.id.action_auto_connect:
+                autoConnect = true;
+                makeDiscoverable();
+                mDeviceAdapter.clearDevices();
+                mBluetoothService.discover();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -314,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     void makeDiscoverable(){
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE);
-        Log.i(TAG, "Discoverable");
+        Log.i(TAG, "Requested discoverable");
     }
 
     public void sayHello(View view){

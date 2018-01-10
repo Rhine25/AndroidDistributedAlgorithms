@@ -16,4 +16,9 @@
         android:orderInCategory="3"
         android:title="Start Ring"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_auto_connect"
+        android:orderInCategory="4"
+        android:title="Auto connect"
+        app:showAsAction="ifRoom"/>
 </menu>
