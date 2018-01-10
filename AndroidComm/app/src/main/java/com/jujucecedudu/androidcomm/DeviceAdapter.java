@@ -90,4 +90,8 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceAdap
         mAvailableDevices.clear();
         notifyDataSetChanged();
     }
+
+    public ArrayList<BluetoothDevice> getDiscoveredDevices(){
+        return mAvailableDevices;
+    }
 }

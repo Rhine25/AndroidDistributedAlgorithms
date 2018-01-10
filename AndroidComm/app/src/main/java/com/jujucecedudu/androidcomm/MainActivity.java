@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.jujucecedudu.androidcomm.MyBluetoothService.ALL;
@@ -72,9 +73,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     String deviceMAC = device.getAddress();
                     Log.i(TAG, "Discovered device : " + deviceName + " " + deviceMAC);
                     mDeviceAdapter.addDeviceData(device);
-                    if(autoConnect){
-                        mBluetoothService.connect(device);
-                    }
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
                     Log.i(TAG, "onReceive, discovery started");
@@ -83,6 +81,12 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                 case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
                     Log.i(TAG, "onReceive, discovery finished");
                     mProgressBar.setVisibility(View.GONE);
+                    if(autoConnect){
+                        ArrayList<BluetoothDevice> discovered = mDeviceAdapter.getDiscoveredDevices();
+                        for(BluetoothDevice discoveredDevice : discovered){
+                            mBluetoothService.connect(discoveredDevice);
+                        }
+                    }
                     break;
                 default:
                     Log.i(TAG, "onReceive, action is not handled : " + action);
