@@ -215,8 +215,9 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                             break;
                         default:
                             //TODO send received message to api
-                            readableMsgR = "";
-                            Log.e(TAG, "Read message that's not a string");
+                            //readableMsgR = "";
+                            Log.d(TAG, "Read message from API, transmitting it");
+                            API.onMessage();
                             break;
                     }
                     Log.i(TAG, "Read " + Arrays.toString(dataR) + "/" + dataR.length + " from " + expedMAC);
