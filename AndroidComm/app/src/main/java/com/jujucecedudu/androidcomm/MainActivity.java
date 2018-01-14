@@ -30,15 +30,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.jujucecedudu.androidcomm.MyBluetoothService.ALL;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.ConnectedThread.NO_RING;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.FROM;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_CONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_RING_STATUS;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_SEARCH_IN_RING;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_TOKEN;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_WHATS_MY_MAC;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_YOUR_NEXT;
 
 public class MainActivity extends AppCompatActivity implements DeviceAdapter.ListItemClickListener{
     private static final String TAG = "BLUETOOTH_TEST_MAIN";
@@ -60,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private TextView mConnectedThreadsTextView;
     private Toast mToast;
     private BluetoothDevice mNext;
+    private BluetoothDevice mPrevious;
+    private boolean mInRing;
     private boolean autoConnect;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -129,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     byte msgTypeR = byteMsgR[0];
                     byte[] dataR = Utils.extractDataFromMessage(byteMsgR);
                     Bundle from = msg.getData();
-                    String exped = from.getString(FROM);
+                    String expedMAC = from.getString(FROM);
                     String readableMsgR;
                     switch (msgTypeR) {
                         case TYPE_STRING:
@@ -162,13 +168,59 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                             readableMsgR = "token";
                             makeTokenVisible();
                             break;
+                        case TYPE_RING_STATUS:
+                            BluetoothDevice expeditor = mBluetoothService.getDeviceFromMAC(expedMAC);
+                            if(dataR[0] == NO_RING){
+                                if(mInRing == false){
+                                    mNext = expeditor;
+                                    mPrevious = expeditor;
+                                }
+                                else{
+                                    byte[] data = Utils.getConstructedMessage(TYPE_YOUR_NEXT, mNext.getAddress().getBytes());
+                                    MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), expeditor.getAddress(), data);
+                                    mBluetoothService.sendMessage(messagePacket);
+                                    mNext = expeditor;
+                                }
+                            }
+                            else{
+                                if(mInRing == false){
+                                    //nothing to do here, it's done in your next reception
+                                }
+                                else{
+                                    if(mBluetoothService.getMyMAC().compareTo(expedMAC) > 0){
+                                        //TODO check the rings are distinct
+                                        /*byte[] byteTargetMAC = expedMAC.getBytes();
+                                        byte[] msgData = ;
+                                        byte[] data = Utils.getConstructedMessage(TYPE_SEARCH_IN_RING, )
+                                        if(distinct){
+                                           send him our next;
+                                           set him as next;
+                                        }*/
+                                    }
+                                    else{
+                                        //balec, on est déjà dans le même ring, tu veux te battre ?
+                                    }
+                                    //TODO FUCK FUCK FUCK (pas du tout)
+                                }
+                            }
+                            readableMsgR = "ring status";
+                            break;
+                        case TYPE_YOUR_NEXT:
+                            String nextMAC = Arrays.toString(dataR);
+                            mNext = mBluetoothService.getDeviceFromMAC(nextMAC);
+                            String previousMAC = expedMAC;
+                            mPrevious = mBluetoothService.getDeviceFromMAC(previousMAC);
+                            Log.d(TAG, "Set " + mNext.getName() + " as next and " + mPrevious.getName() + " as previous");
+                            readableMsgR = "new next";
+                            break;
                         default:
+                            //TODO send received message to api
                             readableMsgR = "";
                             Log.e(TAG, "Read message that's not a string");
                             break;
                     }
-                    Log.i(TAG, "Read " + Arrays.toString(dataR) + "/" + dataR.length + " from " + exped);
-                    mMessagesTextView.append("Read " + readableMsgR + " from " + exped + "\n");
+                    Log.i(TAG, "Read " + Arrays.toString(dataR) + "/" + dataR.length + " from " + expedMAC);
+                    mMessagesTextView.append("Read " + readableMsgR + " from " + expedMAC + "\n");
                     break;
                 case MESSAGE_CONNECTION:
                     BluetoothDevice device = (BluetoothDevice)msg.obj;
@@ -203,6 +255,9 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         setContentView(R.layout.activity_main);
 
         autoConnect = false;
+        mInRing = false;
+        mNext = null;
+        mPrevious = null;
 
         mProgressBar = (ProgressBar) findViewById(R.id.pb_progress_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_available_devices);
@@ -335,7 +390,10 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         byte[] str = "Hello !".getBytes();
         byte[] data = Utils.getConstructedMessage(TYPE_STRING, str);
         MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), ALL, data);
-        mBluetoothService.sendMessage(messagePacket);
+        mBluetoothService.sendMessageBroadcast(messagePacket);
+        //TODO CHECK THIS, CLICKING HELLO DOES NOT DO ANYTHING :/
+        //TODO display routing table (should already be dsplayed ?)
+        //TODO swipe tabs ! \0/
     }
 
     public void clearMessages(View view){

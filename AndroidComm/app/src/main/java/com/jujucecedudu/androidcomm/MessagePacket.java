@@ -7,13 +7,25 @@ import java.io.Serializable;
  */
 
 public class MessagePacket implements Serializable{
-    String expMAC;
-    String destMAC;
-    byte[] data;
+    private String expMAC;
+    private String destMAC;
+    private byte[] data;
 
     public MessagePacket(String expMAC, String destMAC, byte[] data) {
         this.expMAC = expMAC;
         this.destMAC = destMAC;
         this.data = data;
+    }
+
+    public String getDest() {
+        return destMAC;
+    }
+
+    public void setDest(String destMAC) {
+        this.destMAC = destMAC;
+    }
+
+    public byte[] getData() {
+        return data;
     }
 }

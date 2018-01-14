@@ -21,11 +21,14 @@ import java.util.UUID;
 
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.FROM;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_RING_STATUS;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_TOKEN;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_WHATS_MY_MAC;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_YOUR_MAC;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_YOUR_NEXT;
 
 /**
  * Created by rhine on 23/10/17.
@@ -54,6 +57,9 @@ public class MyBluetoothService {
         byte TYPE_TOKEN = 0x02;
         byte TYPE_WHATS_MY_MAC = 0x03;
         byte TYPE_YOUR_MAC = 0x04;
+        byte TYPE_RING_STATUS = 0x05;
+        byte TYPE_YOUR_NEXT = 0x06;
+        byte TYPE_SEARCH_IN_RING = 0x07;
 
         public static final String FROM = "from";
     }
@@ -109,7 +115,7 @@ public class MyBluetoothService {
     }
 
     void sendMessage(MessagePacket message){ //TODO faire les petites fonctions
-        if(message.destMAC.equals(ALL)){ //send message to all directly connected devices
+        if(message.getDest().equals(ALL)){ //send message to all directly connected devices
             for(ConnectedThread connectedThread : mConnectedThreads) {
                 if (connectedThread == null) {
                     Log.d(TAG, "connected thread is null");
@@ -121,7 +127,7 @@ public class MyBluetoothService {
             }
         }
         else{ //send message to a specific device
-            String nextHop = mRoutingTable.getNextHopMAC(message.destMAC);
+            String nextHop = mRoutingTable.getNextHopMAC(message.getDest());
             for(ConnectedThread connectedThread : mConnectedThreads) {
                 if (connectedThread == null) {
                     Log.d(TAG, "connected thread is null");
@@ -138,9 +144,11 @@ public class MyBluetoothService {
 
     }
 
-    void sendMessageBroadcast(byte[] out){ //broadcast message to all devices on the network
+    void sendMessageBroadcast(MessagePacket message){ //broadcast message to all devices on the network
         for(Pair pair : mRoutingTable.getMACToName()){
-            //TODO send message to device
+            String MAC = (String)pair.first;
+            message.setDest(MAC);
+            sendMessage(message);
         }
     }
 
@@ -196,6 +204,15 @@ public class MyBluetoothService {
 
     String getMyMAC(){
         return mRoutingTable.getMyMAC();
+    }
+
+    BluetoothDevice getDeviceFromMAC(String MAC){
+        for(ConnectedThread thread : mConnectedThreads){
+            if(thread.mmDevice.getAddress().equals(MAC)){
+                return thread.mmDevice;
+            }
+        }
+        return null;
     }
 
     class AcceptThread extends Thread {
@@ -295,15 +312,21 @@ public class MyBluetoothService {
     class ConnectedThread extends Thread {
         private static final String TAG = "BLUETOOTH_TEST_CONNECTD";
 
+        public static final byte RING_UNKNOWN = 0x00;
+        public static final byte RING = 0x01;
+        public static final byte NO_RING = 0x02;
+
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
         private byte[] mmBuffer;
+        private int mmDeviceRingStatus;
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             mmDevice = mmSocket.getRemoteDevice();
+            mmDeviceRingStatus = RING_UNKNOWN;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
@@ -332,14 +355,14 @@ public class MyBluetoothService {
             while (true) try {
                 mmInStream.read(mmBuffer);
                 MessagePacket message = Utils.deserializeMessage(mmBuffer);
-                if(!message.destMAC.equals(getMyMAC())){ //transfer message
+                if(!message.getDest().equals(getMyMAC())){ //transfer message
                     sendMessage(message);
                 }
                 else { //message is for me, treat it
-                    numBytes = message.data.length;
-                    byte msgType = message.data[0];
+                    numBytes = message.getData().length;
+                    byte msgType = message.getData()[0];
                     byte[] data = new byte[numBytes];
-                    System.arraycopy(message.data, 0, data, 0, numBytes);
+                    System.arraycopy(message.getData(), 0, data, 0, numBytes);
                     switch (msgType) {
                         case TYPE_STRING:
                             getInfoToUIThread(MessageConstants.MESSAGE_READ, data, FROM, mmDevice.getName());
@@ -362,6 +385,16 @@ public class MyBluetoothService {
                         case TYPE_YOUR_MAC:
                             mRoutingTable.setMyMAC(new String(Utils.extractDataFromMessage(data)));
                             Log.d(TAG, "Received my mac from " + mmDevice.getName() + " : " + mRoutingTable.getMyMAC());
+                        case TYPE_RING_STATUS:
+                            mmDeviceRingStatus = data[1];
+                            getInfoToUIThread(MessageConstants.MESSAGE_READ, data
+                                    , FROM, mmDevice.getAddress());
+                            Log.d(TAG, "Received ring status from " + mmDevice.getName());
+                            break;
+                        case TYPE_YOUR_NEXT:
+                            getInfoToUIThread(MessageConstants.MESSAGE_READ, data, FROM, mmDevice.getAddress());
+                            Log.d(TAG, "Received new next from " + mmDevice.getName());
+                            break;
                         default:
                             Log.e(TAG, "received unkwown message type " + msgType);
                             break;
