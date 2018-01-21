@@ -189,13 +189,19 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                                 else{
                                     if(mBluetoothService.getMyMAC().compareTo(expedMAC) > 0){
                                         //TODO check the rings are distinct
-                                        /*byte[] byteTargetMAC = expedMAC.getBytes();
-                                        byte[] msgData = ;
-                                        byte[] data = Utils.getConstructedMessage(TYPE_SEARCH_IN_RING, )
+                                        byte[] byteTargetMAC = expedMAC.getBytes();
+                                        byte[] msgData = new byte[byteTargetMAC.length + 1];
+                                        msgData[0] = (byte)0;
+                                        System.arraycopy(byteTargetMAC, 0, msgData, 1, byteTargetMAC.length);
+                                        byte[] data = Utils.getConstructedMessage(TYPE_SEARCH_IN_RING, msgData);
+                                        MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), mNext.getAddress(), data);
+                                        mBluetoothService.sendMessage(messagePacket);
+
+                                        //TODO do in reception
                                         if(distinct){
                                            send him our next;
                                            set him as next;
-                                        }*/
+                                        }
                                     }
                                     else{
                                         //balec, on est déjà dans le même ring, tu veux te battre ?

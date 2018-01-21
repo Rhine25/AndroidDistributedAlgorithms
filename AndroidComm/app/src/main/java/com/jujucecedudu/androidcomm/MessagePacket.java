@@ -28,4 +28,8 @@ public class MessagePacket implements Serializable{
     public byte[] getData() {
         return data;
     }
+
+    public String getExpMAC() {
+        return expMAC;
+    }
 }

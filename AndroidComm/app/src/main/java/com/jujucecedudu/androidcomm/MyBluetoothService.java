@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.M
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_RING_STATUS;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_SEARCH_IN_RING;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_TOKEN;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_WHATS_MY_MAC;
@@ -395,6 +397,21 @@ public class MyBluetoothService {
                             getInfoToUIThread(MessageConstants.MESSAGE_READ, data, FROM, mmDevice.getAddress());
                             Log.d(TAG, "Received new next from " + mmDevice.getName());
                             break;
+                        case TYPE_SEARCH_IN_RING:
+                            byte[] targetMACBytes = new byte[data.length-1];
+                            System.arraycopy(data, 1, targetMACBytes, 0, data.length - 1);
+                            String targetMAC = Arrays.toString(targetMACBytes);
+                            if(getMyMAC().equals(targetMAC)){
+                                //TODO set first byte to 1 and send message to next
+                                data[0] = (byte)1;
+                            }
+                            else if(getMyMAC().equals(message.getExpMAC())){
+                                //if address is mine, check first byte value and deal with the shit of the rings fusion
+
+                            }
+                            else{
+                                //just send message unchanged to next
+                            }
                         default:
                             Log.e(TAG, "received unkwown message type " + msgType);
                             break;
