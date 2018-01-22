@@ -1,0 +1,166 @@
+\documentclass[a4paper,10pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[francais]{babel}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{fancyvrb}
+\usepackage{verbatim}
+\usepackage{pdfpages}
+\usepackage{hyperref}
+\usepackage{todonotes}
+
+% Title Page
+\title{Développement d'un environnement pour algorithmes distribués sur Android}
+\author{Célia Dehors, Vincent Durand, Justine Romero}
+\date{Année 2017-2018}
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+\makeatletter
+\newskip\@bigflushglue \@bigflushglue = -100pt plus 1fil
+\def\bigcenter{\trivlist \bigcentering\item\relax}
+\def\bigcentering{\let\\\@centercr\rightskip\@bigflushglue%
+\leftskip\@bigflushglue
+\parindent\z@\parfillskip\z@skip}
+\def\endbigcenter{\endtrivlist}
+\makeatother
+
+\titleformat{\chapter}[hang]{\bf\huge}{\thechapter}{2pc}{}
+
+\begin{document}  
+  \begin{titlepage}
+    \centering
+    \vspace*{0.5 cm}
+    \includegraphics[scale = 0.05]{logo_univ.png}\\[1.0 cm]   % University Logo
+    \LARGE Université de Franche-Comté\\[2.0 cm]   % University Name
+    \Large Rapport de Projet Semestriel\\               % Course Code
+    \large Master Informatique, 2ème année\\[2.5 cm]               % Course Name
+    \rule{\linewidth}{0.2 mm} \\[2.5 mm]
+    { \huge \bfseries \thetitle}\\
+    \rule{\linewidth}{0.2 mm} \\[2.0 cm]
+    
+    \begin{minipage}{0.6\textwidth}
+        \begin{flushleft} \large
+            \emph{Étudiants:}\\
+            \theauthor
+        \end{flushleft}
+    \end{minipage}~
+    \begin{minipage}{0.4\textwidth}
+        \begin{flushleft} \large
+            \emph{Tuteur:}\\
+            M. Laurent PHILIPPE
+        \end{flushleft}
+    \end{minipage}\\[3.0 cm]
+    {\large \thedate}\\[2 cm]
+    \vfill
+    
+\end{titlepage}
+\chapter*{Remerciements}
+%Table des matières
+\begin{changemargin}{0cm}{0cm}{-10cm}{0cm}
+\tableofcontents
+\end{changemargin}
+
+\chapter{Introduction}
+  \paragraph{}
+\chapter{Présentation du projet}
+  \section{Sujet}
+  \section{Problématique}
+\chapter{Recherche des technologies de communication}
+  \paragraph{}
+  L'objectif de ce projet est la réalisation d'un environnement d'exécution et de communication permettant le développement et la démonstration d'algorithmes distribués sur des appareils Android. Notre travail consiste donc au développement d'une application Android possédant son propre système de communication et capable de faire exécuter divers algorithmes.
+  Notre travail se découpe en plusieurs phases :
+  La première est l'étude des différentes technologies de communications disponibles sur les appareils Android
+  La deuxième est l'implémentation du système de communication dans la technologie choisie
+  La troisième est la mise en place d'une API permettant aux développeurs de mettre en place les algorithmes souhaités, en l'occurence des algorithmes distribués, sur l'application créée.
+  \section{Bluetooth}
+    \subsection{Historique}
+    \subsection{Fonctionnement} \todo{pap}
+    \subsection{Avantages}
+    \subsection{Inconvénients}
+  \section{Wifi Direct ou juste Wifi} \todo{DECIDER}
+    \subsection{Historique}
+    \subsection{Fonctionnement}
+    \subsection{Avantages}
+    \subsection{Inconvénients}
+  \section{NFC}
+    \subsection{Historique}
+    \subsection{Fonctionnement}
+    \subsection{Avantages}
+    \subsection{Inconvénients}
+  \section{Choix de la technologie}
+  
+%   \section{Comparaison Bluetooth/Wifi} \todo{virer cette partie}
+%     \paragraph{}
+%     Notre première étape est l'étude des différentes technologies disponibles. Notre attention se porte sur deux technologies principales bien connues : Bluetooth et Wifi.
+%     Nous recherchons tout d'abord des informations sur le web.
+%     Wifi semble être davantage adapté à notre usage. Il est plus rapide, stable, fiable, accepte plus de connexions.
+%     Bluetooth est quant à lui plus léger.
+%     Puis afin d'avoir une comparaison plus tangible des deux technologies, nous décidons d'implémenter deux applications distinctes utilisant chacune une des technologies. Cela dans le but de comparer autant les performances/limites des technologies que leur facilité de mise en place.
+%     -> Conclusion
+%     L'implémentation du Bluetooth est bien plus rapide que celle du wifi, la documentation est plus simple et plus accessible. Nous essayons d'implémenter le wifi mais le temps passant, nous préférons partir sur le bluetooth qui fonctionne déjà.
+    
+\chapter{Développement de l'architecture de l'appli}
+  \paragraph{}
+  \section{Couche bas niveau}
+    \subsection{Fonctionnement de base}
+    \subsection{Connexion}
+    \subsection{Communication}
+  \section{Couche intermédiaire}
+    \subsection{Implémentation d'un anneau}
+      \subsubsection{Création de l'anneau}
+      \subsubsection{Insertion dans un anneau}
+      \subsubsection{Fusion des anneaux}
+  \section{Couche haut niveau}
+    \subsection{API sur le modèle de Visidia}
+    \subsection{Algorithmes} \todo{Implémentabilité}
+%   \section{Fonctionnalités de base / connexion}
+%     \paragraph{}
+%     La première étape de l'intégration du Bluetooth à l'application est la demande de permission au système Android pour l'utilisation du bluetooth et à la localisation (pour la recherche bluetooth) et la détection de la prise en charge matériele et activation du bluetooth le cas échéant.
+%     Une fois le bluetooth activé, on récupère la liste des appareils déjà appairés et on lance une recherche des appareils visibles à proximité.
+%     La recherche d'appareils visibles ne fonctionnait pas, mais après quelques recherches dans les logs, il s'avère que le système de permission depuis la version Lollipop a été renforcé et qu'un nouveau morceau de code est nécessaire à l'acquisistion effective des droits.
+%     Ensuite code permettant de rendre notre appareil visibles des autres en Bluetooth.
+    Création d'un UUID afin d'identifier les connexions Bluetooth
+%     Ajout des threads pour les rôles de client, de serveur, et de gestion de connexions. \todo{expliquer les Fonctionnalités des threads}
+%     Ajout d'une Fonctionnalité pour activer/désactiver le bluetooth depuis l'application sans devoir passer par les paramètres système
+%     Refactoring pour déplacer les morceaux de codes dans des petites fonctions afin de rendre le code plus lisible et mieux maintenable
+%     Ajout d'un menu proposant les options de se rendre visible sur le réseau, de découvrir les appreils visibles, de se rendre disponible en tant que serveur (avec le UUID) ou de se connecter à un serveur
+    
+    
+%     S'appairer/se connecter à deux puis plus
+%     Mode serveur : accepter une connexions
+%     Mode client : se connecter à un serveur
+%     Mise en place de la connexion (stream entre deux device)
+%     L'architecture du service Bluetooth est la suivante : une classe principale BluetoothService composée d'une interface regroupant les types de messages échangés à bas niveau (lecture, écriture, connexion, déconnexion et mécanismes de fonctionnement de la couche basse de l'application) et trois threads permettant l'interconnexion des appareils. Nous avons un thread serveur permettant d'accepter des connexions entrantes, un thread client permettant de se connecter sur un serveur et un thread de connexion établie permettant d'envoyer et de recevoir des messages entre deux appareils connectés.
+    
+%   \section{Fonctionnalités de communication/ couche basse comm}
+%     \paragraph{}
+    
+%     Envoi de message texte
+%     Mise en place routage, sérialisation
+%     explication des formats de messages MessagePacket, type et byte[] data
+    
+%   \section{Couche intermédiaire}
+%     \paragraph{}
+%     Implémentation des types de messages
+%     Implémentation d'un token ring
+%       -> réflexion implémentation d'un token ring au niveau api puis implémentation réelle à bas niveau
+    
+%   \section{Couche haute API algos}
+%     \paragraph{}
+    
+  \subchapter{Développement d'une API permettant de créer des algos distribués}
+  \paragraph{}
+
+\chapter{Algorithme distribué implémenté}
+\chapter{Outils de développement}
+  \paragraph{}
+  Utilisation d'Android Studio et versionnement des sources avec un serveur gitlab.
+  \section{Android Studio}
+  \section{Gitlab}
+\chapter{Conclusion}
+\end{document}          
