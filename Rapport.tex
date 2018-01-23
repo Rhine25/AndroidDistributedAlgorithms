@@ -104,13 +104,40 @@
 %     -> Conclusion
 %     L'implémentation du Bluetooth est bien plus rapide que celle du wifi, la documentation est plus simple et plus accessible. Nous essayons d'implémenter le wifi mais le temps passant, nous préférons partir sur le bluetooth qui fonctionne déjà.
     
-\chapter{Développement de l'architecture de l'appli}
+\chapter{Développement de l'architecture de l'application}
   \paragraph{}
+  Dans cette partie nous allons présenter la façon dont l'application a été conçue et expliquer le fonctionnement de celle-ci. L'application a été architecturée en plusieurs couches pour introduire plusieurs niveaux d'abstraction, séparer les rôles et simplifier le développement.
+  
   \section{Couche bas niveau}
+    \paragraph{}
+    La couche bas niveau de notre application permet la communication entre plusieurs appareils et va servir de support à l'implémentation des algorithmes distribués. Elle est constituée des mécaniques de connexion, de routage et d'échange de paquets sur le réseau afin de permettre une mise en place simple des algorithmes. C'est elle qui a été concue en premier car elle est le soubassement de toutes les Fonctionnalités de notre application.
   
     \subsection{Fonctionnement de base}
+    \paragraph{}
+    La première pierre de l'édifice est la création d'un service Bluetooth central qui va être le garant du bon fonctionnement des échanges entre appareils. C'est lui qui va permettre d'activer ou désactiver la connexion Bluetooth de l'appareil, qui va décider si l'on se rend visible sur le réseau ou non mais surtout de rechercher des appareils disponibles et se connecter à eux pour ensuite communiquer ensemble.
+    
     \subsection{Connexion}
+    \paragraph{}
+    La connexion en Bluetooth entre plusieurs appareils nécessite la création d'un UUID. Un UUID est un identifiant unique composé de 128 bits. Sa taille est telle que l'on considère qu'il n'est pas possible d'avoir de collision en choisissant un UUID au hasard. Dans notre application, cela va permettre de ne pas tenter de se connecter à un appareil qui serait visible en Bluetooth mais qui n'utiliserait pas l'application, et qui par conséquent n'est pas souhaité dans notre réseau.
+    Pour qu'une connexion soit réalisée en Bluetooth il est nécessaire d'avoir un client et un serveur. Le serveur va ouvrir une socket sur laquelle le client va venir initier une connexion à partir de l'adresse MAC du serveur.
+    La connexion entre plusieurs appareils est gérée par le service Bluetooth. Chaque appareil peut être indistinctement client ou serveur. Pour cela, les mécanismes de connexions sont divisés en deux threads : un thread ayant le rôle de serveur et un thread ayant le rôle de client.
+    Lorsque qu'un client et un serveur se sont connectés, un canal RFCOMM est créé permettant la communication des deux appareils, chacun pouvant lire et écrire sur la socket correspondant à la connexion indistinctement du rôle qu'il a joué lors de la phase de connexion.
+    
     \subsection{Communication}
+    \paragraph{}
+    Le mécanisme de communication est implémenté dans un nouveau thread pour permettre le maintien de plusieurs connexions simultanées. Ce thread va constemment attendre qu'un flux de données arrive en entrée sur la socket. Il va bien évidemment aussi être capable d'écrire sur cette socket.
+    Tous les messages échangés adoptent la même forme : un expéditeur, un destinataire et le contenu du message constitué lui-même d'un octet correspondant au type de message et d'un tableau d'octets correspondant aux données du message. Le type de message peut être soit un type de message de bas niveau permettant la mise en place des mécanismes de bas niveau de la communication soit un type de message correspondant aux messages de l'algorithme distribué implémenté.
+    Lors de la réception d'un message sur la socket, nous récupérons le type de message envoyé et effectuons les traitements adpatés en fonction de celui-ci.
+    
+    \subsection{Routage}
+    \paragraph{}
+    La mécanique de bas niveau la plus complexe et sophistiquée est le routage. C'est lui qui va permettre à des appareils qui ne sont pas connectés directement de pouvoir tout de même communiquer entre eux. Cela est nécessaire du fait de la faible portée du Bluetooth afin de pouvoir faire partie du réseau sans pour autant être à portée de tous les autres appareils du réseau.
+    
+    //table de routage
+    //gestion des entrées de la table
+    //recherche de chemin vers
+    //communication avec un appreil distant
+  
   \section{Couche intermédiaire}
     \subsection{Implémentation d'un anneau}
       \subsubsection{Création de l'anneau}
@@ -121,10 +148,6 @@
     \subsection{Algorithmes} \todo{Implémentabilité}
 %   \section{Fonctionnalités de base / connexion}
 %     \paragraph{}
-%     La première étape de l'intégration du Bluetooth à l'application est la demande de permission au système Android pour l'utilisation du bluetooth et à la localisation (pour la recherche bluetooth) et la détection de la prise en charge matériele et activation du bluetooth le cas échéant.
-%     Une fois le bluetooth activé, on récupère la liste des appareils déjà appairés et on lance une recherche des appareils visibles à proximité.
-%     La recherche d'appareils visibles ne fonctionnait pas, mais après quelques recherches dans les logs, il s'avère que le système de permission depuis la version Lollipop a été renforcé et qu'un nouveau morceau de code est nécessaire à l'acquisistion effective des droits.
-%     Ensuite code permettant de rendre notre appareil visibles des autres en Bluetooth.
 %     Création d'un UUID afin d'identifier les connexions Bluetooth
 %     Ajout des threads pour les rôles de client, de serveur, et de gestion de connexions. \todo{expliquer les Fonctionnalités des threads}
 %     Ajout d'une Fonctionnalité pour activer/désactiver le bluetooth depuis l'application sans devoir passer par les paramètres système
