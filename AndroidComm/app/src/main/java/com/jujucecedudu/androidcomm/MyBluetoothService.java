@@ -23,6 +23,8 @@ import java.util.UUID;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.FROM;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_FOR_NEXT;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_RING_FUSION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_RING_STATUS;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_SEARCH_IN_RING;
@@ -62,6 +64,8 @@ public class MyBluetoothService {
         byte TYPE_RING_STATUS = 0x05;
         byte TYPE_YOUR_NEXT = 0x06;
         byte TYPE_SEARCH_IN_RING = 0x07;
+        byte TYPE_RING_FUSION = 0x08;
+        byte TYPE_FOR_NEXT = 0x09;
 
         public static final String FROM = "from";
     }
@@ -152,11 +156,6 @@ public class MyBluetoothService {
             message.setDest(MAC);
             sendMessage(message);
         }
-    }
-
-    void sendMessage_(byte[] out, BluetoothDevice dest){ //send message to any device on the network
-        Object[] entry = mRoutingTable.getShortestPathTo(dest.getAddress());
-        //TODO add dest to messages
     }
 
     void sendRoutingTable(BluetoothDevice dest){
@@ -356,7 +355,7 @@ public class MyBluetoothService {
 
             while (true) try {
                 mmInStream.read(mmBuffer);
-                MessagePacket message = Utils.deserializeMessage(mmBuffer);
+                MessagePacket message = Utils.deserializeMessage(mmBuffer); //TODO check if should pass mmBuffer length too
                 if(!message.getDest().equals(getMyMAC())){ //transfer message
                     sendMessage(message);
                 }
@@ -401,16 +400,20 @@ public class MyBluetoothService {
                             byte[] targetMACBytes = new byte[data.length-1];
                             System.arraycopy(data, 1, targetMACBytes, 0, data.length - 1);
                             String targetMAC = Arrays.toString(targetMACBytes);
-                            if(getMyMAC().equals(targetMAC)){
-                                //TODO set first byte to 1 and send message to next
-                                data[0] = (byte)1;
+                            if(getMyMAC().equals(message.getExpMAC())){ //if address is mine, check first byte value and deal with the shit of the rings fusion
+                                if(data[1] == 0){ //if the rings are distinct
+                                    getInfoToUIThread(MessageConstants.MESSAGE_READ, TYPE_RING_FUSION, FROM, message.getExpMAC());
+                                }
                             }
-                            else if(getMyMAC().equals(message.getExpMAC())){
-                                //if address is mine, check first byte value and deal with the shit of the rings fusion
-
-                            }
-                            else{
-                                //just send message unchanged to next
+                            else{ //if not, send to next
+                                byte[] messageByte = new byte[numBytes+1];
+                                messageByte[0] = TYPE_FOR_NEXT;
+                                System.arraycopy(mmBuffer, 0, messageByte, 1, numBytes);
+                                //TODO should not copy buffer but serialize messagePacket
+                                if(getMyMAC().equals(targetMAC)){ //if i'm the target,
+                                    data[1] = (byte)1; //TODO not in data but in the message we'll send
+                                }
+                                getInfoToUIThread(MessageConstants.MESSAGE_READ, messageByte);
                             }
                         default:
                             Log.e(TAG, "received unkwown message type " + msgType);

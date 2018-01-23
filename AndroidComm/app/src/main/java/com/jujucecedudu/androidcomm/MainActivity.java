@@ -36,6 +36,8 @@ import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.M
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_WRITE;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_FOR_NEXT;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_RING_FUSION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_RING_STATUS;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_ROUTING_TABLE;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_SEARCH_IN_RING;
@@ -188,7 +190,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                                 }
                                 else{
                                     if(mBluetoothService.getMyMAC().compareTo(expedMAC) > 0){
-                                        //TODO check the rings are distinct
                                         byte[] byteTargetMAC = expedMAC.getBytes();
                                         byte[] msgData = new byte[byteTargetMAC.length + 1];
                                         msgData[0] = (byte)0;
@@ -196,12 +197,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                                         byte[] data = Utils.getConstructedMessage(TYPE_SEARCH_IN_RING, msgData);
                                         MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), mNext.getAddress(), data);
                                         mBluetoothService.sendMessage(messagePacket);
-
-                                        //TODO do in reception
-                                        if(distinct){
-                                           send him our next;
-                                           set him as next;
-                                        }
                                     }
                                     else{
                                         //balec, on est déjà dans le même ring, tu veux te battre ?
@@ -219,11 +214,23 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                             Log.d(TAG, "Set " + mNext.getName() + " as next and " + mPrevious.getName() + " as previous");
                             readableMsgR = "new next";
                             break;
+                        case TYPE_RING_FUSION:
+                            //send expedMAC our next;
+                            byte[] data = Utils.getConstructedMessage(TYPE_YOUR_NEXT, expedMAC.getBytes());
+                            MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), expedMAC, data);
+                            mBluetoothService.sendMessage(messagePacket);
+                            //set him as our new next
+                            mNext = mBluetoothService.getDeviceFromMAC(expedMAC);
+                            readableMsgR = "ring fusion";
+                            break;
+                        case TYPE_FOR_NEXT: //
+                            MessagePacket message = Utils.deserializeMessage(dataR); //TODO check if should pass mmBuffer length too
+                            message.setDest(mNext.getAddress());
+                            mBluetoothService.sendMessage(message);
                         default:
-                            //TODO send received message to api
-                            //readableMsgR = "";
+                            readableMsgR = "Developer message type";
                             Log.d(TAG, "Read message from API, transmitting it");
-                            API.onMessage();
+                            API.onMessage(byteMsgR);
                             break;
                     }
                     Log.i(TAG, "Read " + Arrays.toString(dataR) + "/" + dataR.length + " from " + expedMAC);

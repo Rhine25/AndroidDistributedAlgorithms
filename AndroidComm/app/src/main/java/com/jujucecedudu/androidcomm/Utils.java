@@ -26,8 +26,22 @@ public class Utils {
             byte msg[] = outputStream.toByteArray( );
             return msg;
         } catch (IOException e) {
-            Log.e(TAG, "Couldn't construct hello msg", e);
+            Log.e(TAG, "Couldn't construct msg", e);
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    static byte[] convertObjectToByteArray(Object data){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(out);
+            oos.writeObject(data);
+            return out.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Couldn't convert object to byte array " + e);
         }
         return null;
     }
