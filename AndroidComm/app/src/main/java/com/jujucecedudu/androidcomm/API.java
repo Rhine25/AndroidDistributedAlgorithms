@@ -9,6 +9,13 @@ import static com.jujucecedudu.androidcomm.API.MessageTypes.*;
  */
 
 public class API {
+
+    /*AlgoLamportChat algo;
+
+    public API(AlgoLamportChat a){
+        algo = a;
+    }*/
+
     private static final String TAG = "BLUETOOTH_TEST_API";
 
     private static MyBluetoothService myBluetoothService;
@@ -17,6 +24,9 @@ public class API {
         byte TYPE_EXAMPLE_1 = 0x10;
         byte TYPE_EXAMPLE_2 = 0x11;
         byte TYPE_EXAMPLE_3 = 0x12;
+        byte REQ = 0x13;
+        byte ACK = 0x14;
+        byte REL = 0x15;
     }
 
     public static void initApi(MyBluetoothService bluetoothService){
@@ -33,6 +43,18 @@ public class API {
                 Log.i(TAG, "Received message example 2");
                 break;
             case TYPE_EXAMPLE_3:
+                Log.i(TAG, "Received message example 3");
+                break;
+            case REQ:
+                //receiveREQ(emmeteur, horloge);
+                Log.i(TAG, "Received message example 3");
+                break;
+            case ACK:
+                //receiveACK(emmeteur, horloge);
+                Log.i(TAG, "Received message example 3");
+                break;
+            case REL:
+                //receiveREL(emmeteur, horloge);
                 Log.i(TAG, "Received message example 3");
                 break;
             default:
