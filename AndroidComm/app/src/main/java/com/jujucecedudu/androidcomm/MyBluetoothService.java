@@ -219,6 +219,10 @@ public class MyBluetoothService {
     public String[] getAllDevicesMACs(){
         return mRoutingTable.getDevicesMACs();
     }
+    
+    public int getNbEntries(){
+        return mRoutingTable.getNbEntries();
+    }
 
     class AcceptThread extends Thread {
         private static final String TAG = "BLUETOOTH_TEST_ACCEPT";
