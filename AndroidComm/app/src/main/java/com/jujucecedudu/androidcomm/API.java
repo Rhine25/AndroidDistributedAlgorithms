@@ -46,4 +46,8 @@ public class API {
         MessagePacket mp = new MessagePacket(myBluetoothService.getMyMAC(),dest,data_b);
         myBluetoothService.sendMessage(mp);
     }
+    
+    public String[] getDevicesMACs(){
+        return myBluetoothService.getAllDevicesMACs();
+    }
 }
