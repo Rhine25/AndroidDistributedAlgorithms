@@ -60,10 +60,21 @@
     
 \end{titlepage}
 \chapter*{Remerciements}
+\paragraph{}
+Nous avions envie d'adresser nos sincères remerciements à plusieurs personnes qui nous ont aidé à la réalisation de ce projet ainsi qu'a l'élaboration de ce mémoire.
+
+
+En premier lieu nous remercions Mr Laurent Philippe notre tuteur pour son aide dans les choix que nous avons eu à prendre, et pour le temps qu'il nous à consacré tout au long de ce projet.
+
+Nous remercions également les personnes qui nous ont aidé à la relecture du mémoire.
+
+Enfin nous tenions à remercier Google Internship \todo{ça a un nom spécial celia ?} pour les cours Android qu'il a mis à disposition de certains membres du groupe.
 %Table des matières
 \begin{changemargin}{0cm}{0cm}{-10cm}{0cm}
 \tableofcontents
 \end{changemargin}
+\chapter*{Glossaire}
+\todo{A remplir}
 
 \chapter{Introduction}
   \paragraph{}
@@ -82,7 +93,7 @@
   Le projet est à réaliser en java sous android.
   
   
-  \todo{choisir le meiller paragraphe}
+  \todo{choisir le meilleur paragraphe}
   
   L’objectif de ce projet est de r´ealiser un environnement d’ex´ecution et de communication
   sur des appareils android pour permettre le d´eveloppement et la d´emonstration
@@ -99,7 +110,7 @@
   \begin{itemize}
     \item Quelles technologies allons nous utiliser ?
     \item Quelle architecture allons nous mettre en place pour faciliter la rédaction des algorithmes ?
-    \item \todo{Trouver une troisième question}
+    \item Comment pouvons nous proposer un outil simple d'utilisation en masquant les aspects techniques de la communication ?
   \end{itemize}
 \chapter{Recherche des technologies de communication}
   \paragraph{}
@@ -144,12 +155,13 @@
 %     L'implémentation du Bluetooth est bien plus rapide que celle du wifi, la documentation est plus simple et plus accessible. Nous essayons d'implémenter le wifi mais le temps passant, nous préférons partir sur le bluetooth qui fonctionne déjà.
     
 \chapter{Développement de l'architecture de l'application}
+\todo{dire pourqoi on a choisit ça en fonction des besoins de production qu'on avait}
   \paragraph{}
   Dans cette partie nous allons présenter la façon dont l'application a été conçue et expliquer le fonctionnement de celle-ci. L'application a été architecturée en plusieurs couches pour introduire plusieurs niveaux d'abstraction, séparer les rôles et simplifier le développement.
   
   \section{Couche bas niveau}
     \paragraph{}
-    La couche bas niveau de notre application permet la communication entre plusieurs appareils et va servir de support à l'implémentation des algorithmes distribués. Elle est constituée des mécaniques de connexion, de routage et d'échange de paquets sur le réseau afin de permettre une mise en place simple des algorithmes. C'est elle qui a été concue en premier car elle est le soubassement de toutes les Fonctionnalités de notre application.
+    La couche bas niveau de notre application permet la communication entre plusieurs appareils et va servir de support à l'implémentation des algorithmes distribués. Elle est constituée des mécaniques de connexion, de routage et d'échange de paquets sur le réseau afin de permettre une mise en place simple des algorithmes. C'est elle qui a été conçue en premier car elle est le soubassement de toutes les Fonctionnalités de notre application.
   
     \subsection{Fonctionnement de base}
     \paragraph{}
@@ -164,7 +176,7 @@
     
     \subsection{Communication}
     \paragraph{}
-    Le mécanisme de communication est implémenté dans un nouveau thread pour permettre le maintien de plusieurs connexions simultanées. Ce thread va constemment attendre qu'un flux de données arrive en entrée sur la socket. Il va bien évidemment aussi être capable d'écrire sur cette socket.
+    Le mécanisme de communication est implémenté dans un nouveau thread pour permettre le maintien de plusieurs connexions simultanées. Ce thread va constamment attendre qu'un flux de données arrive en entrée sur la socket. Il va bien évidemment aussi être capable d'écrire sur cette socket.
     Tous les messages échangés adoptent la même forme : un expéditeur, un destinataire et le contenu du message constitué lui-même d'un octet correspondant au type de message et d'un tableau d'octets correspondant aux données du message. Le type de message peut être soit un type de message de bas niveau permettant la mise en place des mécanismes de bas niveau de la communication soit un type de message correspondant aux messages de l'algorithme distribué implémenté.
     Lors de la réception d'un message sur la socket, nous récupérons le type de message envoyé et effectuons les traitements adpatés en fonction de celui-ci.
     
@@ -175,7 +187,7 @@
     //table de routage
     //gestion des entrées de la table
     //recherche de chemin vers
-    //communication avec un appreil distant
+    //communication avec un appareil distant
   
   \section{Couche intermédiaire}
     \subsection{Implémentation d'un anneau}
@@ -230,10 +242,21 @@
   %besoin de versionner
   %on disposait de serveurs gitlab chez nous
 \chapter{Conclusion}
-\chapter{Biblio}
+\todo{partage des taches et travail en équipe}
+\chapter*{Biblio}
  \paragraph{}
  NFC
  http://www.blog-crm.fr/exposes-etudiants/technologie-nfc/ (dernière consultation \todo{à remplir}
  https://fr.wikipedia.org/wiki/Communication_en_champ_proche (dernière consultation \todo{à remplir}
  
+ WifiDirect
+ http://www.techradar.com/news/phone-and-communications/mobile-phones/wi-fi-direct-what-it-is-and-why-you-should-care-1065449 (16/10/2017)
+ https://www.androidpit.com/what-is-wifi-direct (16/10/2017)
+ https://stackoverflow.com/questions/11251610/wifi-direct-android-4-0-with-multiple-3-devices (16/10/2017)
+ http://www.thinktube.com/tech/android/wifi-direct (08/11/2017)
+ 
+ Bluetooth
+ http://www.phonandroid.com/bluetooth-google-fast-pair-systeme-simplifier-appairage-smartphone.html (31/10/2017)
+ \chapter*{Résumé}
+ \chapter*{Abstract}
 \end{document}          
