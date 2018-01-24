@@ -232,6 +232,18 @@ Enfin nous tenions à remercier Google Internship \todo{ça a un nom spécial ce
   \paragraph{}
 
 \chapter{Algorithme distribué implémenté}
+\paragraph{}
+\todo{A relire voir si ça convient}
+Afin de démontrer les fonctionnalités de l'application nous avons réalisés un algorithme distribué ayant  pour but la gestion d'un chat entre plusieurs téléphones mobiles. L'écriture dans le chat représente la section critique (deux appareils ne doivent pas pouvoir écrire en même temps).
+
+Principe:
+
+Lorsqu'une personne souhaite écrire dans le chat elle clique sur le bouton "Demander l'accès" puis attend la notification d'accès.
+Elle peut écrire autant qu'elle veut.
+Quand elle à fini d'écrire il lui suffit de cliquer sur le bouton "fin de transmission" pour libérer la section critique et permettre à quelqu'un d'autre de prendre la main.
+
+Pour gérer la synchronisation des demandes nous avons choisi d'implémenter l'algorithme de Lamport avec estampilles ce qui nous permet de gérer les demandes concurrentes grâce à la datation logique. Ce n'est pas le plus optimisé des algorithmes à estampille mais cela est suffisant pour un exemple de fonctionnement.
+
 \chapter{Outils de développement}
   \paragraph{}
   Utilisation d'Android Studio et versionnement des sources avec un serveur gitlab.
