@@ -80,6 +80,20 @@
   L'objectif de ce projet est de réaliser un outil permettant d'exécuter des algorithmes distribués sur des téléphones portables. Pour ce faire les appareils doivent pouvoir communiquer de manière synchronisée. Il doit être possible de rédiger simplement des algorithmes afin de les dérouler et d'observer son comportement (visualiser les messages et leur contenu). Ces algorithmes ont vocation à être utilisés pour créer des applications distribuées.
   
   Le projet est à réaliser en java sous android.
+  
+  
+  \todo{choisir le meiller paragraphe}
+  
+  L’objectif de ce projet est de r´ealiser un environnement d’ex´ecution et de communication
+  sur des appareils android pour permettre le d´eveloppement et la d´emonstration
+  d’algorithmes distribu´es. L’environnement devra permettra une ´ecriture simple des algorithmes
+  et la r´ealisation de d´emonstrations pour simplifier leur compr´ehension. Le travail
+  consistera donc `a r´ealiser une plate-forme qui permette de programmer facilement un algorithme
+  distribu´e et de pouvoir le d´erouler tout en observant les ´echanges de messages et
+  le contenu des variables.
+  Les algorithmes pourront ensuite servir pour implanter des applications simples comme
+  des jeux. Le travail sera r´ealis´e en Java sous android.
+  
   \section{Problématiques}
   Les questions que nous nous sommes posés sont les suivantes : 
   \begin{itemize}
@@ -106,9 +120,17 @@
     \subsection{Inconvénients}
   \section{NFC}
     \subsection{Historique}
+     \paragraph{}
+     Le NFC ou Near Field Communication est une technologie de communication radio. Elle est apparue en 1994 et nous est encore utile aujourd'hui dans les téléphones (paiement mobile) par exemple. \todo{parler de androidBeam depuis jellybean}
     \subsection{Fonctionnement}
+     \paragraph{}
+     Le NFC permet l'échange d'informations sur de très courtes distances. Il permet de se faire passer pour une carte à puce face à un lecteur, de faire office de terminal pour lire des cartes, mais possède également un mode pair à pair pour l'échange d'informations entre deux terminaux mobiles. C'est ce mode qui nous intéressait.
     \subsection{Avantages}
+    \paragraph{}
+    Le NFC dispose de nombreux avantages comme des fréquences très basse (13.56Mhz contre 2.5Ghz pour le Wifi b/g/n) permettant de \todo{demander a celia ce que ca fait}et un mode de communication full duplex permettant des communications dans les deux sens en même temps.
     \subsection{Inconvénients}
+    \paragraph{}
+    Le principal inconvénient de cette technologie est la distance, en effet elle ne fonctionne qu'avec un espacement de quelques centimètres entre les deux terminaux. Cela ne convenait pas à la constructions d'un grand réseau de téléphones portables.
   \section{Choix de la technologie}
   
 %   \section{Comparaison Bluetooth/Wifi} \todo{virer cette partie}
@@ -202,6 +224,16 @@
   \paragraph{}
   Utilisation d'Android Studio et versionnement des sources avec un serveur gitlab.
   \section{Android Studio}
+  Nous devions développer sous Android et avons donc eu le choix entre plusieurs IDE (Android Studio, Eclipse). S'étant familiarisés avec les outils JetBrains pendant notre cursus c'est tout naturellement que notre choix s'est porté sur Android Studio. De plus, depuis 2014, cet IDE est devenu l'outil officiel de Google pour le développement android.
   \section{Gitlab}
+  \todo{A toi de jouer Celia}
+  %besoin de versionner
+  %on disposait de serveurs gitlab chez nous
 \chapter{Conclusion}
+\chapter{Biblio}
+ \paragraph{}
+ NFC
+ http://www.blog-crm.fr/exposes-etudiants/technologie-nfc/ (dernière consultation \todo{à remplir}
+ https://fr.wikipedia.org/wiki/Communication_en_champ_proche (dernière consultation \todo{à remplir}
+ 
 \end{document}          
