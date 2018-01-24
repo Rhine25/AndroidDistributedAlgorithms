@@ -127,9 +127,19 @@ Enfin nous tenions à remercier Google Internship \todo{ça a un nom spécial ce
     \subsection{Inconvénients}
   \section{Wifi Direct ou juste Wifi} \todo{DECIDER}
     \subsection{Historique}
+      \paragraph{}
+      Crée par Wifi Alliance, le Wifi Direct permet le partage de données entre différents appareils grâce à leur connexion Wifi sans avoir besoin d'une liaison avec d'un point d'accès intermédiaire.
     \subsection{Fonctionnement}
+     \paragraph{}
+    L'activation du Wifi Direct sur les appareils ne nécessite d'activer qu'une option dans les paramètres, une fois ceci fait l'envoi des fichiers est possible. En revanche le Wifi direct est utilisable sur un dispositif ayant Android 4.0 minimum. 
     \subsection{Avantages}
+     \paragraph{}
+     L'avantage principale de l'utilisation du Wifi Direct est la vitesse d'envoie des fichiers entre les appareils, surtout lorsque de lourd fichiers sont en jeu. 
+     Il est aussi possible d'utiliser cette technologie entre différents type de dispositifs : smartphone, télévision, ordinateur, tablette,... Ce qui permet une utilisation large des applications grâce à une connectivité plus simple et plus rapide que le bluetooth. Un autre avantage est la compatibilité, tout appareil utilisant le Wifi classique sera en mesure de répondre à une communication avec un dispositif utilisant le Wifi Direct.
     \subsection{Inconvénients}
+    \paragraph{}
+    D'après certains retour, l'activation du Wifi Direct peut entraîner des soucis sur certains modèles. De plus certains dispositifs ne fonctionnent qu'avec des appareils de la même marque, ce qui complique la mise en place d'un algorithme distribué.
+    L'écriture du code du Wifi direct n'est pas aisé à cause du manque de documentation et du fait que cette technologie n'est pas encore très répendue. D'autre part lorsque des erreurs étaient rencontrées lors de l'écriture de l'algorithme, il était difficile de savoir d'où provenait le problème. Est-ce qu'il était dû à la marque du téléphone ? Ou à une erreur de code ? 
   \section{NFC}
     \subsection{Historique}
      \paragraph{}
@@ -197,6 +207,9 @@ Enfin nous tenions à remercier Google Internship \todo{ça a un nom spécial ce
       \subsubsection{Fusion des anneaux}
   \section{Couche haut niveau}
     \subsection{API sur le modèle de Visidia}
+    \paragraph{}
+    Afin de pouvoir utiliser le couche bas niveau et intermédiaire de l'application, une API a été codée et réalisera le lien avec les algorithme qu'un développeur voudra mettre en place.
+    Elle permet d'envoyer des messages entre différents appareils et la réception de ceux-ci. L'implémentation de l'API a été réalisé en suivant le modèle utilisé par Visidia vu en Synchronisation distribué durant ce semestre en Master. Des fonctions ont été créées afin de permettre d'utiliser les informations de la table de routage et le lien pour accéder aux appareils.
     \subsection{Algorithmes} \todo{Implémentabilité}
 %   \section{Fonctionnalités de base / connexion}
 %     \paragraph{}
