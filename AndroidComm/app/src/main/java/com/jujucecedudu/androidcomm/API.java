@@ -72,4 +72,8 @@ public class API {
     public String[] getDevicesMACs(){
         return myBluetoothService.getAllDevicesMACs();
     }
+    
+     public int getNbEntries(){
+        return myBluetoothService.getNbEntries();
+    }
 }
