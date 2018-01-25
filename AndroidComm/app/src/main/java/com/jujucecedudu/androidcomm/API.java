@@ -54,7 +54,7 @@ public class API {
         byte[] data_b = new byte[d.length+1];
         data_b[0] = tMess;
         for(int i=1;i<data_b.length;i++)
-            data_b[i-1]=d[i-1];
+            data_b[i]=d[i-1];
         MessagePacket mp = new MessagePacket(myBluetoothService.getMyMAC(),dest,data_b);
         myBluetoothService.sendMessage(mp);
     }
