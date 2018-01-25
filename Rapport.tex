@@ -114,6 +114,8 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
     \newline
     \item Comment pouvons-nous proposer un outil simple d'utilisation en masquant les aspects techniques de la communication entre appareils ?
   \end{itemize}
+  
+  
 \chapter{Recherche des technologies de communication}
   \paragraph{}
   L'objectif de ce projet est la réalisation d'un environnement d'exécution et de communication permettant le développement et la démonstration d'algorithmes distribués sur des appareils Android. Notre travail consiste donc au développement d'une application Android possédant son propre système de communication et capable de faire exécuter divers algorithmes.
@@ -292,13 +294,30 @@ Quand elle à fini d'écrire il lui suffit de cliquer sur le bouton "fin de tran
 
 Pour gérer la synchronisation des demandes nous avons choisi d'implémenter l'algorithme de Lamport avec estampilles ce qui nous permet de gérer les demandes concurrentes grâce à la datation logique. Ce n'est pas le plus optimisé des algorithmes à estampille mais cela est suffisant pour un exemple de fonctionnement.
 
-\chapter{Conclusion}
-\paragraph{}
-\todo{A mettre en forme}
-Partage des taches:
-Dans ce projet chacun avait des affinités, Celia par exemple est douée en développement android c'est donc elle qui s'est chargée de la création de l'application et de la majeure partie du développement. Justine quand à elle à une bonne vision du fonctionnement de l'outil ainsi qu'un bon esprit de synthèse elle s'est donc occupée de la création de l'API et des fonctions dites "haut niveau" qui facilitent l'utilisation de l'application. Vincent préfère la partie théorique et la modélisation algorithmique, il a donc été actif lors des discussions sur les choix d'implémentations lors des réunions de groupe et a développé l'algorithme de test.
+\chapter{Déroulement du projet}
+ \section{Partage des tâches}
+ \paragraph{}
+ Dans ce projet chacun avait des affinités, Celia par exemple est douée en développement android c'est donc elle qui s'est chargée de la création de l'application et de la majeure partie du développement. Justine quand à elle à une bonne vision du fonctionnement de l'outil ainsi qu'un bon esprit de synthèse elle s'est donc occupée de la création de l'API et des fonctions dites "haut niveau" qui facilitent l'utilisation de l'application. Vincent préfère la partie théorique et la modélisation algorithmique, il a donc été actif lors des discussions sur les choix d'implémentations lors des réunions de groupe et a développé l'algorithme de test.
+ \section{Rétrospective sur le travail d'équipe}
+ \paragraph{}
+ Le travail d'équipe s'est bien réparti, chacun avait ses taches à réaliser que ce soit de la recherche, du développement ou encore de la modélisation. Toute l'équipe participait activement aux discussions lorsqu'il y avait des décisions à prendre.
 
-Le travail d'équipe s'est bien réparti, chacun avait ses taches à réaliser que ce soit de la recherche, du développement ou encore de la modélisation. Toute l'équipe participait activement aux discussions lorsqu'il y avait des décisions à prendre.
+\chapter{Conclusion}
+\section{État d'avancement}
+\paragraph{}
+A ce jour nous avons une application qui gère un nombre non limité d'appareils inter-connectés simultanément. Nous pouvons nous connecter à un réseau existant à n'importe quel moment et être connu de tous.
+\paragraph{}
+Nous disposons aussi d'une API permettant le développement d'algorithmes distribués. Cette API peut être complétée si de nouveaux besoins sont découverts lors de l'utilisation de notre outil.
+\paragraph{}
+Nous avons cependant pris du retard sur l'implémentation de l'algorithme de démonstration qui est écrit mais pas utilisable directement dans l'application.
+\paragraph{}
+\section{difficultés rencontrées}
+\paragraph{}
+La principale difficulté que nous avons eu est la découverte du fonctionnement d'Android, c'est à dire comprendre l'architecture et l'articulation de toutes les parties d'une application. C'est en partie du à cela que nous n'avons pas pu mettre mettre en place l'algorithme.
+\todo{ajouter les difficultés}
+\paragraph{}
+
+
 
 \todo{partage des taches et travail en équipe}
 \chapter*{Bibliographie}
@@ -331,5 +350,8 @@ Le travail d'équipe s'est bien réparti, chacun avait ses taches à réaliser q
  Programmé en Java \todo{Ajouter la version} pour des appareils Android version \todo{AJOUTER LA VERSION ANDROID}
  
  Mots-clés : Android, Bluetooth, Wifi-Direct, NFC, Algorithme distriué, Visidia \todo{Parler de visidia qqpart}
+ 
  \chapter*{Abstract}
+ \todo{Doit être sur la même page que le résumé
+ }
 \end{document}          
