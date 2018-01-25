@@ -14,7 +14,7 @@ import static com.jujucecedudu.androidcomm.API.MessageTypes.*;
 
 public class API {
 
-    AlgoLamportChat algo;
+    private AlgoLamportChat algo;
 
     public API(AlgoLamportChat a){
         algo = a;
@@ -23,7 +23,6 @@ public class API {
     private static final String TAG = "BLUETOOTH_TEST_API";
 
     private static MyBluetoothService myBluetoothService;
-    private AlgoLamportChat algo;
 
     public interface MessageTypes{
         byte SEND_MESSAGE = 0x10;
