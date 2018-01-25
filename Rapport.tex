@@ -60,10 +60,21 @@
     
 \end{titlepage}
 \chapter*{Remerciements}
+\paragraph{}
+Nous avions envie d'adresser nos sincères remerciements à plusieurs personnes qui nous ont aidé à la réalisation de ce projet ainsi qu'a l'élaboration de ce mémoire.
+
+
+En premier lieu nous remercions Mr Laurent Philippe notre tuteur pour son aide dans les choix que nous avons eu à prendre, et pour le temps qu'il nous à consacré tout au long de ce projet.
+
+Nous remercions également les personnes qui nous ont aidé à la relecture du mémoire.
+
+Enfin nous tenions à remercier Google Internship \todo{ça a un nom spécial celia ?} pour les cours Android qu'il a mis à disposition de certains membres du groupe.
 %Table des matières
 \begin{changemargin}
 \tableofcontents
 \end{changemargin}
+\chapter*{Glossaire}
+\todo{A remplir}
 
 \chapter{Introduction}
   \paragraph{}
@@ -80,12 +91,26 @@
   L'objectif de ce projet est de réaliser un outil permettant d'exécuter des algorithmes distribués sur des téléphones portables. Pour ce faire les appareils doivent pouvoir communiquer de manière synchronisée. Il doit être possible de rédiger simplement des algorithmes afin de les dérouler et d'observer son comportement (visualiser les messages et leur contenu). Ces algorithmes ont vocation à être utilisés pour créer des applications distribuées.
   
   Le projet est à réaliser en java sous android.
+  
+  
+  \todo{choisir le meilleur paragraphe}
+  
+  L’objectif de ce projet est de r´ealiser un environnement d’ex´ecution et de communication
+  sur des appareils android pour permettre le d´eveloppement et la d´emonstration
+  d’algorithmes distribu´es. L’environnement devra permettra une ´ecriture simple des algorithmes
+  et la r´ealisation de d´emonstrations pour simplifier leur compr´ehension. Le travail
+  consistera donc `a r´ealiser une plate-forme qui permette de programmer facilement un algorithme
+  distribu´e et de pouvoir le d´erouler tout en observant les ´echanges de messages et
+  le contenu des variables.
+  Les algorithmes pourront ensuite servir pour implanter des applications simples comme
+  des jeux. Le travail sera r´ealis´e en Java sous android.
+  
   \section{Problématiques}
   Les questions que nous nous sommes posés sont les suivantes : 
   \begin{itemize}
     \item Quelles technologies allons nous utiliser ?
     \item Quelle architecture allons nous mettre en place pour faciliter la rédaction des algorithmes ?
-    \item \todo{Trouver une troisième question}
+    \item Comment pouvons nous proposer un outil simple d'utilisation en masquant les aspects techniques de la communication ?
   \end{itemize}
 \chapter{Recherche des technologies de communication}
   \paragraph{}
@@ -94,6 +119,9 @@
   La première est l'étude des différentes technologies de communications disponibles sur les appareils Android
   La deuxième est l'implémentation du système de communication dans la technologie choisie
   La troisième est la mise en place d'une API permettant aux développeurs de mettre en place les algorithmes souhaités, en l'occurence des algorithmes distribués, sur l'application créée.
+  \todo{partie en dessous à revoir}
+  Nous avions une étude préalable à faire pour décider de la technologie à utiliser en effectuant des comparatifs.
+  Nous avons en parallel mené le développement d'applications basiques de connexions pour tester directement le résultat de nos recherches
   \section{Bluetooth}
     \subsection{Historique}
     \subsection{Fonctionnement} \todo{pap}
@@ -101,14 +129,32 @@
     \subsection{Inconvénients}
   \section{Wifi Direct ou juste Wifi} \todo{DECIDER}
     \subsection{Historique}
+      \paragraph{}
+      Crée par Wifi Alliance, le Wifi Direct permet le partage de données entre différents appareils grâce à leur connexion Wifi sans avoir besoin d'une liaison avec d'un point d'accès intermédiaire.
     \subsection{Fonctionnement}
+     \paragraph{}
+    L'activation du Wifi Direct sur les appareils ne nécessite d'activer qu'une option dans les paramètres, une fois ceci fait l'envoi des fichiers est possible. En revanche le Wifi direct est utilisable sur un dispositif ayant Android 4.0 minimum. 
     \subsection{Avantages}
+     \paragraph{}
+     L'avantage principale de l'utilisation du Wifi Direct est la vitesse d'envoie des fichiers entre les appareils, surtout lorsque de lourd fichiers sont en jeu. 
+     Il est aussi possible d'utiliser cette technologie entre différents type de dispositifs : smartphone, télévision, ordinateur, tablette,... Ce qui permet une utilisation large des applications grâce à une connectivité plus simple et plus rapide que le bluetooth. Un autre avantage est la compatibilité, tout appareil utilisant le Wifi classique sera en mesure de répondre à une communication avec un dispositif utilisant le Wifi Direct.
     \subsection{Inconvénients}
+    \paragraph{}
+    D'après certains retour, l'activation du Wifi Direct peut entraîner des soucis sur certains modèles. De plus certains dispositifs ne fonctionnent qu'avec des appareils de la même marque, ce qui complique la mise en place d'un algorithme distribué.
+    L'écriture du code du Wifi direct n'est pas aisé à cause du manque de documentation et du fait que cette technologie n'est pas encore très répendue. D'autre part lorsque des erreurs étaient rencontrées lors de l'écriture de l'algorithme, il était difficile de savoir d'où provenait le problème. Est-ce qu'il était dû à la marque du téléphone ? Ou à une erreur de code ? 
   \section{NFC}
     \subsection{Historique}
+     \paragraph{}
+     Le NFC ou Near Field Communication est une technologie de communication radio. Elle est apparue en 1994 et nous est encore utile aujourd'hui dans les téléphones (paiement mobile) par exemple. \todo{parler de androidBeam depuis jellybean}
     \subsection{Fonctionnement}
+     \paragraph{}
+     Le NFC permet l'échange d'informations sur de très courtes distances. Il permet de se faire passer pour une carte à puce face à un lecteur, de faire office de terminal pour lire des cartes, mais possède également un mode pair à pair pour l'échange d'informations entre deux terminaux mobiles. C'est ce mode qui nous intéressait.
     \subsection{Avantages}
+    \paragraph{}
+    Le NFC dispose de nombreux avantages comme des fréquences très basse (13.56Mhz contre 2.5Ghz pour le Wifi b/g/n) permettant de \todo{demander a celia ce que ca fait}et un mode de communication full duplex permettant des communications dans les deux sens en même temps.
     \subsection{Inconvénients}
+    \paragraph{}
+    Le principal inconvénient de cette technologie est la distance, en effet elle ne fonctionne qu'avec un espacement de quelques centimètres entre les deux terminaux. Cela ne convenait pas à la constructions d'un grand réseau de téléphones portables.
   \section{Choix de la technologie}
   
 %   \section{Comparaison Bluetooth/Wifi} \todo{virer cette partie}
@@ -122,12 +168,13 @@
 %     L'implémentation du Bluetooth est bien plus rapide que celle du wifi, la documentation est plus simple et plus accessible. Nous essayons d'implémenter le wifi mais le temps passant, nous préférons partir sur le bluetooth qui fonctionne déjà.
     
 \chapter{Développement de l'architecture de l'application}
+\todo{dire pourqoi on a choisit ça en fonction des besoins de production qu'on avait}
   \paragraph{}
   Dans cette partie nous allons présenter la façon dont l'application a été conçue et expliquer le fonctionnement de celle-ci. L'application a été architecturée en plusieurs couches pour introduire plusieurs niveaux d'abstraction, séparer les rôles et simplifier le développement.
   
   \section{Couche bas niveau}
     \paragraph{}
-    La couche bas niveau de notre application permet la communication entre plusieurs appareils et va servir de support à l'implémentation des algorithmes distribués. Elle est constituée des mécaniques de connexion, de routage et d'échange de paquets sur le réseau afin de permettre une mise en place simple des algorithmes. C'est elle qui a été concue en premier car elle est le soubassement de toutes les Fonctionnalités de notre application.
+    La couche bas niveau de notre application permet la communication entre plusieurs appareils et va servir de support à l'implémentation des algorithmes distribués. Elle est constituée des mécaniques de connexion, de routage et d'échange de paquets sur le réseau afin de permettre une mise en place simple des algorithmes. C'est elle qui a été conçue en premier car elle est le soubassement de toutes les Fonctionnalités de notre application.
   
     \subsection{Fonctionnement de base}
     \paragraph{}
@@ -142,7 +189,7 @@
     
     \subsection{Communication}
     \paragraph{}
-    Le mécanisme de communication est implémenté dans un nouveau thread pour permettre le maintien de plusieurs connexions simultanées. Ce thread va constemment attendre qu'un flux de données arrive en entrée sur la socket. Il va bien évidemment aussi être capable d'écrire sur cette socket.
+    Le mécanisme de communication est implémenté dans un nouveau thread pour permettre le maintien de plusieurs connexions simultanées. Ce thread va constamment attendre qu'un flux de données arrive en entrée sur la socket. Il va bien évidemment aussi être capable d'écrire sur cette socket.
     Tous les messages échangés adoptent la même forme : un expéditeur, un destinataire et le contenu du message constitué lui-même d'un octet correspondant au type de message et d'un tableau d'octets correspondant aux données du message. Le type de message peut être soit un type de message de bas niveau permettant la mise en place des mécanismes de bas niveau de la communication soit un type de message correspondant aux messages de l'algorithme distribué implémenté.
     Lors de la réception d'un message sur la socket, nous récupérons le type de message envoyé et effectuons les traitements adpatés en fonction de celui-ci.
     
@@ -153,7 +200,7 @@
     //table de routage
     //gestion des entrées de la table
     //recherche de chemin vers
-    //communication avec un appreil distant
+    //communication avec un appareil distant
   
   \section{Couche intermédiaire}
     \subsection{Implémentation d'un anneau}
@@ -174,6 +221,9 @@
       
   \section{Couche haut niveau}
     \subsection{API sur le modèle de Visidia}
+    \paragraph{}
+    Afin de pouvoir utiliser le couche bas niveau et intermédiaire de l'application, une API a été codée et réalisera le lien avec les algorithme qu'un développeur voudra mettre en place.
+    Elle permet d'envoyer des messages entre différents appareils et la réception de ceux-ci. L'implémentation de l'API a été réalisé en suivant le modèle utilisé par Visidia vu en Synchronisation distribué durant ce semestre en Master. Des fonctions ont été créées afin de permettre d'utiliser les informations de la table de routage et le lien pour accéder aux appareils.
     \subsection{Algorithmes} \todo{Implémentabilité}
 %   \section{Fonctionnalités de base / connexion}
 %     \paragraph{}
@@ -210,10 +260,49 @@
   \paragraph{}
 
 \chapter{Algorithme distribué implémenté}
+\paragraph{}
+Afin de démontrer les fonctionnalités de l'application nous avons réalisés un algorithme distribué ayant  pour but la gestion d'un chat entre plusieurs téléphones mobiles. L'écriture dans le chat représente la section critique (deux appareils ne doivent pas pouvoir écrire en même temps).
+
+Principe:
+
+Lorsqu'une personne souhaite écrire dans le chat elle clique sur le bouton "Demander l'accès" puis attend la notification d'accès.
+Elle peut écrire autant qu'elle veut.
+Quand elle à fini d'écrire il lui suffit de cliquer sur le bouton "fin de transmission" pour libérer la section critique et permettre à quelqu'un d'autre de prendre la main.
+
+Pour gérer la synchronisation des demandes nous avons choisi d'implémenter l'algorithme de Lamport avec estampilles ce qui nous permet de gérer les demandes concurrentes grâce à la datation logique. Ce n'est pas le plus optimisé des algorithmes à estampille mais cela est suffisant pour un exemple de fonctionnement.
+
 \chapter{Outils de développement}
   \paragraph{}
   Utilisation d'Android Studio et versionnement des sources avec un serveur gitlab.
   \section{Android Studio}
+  Nous devions développer sous Android et avons donc eu le choix entre plusieurs IDE (Android Studio, Eclipse). S'étant familiarisés avec les outils JetBrains pendant notre cursus c'est tout naturellement que notre choix s'est porté sur Android Studio. De plus, depuis 2014, cet IDE est devenu l'outil officiel de Google pour le développement android.
   \section{Gitlab}
+  \todo{A toi de jouer Celia}
+  %besoin de versionner
+  %on disposait de serveurs gitlab chez nous
 \chapter{Conclusion}
+\paragraph{}
+\todo{A mettre en forme}
+Partage des taches:
+Dans ce projet chacun avait des affinités, Celia par exemple est douée en développement android c'est donc elle qui s'est chargée de la création de l'application et de la majeure partie du développement. Justine quand à elle à une bonne vision du fonctionnement de l'outil ainsi qu'un bon esprit de synthèse elle s'est donc occupée de la création de l'API et des fonctions dites "haut niveau" qui facilitent l'utilisation de l'application. Vincent préfère la partie théorique et la modélisation algorithmique, il a donc été actif lors des discussions sur les choix d'implémentations lors des réunions de groupe et a développé l'algorithme de test.
+
+Le travail d'équipe s'est bien réparti, chacun avait ses taches à réaliser que ce soit de la recherche, du développement ou encore de la modélisation. Toute l'équipe participait activement aux discussions lorsqu'il y avait des décisions à prendre.
+
+\todo{partage des taches et travail en équipe}
+\chapter*{Biblio}
+ \paragraph{}
+ NFC
+ http://www.blog-crm.fr/exposes-etudiants/technologie-nfc/ (dernière consultation \todo{à remplir}
+ https://fr.wikipedia.org/wiki/Communication_en_champ_proche (dernière consultation \todo{à remplir}
+ 
+ WifiDirect
+ http://www.techradar.com/news/phone-and-communications/mobile-phones/wi-fi-direct-what-it-is-and-why-you-should-care-1065449 (16/10/2017)
+ https://www.androidpit.com/what-is-wifi-direct (16/10/2017)
+ https://stackoverflow.com/questions/11251610/wifi-direct-android-4-0-with-multiple-3-devices (16/10/2017)
+ http://www.thinktube.com/tech/android/wifi-direct (08/11/2017)
+ 
+ Bluetooth
+ http://www.phonandroid.com/bluetooth-google-fast-pair-systeme-simplifier-appairage-smartphone.html (31/10/2017)
+ \chapter*{Résumé}
+ \chapter*{Abstract}
 \end{document}          

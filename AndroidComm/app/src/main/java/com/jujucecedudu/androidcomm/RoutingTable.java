@@ -171,6 +171,16 @@ public class RoutingTable implements Serializable{
         return table.size();
     }
 
+    public String[] getDevicesMACs(){
+        String[] str = new String[table.size()];
+        int i =0;
+        for (Object[] entry : table) {
+            str[i] = getTargetMAC(entry);
+            i++;
+        }
+        return str;
+    }
+
     @Override
     public String toString() {
         String str = "";
