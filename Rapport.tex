@@ -183,9 +183,12 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
 
 \chapter{Outils de développement}
   \paragraph{}
-  Utilisation d'Android Studio et versionnement des sources avec un serveur gitlab.
+  Pour ce projet nous avons libre choix des outils à utiliser. Nous avons besoin d'un IDE pour le développement de l'application ainsi qu'un outil de gestion de version.
+
   \section{Android Studio}
-  Nous devions développer sous Android et avons donc eu le choix entre plusieurs IDE (Android Studio, Eclipse). S'étant familiarisés avec les outils JetBrains pendant notre cursus c'est tout naturellement que notre choix s'est porté sur Android Studio. De plus, depuis 2014, cet IDE est devenu l'outil officiel de Google pour le développement android.
+  Nous devons développer sous Android, nous avons donc le choix entre plusieurs IDE (Android Studio et Éclipse). Ayant l'habitude de travailler avec les outils JetBrains pendant notre cursus c'est tout naturellement que notre choix se porte sur Android Studio. De plus, depuis 2014, cet IDE est devenu l'outil officiel de Google pour le développement Android et est régulièrement mis à jour dû à la perpétuelle évolution de ce système d'exploitation.
+  \paragraph{}
+  Cet outil permet la création d'une application Android basique très facilement grâce à la gestion des classes Java et des fichiers de paramétrages de l'interface graphique. Il permet de concentrer en un endroit tous les composants nécessaires au fonctionnement d'une application.
   \section{Gitlab}
   \todo{A toi de jouer Celia}
   %besoin de versionner
@@ -281,26 +284,63 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
 %   \section{Couche haute API algos}
 %     \paragraph{}
     
-  \subchapter{Développement d'une API permettant de créer des algos distribués}
+  \subchapter{Développement d'une API permettant de créer des algorithmes distribués}
   \paragraph{}
 
-\chapter{Algorithme distribué implémenté}
+\chapter{Algorithme implémenté}
 \paragraph{}
-Afin de démontrer les fonctionnalités de l'application, nous avons réalisé un algorithme distribué ayant pour but la gestion d'un chat entre plusieurs téléphones mobiles. L'écriture dans le chat représente la section critique (deux appareils ne doivent pas pouvoir écrire \todo{pas plutôt envoyer ? parce que empêcher d'écrire je pense pas que ça va être possible, ni intéressant} en même temps).
-
+Afin de démontrer les fonctionnalités de l'application, nous avons implémenté un algorithme distribué ayant pour but la gestion d'un chat entre plusieurs téléphones mobiles. L'écriture dans le chat représente la section critique (deux appareils ne doivent pas pouvoir écrire en même temps).
+\paragraph{}
 Le principe de l'algorithme est le suivant : lorsqu'une personne souhaite écrire dans le chat elle clique sur le bouton "Demander l'accès" puis attend la notification d'accès.
 Elle peut écrire autant qu'elle veut.
 Quand elle à fini d'écrire il lui suffit de cliquer sur le bouton "fin de transmission" pour libérer la section critique et permettre à quelqu'un d'autre de prendre la main.
-
+\paragraph{}
 Pour gérer la synchronisation des demandes nous avons choisi d'implémenter l'algorithme de Lamport avec estampilles ce qui nous permet de gérer les demandes concurrentes grâce à la datation logique. Ce n'est pas le plus optimisé des algorithmes à estampille mais cela est suffisant pour un exemple de fonctionnement.
+\paragraph{}
+Dans l'architecture de notre projet nous disposons de deux classes java nécessaires au fonctionnement de l'algorithme.
+\paragraph{}
+La première représente notre processus et contient :
+\newline
+\begin{itemize}
+    \item Les données du processus (horloge locale, tableau d'horloge des autres processus, la liste de ses voisins, et d'autres variables utiles au processus).
+    \newline
+    \item Les différentes règles de l'algorithme (ce sont les fonctions des processus, par exemple comment réagir à la réception d'une demande d'accès à la section critique)
+\end{itemize}
+\paragraph{}
+La seconde est l'API qui nous permet de gérer les action à effectuer lors de la réception d'un message en fonction de son type (grâce à la fonction onMessage).
+\newpage
+\paragraph{}
+Voici un exemple de règle pour la réception d'un message de type REQ représentant la demande d'un autre processus pour entrer en section critique :
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.70]{receiveREQ.png}
+    \caption{Règle de réception d'un message de type REQ}
+\end{figure}
+
+
+\paragraph{}
+Lors de la réception d'un message de type REQ le processus incrémente son horloge locale puis met à jour le tableau d'horloge des demandes d'accès à la section critique et le tableau des requêtes, à l'indice correspondant à l'émetteur. Il envoie ensuite un message de type ACK daté de bonne réception à l'émetteur.
+\newpage
+
+\paragraph{}
+Voici maintenant la fonction onMessage() qui, en fonction du type de message, reçu appelle la règle correspondante.
+
+\begin{figure}[h]
+    \hspace{-3cm}
+    \includegraphics[scale=0.50]{onMessage.png}
+    \caption{Fonction d'appel de règles de l'API}
+\end{figure}
+
+\paragraph{}
+On remarque ici, pour notre cas de réception de demande d'accès à la section critique, qu'à la réception d'un message de type REQ on appelle la fonction receiveACK.
 
 \chapter{Déroulement du projet}
  \section{Partage des tâches}
  \paragraph{}
- Dans ce projet chacun avait des affinités, Celia par exemple est douée en développement android c'est donc elle qui s'est chargée de la création de l'application et de la majeure partie du développement. Justine quand à elle à une bonne vision du fonctionnement de l'outil ainsi qu'un bon esprit de synthèse elle s'est donc occupée de la création de l'API et des fonctions dites "haut niveau" qui facilitent l'utilisation de l'application. Vincent préfère la partie théorique et la modélisation algorithmique, il a donc été actif lors des discussions sur les choix d'implémentations lors des réunions de groupe et a développé l'algorithme de test.
+ Dans ce projet chacun avait des affinités, Celia par exemple est douée en développement Android c'est donc elle qui s'est chargée de la création de l'application et de la majeure partie du développement. Justine quand à elle a une bonne vision du fonctionnement de l'outil ainsi qu'un bon esprit de synthèse elle s'est donc occupée de la création de l'API et des fonctions dites "haut niveau" qui facilitent l'utilisation de l'application. Vincent préfère la partie théorique et la modélisation algorithmique, il a donc été actif lors des discussions sur les choix d'implémentations lors des réunions de groupe et a développé l'algorithme de test.
  \section{Rétrospective sur le travail d'équipe}
  \paragraph{}
- Le travail d'équipe s'est bien réparti, chacun avait ses taches à réaliser que ce soit de la recherche, du développement ou encore de la modélisation. Toute l'équipe participait activement aux discussions lorsqu'il y avait des décisions à prendre.
+ Le travail d'équipe s'est bien réparti, chacun avait ses taches à réaliser que ce soit de la recherche, du développement ou encore de la modélisation. Toute l'équipe participait activement aux discussions lorsqu'il y avait des décisions à prendre ou lorsqu'un membre de l'équipe était en difficulté.
 
 \chapter{Conclusion}
 \section{État d'avancement}
