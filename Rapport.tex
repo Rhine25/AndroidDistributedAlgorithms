@@ -89,29 +89,30 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
 
 \chapter{Présentation du projet}
   \section{Sujet}
-  L'objectif de ce projet est de réaliser un outil permettant d'exécuter des algorithmes distribués sur des tablettes et des téléphones portables. Pour ce faire, les appareils doivent pouvoir communiquer de manière synchronisée. Il doit être possible de rédiger simplement des algorithmes afin de les dérouler et d'observer leur comportement (visualiser les messages et leur contenu). \todo{WTF ->} Ces algorithmes ont vocation à être utilisés pour créer des applications distribuées.
-  
-  Le projet est à réaliser avec Java sous Android.
-  
-  
-  \todo{choisir le meilleur paragraphe}
-  
+  \paragraph{}
   L’objectif de ce projet est de réaliser un environnement d’exécution et de communication
   sur des appareils Android pour permettre le développement et la démonstration
   d’algorithmes distribués. L’environnement devra permettre l'écriture simple des algorithmes
-  et \todo{WTF ->} la réalisation de démonstrations pour simplifier leur compréhension. Le travail
-  consistera donc à réaliser une plateforme qui permette de programmer facilement un algorithme
+  et la réalisation de démonstrations pour simplifier leur compréhension.
+  \paragraph{}
+  Le travail consiste donc à réaliser une plateforme qui permette de programmer facilement un algorithme
   distribué et de pouvoir le dérouler tout en observant les échanges de messages et
   le contenu des variables.
   Les algorithmes pourront ensuite servir pour implanter des applications simples comme
-  des jeux. Le travail sera réalisé avec Java sous Android.
+  des jeux. 
+  \paragraph{}
+  Le travail sera réalisé avec Java sous Android.
   
   \section{Problématiques}
-  Les questions que nous nous sommes posées sont les suivantes : 
+  \paragraph{}
+  Après la première réunion de travail avec notre tueur, nous avons pu identifier les problématiques posées par notre projet, qui sont les suivantes :
+\paragraph{}
   \begin{itemize}
-    \item Quelles technologies allons-nous utiliser ?
-    \item Quelle architecture allons-nous mettre en place pour faciliter la rédaction des algorithmes ?
-    \item Comment pouvons-nous proposer un outil simple d'utilisation en masquant les aspects techniques de la communication ?
+    \item Quelles sont les technologies dont nous disposons pour faire communiquer nos appareils Android ensemble ?
+    \newline
+    \item Quelle architecture d'application allons-nous mettre en place pour faciliter l'usage de celle-ci (rédaction des algorithmes distribués) pour l'utilisateur final ?
+    \newline
+    \item Comment pouvons-nous proposer un outil simple d'utilisation en masquant les aspects techniques de la communication entre appareils ?
   \end{itemize}
 \chapter{Recherche des technologies de communication}
   \paragraph{}
@@ -134,7 +135,7 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
      \paragraph{}
     L'activation du Wifi Direct sur les appareils ne nécessite d'activer qu'une option dans les paramètres du Wifi, grâce aux options avancés. Une fois ceci fait, l'envoi des fichiers est possible.
     \paragraph{}
-    Si la technologie n'est pas activée au lancement d'une application, il est possibe de mettre en place une autorisation d'activation dans le code afin de mettre en marche le Wifi Direct. En revanche ce n'est utilisable que sur des dispositifs sous Android 2.3 minimum.
+    Si la technologie n'est pas activée au lancement d'une application, il est possible de mettre en place une autorisation d'activation dans le code afin de mettre en marche le Wifi Direct. En revanche ce n'est utilisable que sur des dispositifs sous Android 2.3 minimum.
     \subsection{Avantages}
      \paragraph{}
      L'avantage principal de l'utilisation du Wifi Direct est la vitesse d'envoi des fichiers entre les appareils, surtout lorsque de lourds fichiers sont en jeu. 
