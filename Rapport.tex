@@ -130,7 +130,9 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
       Créé par la Wifi Alliance, le Wifi Direct permet le partage de données entre différents appareils grâce à leur connexion Wifi sans avoir besoin d'une liaison avec d'un point d'accès intermédiaire.
     \subsection{Fonctionnement}
      \paragraph{}
-    L'activation du Wifi Direct sur les appareils ne nécessite d'activer qu'une option \todo{quelle option ?} dans les paramètres \todo{activation à faire à la main par l'utilisateur ou possible depuis le code comme pour le bluetooth ?}. Une fois ceci fait, l'envoi des fichiers est possible. En revanche le Wifi Direct n'est utilisable que sur les dispositifs installés sous Android 4.0 minimum.
+    L'activation du Wifi Direct sur les appareils ne nécessite d'activer qu'une option dans les paramètres du Wifi, grâce aux options avancé. Une fois ceci fait, l'envoi des fichiers est possible.
+    \paragraph{}
+    Si la technologie n'est pas activée au lancement d'une application, une autorisation d'activation est possible à mettre en place dans le code afin de mettre en marche le Wifi Direct. En revanche ce n'est utilisable que sur des dispositifs sous Android 2.3 minimum.
     \subsection{Avantages}
      \paragraph{}
      L'avantage principal de l'utilisation du Wifi Direct est la vitesse d'envoi des fichiers entre les appareils, surtout lorsque de lourds fichiers sont en jeu. 
@@ -153,6 +155,16 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
     \paragraph{}
     Le principal inconvénient de cette technologie est la distance, en effet elle ne fonctionne qu'avec un espacement de quelques centimètres entre les deux terminaux. \todo{idem, à mettre dans le choix} Cela ne convenait pas à la constructions d'un grand réseau de téléphones portables.
   \section{Choix de la technologie}
+  
+  Afin de prendre une décision sur la techonolie a utilisé pour l'application, des comparatifs ont été réalisés en mettant en avant les avantages et les inconvénients. 
+  \paragraph{}
+  En ce qui concerne le NFC, il a été décidé de ne pas retenir cette solution en raison de la faible distance requise entre deux appareils pour son fonctionnement (environ 10cm maximum).
+  \paragraph{}
+  Pour départager le Bluetooth et le Wifi Direct, il a été décidé de coder deux applications utilisant chacune une des technologie et de les comparer directement grâce aux implémentation réaliser.
+  \paragraph{}
+  Concernant le Bluetooth, l'avancé de l'application était plutôt rapide, grâce à des tutoriels Android mise en place par Google. Cependant pour le Wifi Direct, l'écriture du code a été plus compliqué à réaliser, lorsque des erreurs étaient rencontrées lors de l'écriture de l'application, il était difficile de savoir d'où provenait le problème. Est-ce qu'il était dû à la marque du téléphone ? Ou à une erreur de code ? 
+  \paragraph{} 
+  L'application Bluetooth étant terminée et fonctionnelle contrairement à celle utilisant le Wifi, il a donc été décidé pour une bonne avancé du projet de choisir la première option pour notre application.
   
 %   \section{Comparaison Bluetooth/Wifi} \todo{virer cette partie}
 %     \paragraph{}
