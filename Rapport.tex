@@ -76,15 +76,17 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
 \todo{A remplir}
 
 \chapter{Introduction}
+\sloppy
   \paragraph{}
   Différents projets ont été proposés aux étudiants de deuxième année de Master pour cette année 2018. Dans notre cas nous avons choisi le sujet suivant : "Développement d’un environnement pour les algorithmes distribués sur Android".
-  
-  Ce projet nous a intéressé car il mélangeait différents domaines appréciés par les membres de notre trinome soit la synchronisation distribuée et le développement Android.
+  \paragraph{}
+  Ce projet nous a intéressé car il mélangeait différents domaines appréciés par les membres de notre trinôme soit la synchronisation distribuée et le développement Android.
   L'aspect distribué permet aux utilisateurs d'avoir leur application sur leur téléphone qui partage des données avec les autres terminaux mobiles inter-connectés.
-  
+  \paragraph{}
   Quelles sont les solutions et les méthodes que nous avons appliquées pour réaliser ce projet ?
-  
-  Ce rapport se compose de cinq grands axes. Nous étudierons tout d'abord le sujet du projet en détail puis nous présenterons les recherches préliminaires au développement.Par la suite nous allons décrire l'architecture du projet avec ses différentes couches d'implémentation et l'algorithme implémenté afin de tester les fonctionnalités crées. Enfin nous reviendrons sur les outils utilisés.
+  \paragraph{}
+  Ce rapport se compose de cinq grands axes. Nous étudions tout d'abord le sujet du projet en détail puis nous développons les recherches préliminaires au développement. 	Par la suite nous présentons les outils de développement utilisés puis décrivons l'architecture du projet avec ses différentes couches d'implémentation. Enfin nous expliquons l'algorithme que nous voulons implémenter afin de tester les fonctionnalités crées.
+
 \chapter{Présentation du projet}
   \section{Sujet}
   L'objectif de ce projet est de réaliser un outil permettant d'exécuter des algorithmes distribués sur des tablettes et des téléphones portables. Pour ce faire, les appareils doivent pouvoir communiquer de manière synchronisée. Il doit être possible de rédiger simplement des algorithmes afin de les dérouler et d'observer leur comportement (visualiser les messages et leur contenu). \todo{WTF ->} Ces algorithmes ont vocation à être utilisés pour créer des applications distribuées.
@@ -175,7 +177,17 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
 %     Puis afin d'avoir une comparaison plus tangible des deux technologies, nous décidons d'implémenter deux applications distinctes utilisant chacune une des technologies. Cela dans le but de comparer autant les performances/limites des technologies que leur facilité de mise en place.
 %     -> Conclusion
 %     L'implémentation du Bluetooth est bien plus rapide que celle du wifi, la documentation est plus simple et plus accessible. Nous essayons d'implémenter le wifi mais le temps passant, nous préférons partir sur le bluetooth qui fonctionne déjà.
-    
+
+\chapter{Outils de développement}
+  \paragraph{}
+  Utilisation d'Android Studio et versionnement des sources avec un serveur gitlab.
+  \section{Android Studio}
+  Nous devions développer sous Android et avons donc eu le choix entre plusieurs IDE (Android Studio, Eclipse). S'étant familiarisés avec les outils JetBrains pendant notre cursus c'est tout naturellement que notre choix s'est porté sur Android Studio. De plus, depuis 2014, cet IDE est devenu l'outil officiel de Google pour le développement android.
+  \section{Gitlab}
+  \todo{A toi de jouer Celia}
+  %besoin de versionner
+  %on disposait de serveurs gitlab chez nous
+
 \chapter{Développement de l'architecture de l'application}
 \todo{dire pourqoi on a choisit ça en fonction des besoins de production qu'on avait}
   \paragraph{}
@@ -279,15 +291,6 @@ Quand elle à fini d'écrire il lui suffit de cliquer sur le bouton "fin de tran
 
 Pour gérer la synchronisation des demandes nous avons choisi d'implémenter l'algorithme de Lamport avec estampilles ce qui nous permet de gérer les demandes concurrentes grâce à la datation logique. Ce n'est pas le plus optimisé des algorithmes à estampille mais cela est suffisant pour un exemple de fonctionnement.
 
-\chapter{Outils de développement}
-  \paragraph{}
-  Utilisation d'Android Studio et versionnement des sources avec un serveur gitlab.
-  \section{Android Studio}
-  Nous devions développer sous Android et avons donc eu le choix entre plusieurs IDE (Android Studio, Eclipse). S'étant familiarisés avec les outils JetBrains pendant notre cursus c'est tout naturellement que notre choix s'est porté sur Android Studio. De plus, depuis 2014, cet IDE est devenu l'outil officiel de Google pour le développement android.
-  \section{Gitlab}
-  \todo{A toi de jouer Celia}
-  %besoin de versionner
-  %on disposait de serveurs gitlab chez nous
 \chapter{Conclusion}
 \paragraph{}
 \todo{A mettre en forme}
