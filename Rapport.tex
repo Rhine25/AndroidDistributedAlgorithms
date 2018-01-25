@@ -61,14 +61,13 @@
 \end{titlepage}
 \chapter*{Remerciements}
 \paragraph{}
-Nous avions envie d'adresser nos sincères remerciements à plusieurs personnes qui nous ont aidé à la réalisation de ce projet ainsi qu'a l'élaboration de ce mémoire.
+Nous tenons à adresser nos sincères remerciements à plusieurs personnes qui nous ont aidées à la réalisation de ce projet ainsi qu'à l'élaboration de ce mémoire.
 
+En premier lieu nous remercions M. Laurent Philippe, notre tuteur, pour son aide dans les choix que nous avons eu à prendre, et pour le temps qu'il nous à consacré tout au long de ce projet.
 
-En premier lieu nous remercions Mr Laurent Philippe notre tuteur pour son aide dans les choix que nous avons eu à prendre, et pour le temps qu'il nous à consacré tout au long de ce projet.
+Nous remercions également les personnes qui nous ont aidés à la relecture du mémoire.
 
-Nous remercions également les personnes qui nous ont aidé à la relecture du mémoire.
-
-Enfin nous tenions à remercier Google Internship \todo{ça a un nom spécial celia ?} pour les cours Android qu'il a mis à disposition de certains membres du groupe.
+Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challenge Scholarship, une formation Android qui a été mise à disposition de certains membres du groupe.
 %Table des matières
 \begin{changemargin}
 \tableofcontents
@@ -88,60 +87,58 @@ Enfin nous tenions à remercier Google Internship \todo{ça a un nom spécial ce
   Ce rapport se compose de cinq grands axes. Nous étudierons tout d'abord le sujet du projet en détail puis nous présenterons les recherches préliminaires au développement.Par la suite nous allons décrire l'architecture du projet avec ses différentes couches d'implémentation et l'algorithme implémenté afin de tester les fonctionnalités crées. Enfin nous reviendrons sur les outils utilisés.
 \chapter{Présentation du projet}
   \section{Sujet}
-  L'objectif de ce projet est de réaliser un outil permettant d'exécuter des algorithmes distribués sur des téléphones portables. Pour ce faire les appareils doivent pouvoir communiquer de manière synchronisée. Il doit être possible de rédiger simplement des algorithmes afin de les dérouler et d'observer son comportement (visualiser les messages et leur contenu). Ces algorithmes ont vocation à être utilisés pour créer des applications distribuées.
+  L'objectif de ce projet est de réaliser un outil permettant d'exécuter des algorithmes distribués sur des tablettes et des téléphones portables. Pour ce faire, les appareils doivent pouvoir communiquer de manière synchronisée. Il doit être possible de rédiger simplement des algorithmes afin de les dérouler et d'observer leur comportement (visualiser les messages et leur contenu). \todo{WTF ->} Ces algorithmes ont vocation à être utilisés pour créer des applications distribuées.
   
-  Le projet est à réaliser en java sous android.
+  Le projet est à réaliser avec Java sous Android.
   
   
   \todo{choisir le meilleur paragraphe}
   
-  L’objectif de ce projet est de r´ealiser un environnement d’ex´ecution et de communication
-  sur des appareils android pour permettre le d´eveloppement et la d´emonstration
-  d’algorithmes distribu´es. L’environnement devra permettra une ´ecriture simple des algorithmes
-  et la r´ealisation de d´emonstrations pour simplifier leur compr´ehension. Le travail
-  consistera donc `a r´ealiser une plate-forme qui permette de programmer facilement un algorithme
-  distribu´e et de pouvoir le d´erouler tout en observant les ´echanges de messages et
+  L’objectif de ce projet est de réaliser un environnement d’exécution et de communication
+  sur des appareils Android pour permettre le développement et la démonstration
+  d’algorithmes distribués. L’environnement devra permettre l'écriture simple des algorithmes
+  et \todo{WTF ->} la réalisation de démonstrations pour simplifier leur compréhension. Le travail
+  consistera donc à réaliser une plateforme qui permette de programmer facilement un algorithme
+  distribué et de pouvoir le dérouler tout en observant les échanges de messages et
   le contenu des variables.
   Les algorithmes pourront ensuite servir pour implanter des applications simples comme
-  des jeux. Le travail sera r´ealis´e en Java sous android.
+  des jeux. Le travail sera réalisé avec Java sous Android.
   
   \section{Problématiques}
-  Les questions que nous nous sommes posés sont les suivantes : 
+  Les questions que nous nous sommes posées sont les suivantes : 
   \begin{itemize}
-    \item Quelles technologies allons nous utiliser ?
-    \item Quelle architecture allons nous mettre en place pour faciliter la rédaction des algorithmes ?
-    \item Comment pouvons nous proposer un outil simple d'utilisation en masquant les aspects techniques de la communication ?
+    \item Quelles technologies allons-nous utiliser ?
+    \item Quelle architecture allons-nous mettre en place pour faciliter la rédaction des algorithmes ?
+    \item Comment pouvons-nous proposer un outil simple d'utilisation en masquant les aspects techniques de la communication ?
   \end{itemize}
 \chapter{Recherche des technologies de communication}
   \paragraph{}
   L'objectif de ce projet est la réalisation d'un environnement d'exécution et de communication permettant le développement et la démonstration d'algorithmes distribués sur des appareils Android. Notre travail consiste donc au développement d'une application Android possédant son propre système de communication et capable de faire exécuter divers algorithmes.
   Notre travail se découpe en plusieurs phases :
-  La première est l'étude des différentes technologies de communications disponibles sur les appareils Android
-  La deuxième est l'implémentation du système de communication dans la technologie choisie
+  La première est l'étude des différentes technologies de communications disponibles sur les appareils Android.
+  La deuxième est l'implémentation du système de communication dans la technologie choisie.
   La troisième est la mise en place d'une API permettant aux développeurs de mettre en place les algorithmes souhaités, en l'occurence des algorithmes distribués, sur l'application créée.
-  \todo{partie en dessous à revoir}
-  Nous avions une étude préalable à faire pour décider de la technologie à utiliser en effectuant des comparatifs.
-  Nous avons en parallel mené le développement d'applications basiques de connexions pour tester directement le résultat de nos recherches
+  Afin de compléter l'étude des différentes technologies et confirmer notre choix, nous avons décidé de développer en parallèle plusieurs applications supportant chacune une des technologies de communication. Ceci afin de pouvoir comparer les performances de chacune des technologies ainsi que leurs limites et leur souplesse.
   \section{Bluetooth}
     \subsection{Historique}
     \subsection{Fonctionnement} \todo{pap}
     \subsection{Avantages}
     \subsection{Inconvénients}
-  \section{Wifi Direct ou juste Wifi} \todo{DECIDER}
+  \section{Wifi Direct}
     \subsection{Historique}
       \paragraph{}
-      Crée par Wifi Alliance, le Wifi Direct permet le partage de données entre différents appareils grâce à leur connexion Wifi sans avoir besoin d'une liaison avec d'un point d'accès intermédiaire.
+      Créé par la Wifi Alliance, le Wifi Direct permet le partage de données entre différents appareils grâce à leur connexion Wifi sans avoir besoin d'une liaison avec d'un point d'accès intermédiaire.
     \subsection{Fonctionnement}
      \paragraph{}
-    L'activation du Wifi Direct sur les appareils ne nécessite d'activer qu'une option dans les paramètres, une fois ceci fait l'envoi des fichiers est possible. En revanche le Wifi direct est utilisable sur un dispositif ayant Android 4.0 minimum. 
+    L'activation du Wifi Direct sur les appareils ne nécessite d'activer qu'une option \todo{quelle option ?} dans les paramètres \todo{activation à faire à la main par l'utilisateur ou possible depuis le code comme pour le bluetooth ?}. Une fois ceci fait, l'envoi des fichiers est possible. En revanche le Wifi Direct n'est utilisable que sur les dispositifs installés sous Android 4.0 minimum.
     \subsection{Avantages}
      \paragraph{}
-     L'avantage principale de l'utilisation du Wifi Direct est la vitesse d'envoie des fichiers entre les appareils, surtout lorsque de lourd fichiers sont en jeu. 
-     Il est aussi possible d'utiliser cette technologie entre différents type de dispositifs : smartphone, télévision, ordinateur, tablette,... Ce qui permet une utilisation large des applications grâce à une connectivité plus simple et plus rapide que le bluetooth. Un autre avantage est la compatibilité, tout appareil utilisant le Wifi classique sera en mesure de répondre à une communication avec un dispositif utilisant le Wifi Direct.
+     L'avantage principal de l'utilisation du Wifi Direct est la vitesse d'envoi des fichiers entre les appareils, surtout lorsque de lourds fichiers sont en jeu. 
+     Il est aussi possible d'utiliser cette technologie entre différents types de dispositifs, entre autres : smartphones, télévisions, ordinateurs, tablettes. Cela permet une utilisation large des applications grâce à une connectivité plus simple et plus rapide que le Bluetooth. Un autre avantage est la compatibilité : tout appareil utilisant le Wifi classique sera en mesure de répondre à une communication avec un dispositif utilisant le Wifi Direct.
     \subsection{Inconvénients}
     \paragraph{}
-    D'après certains retour, l'activation du Wifi Direct peut entraîner des soucis sur certains modèles. De plus certains dispositifs ne fonctionnent qu'avec des appareils de la même marque, ce qui complique la mise en place d'un algorithme distribué.
-    L'écriture du code du Wifi direct n'est pas aisé à cause du manque de documentation et du fait que cette technologie n'est pas encore très répendue. D'autre part lorsque des erreurs étaient rencontrées lors de l'écriture de l'algorithme, il était difficile de savoir d'où provenait le problème. Est-ce qu'il était dû à la marque du téléphone ? Ou à une erreur de code ? 
+    D'après certains retours, l'activation du Wifi Direct peut entraîner des soucis sur certains modèles. De plus certains dispositifs ne fonctionnent qu'avec des appareils de la même marque, ce qui complique la mise en place d'un algorithme distribué.
+    L'écriture du code du Wifi Direct n'est pas aisée à cause du manque de documentation et du fait que cette technologie n'est pas encore très répendue. \todo{plutôt à mettre dans la partie du choix, ici on se contente de résumer ce qu'on a appris juste avec la recherche initiale sans commencer à coder} D'autre part, lorsque des erreurs étaient rencontrées lors de l'écriture de l'algorithme \todo{pas algo, application ?}, il était difficile de savoir d'où provenait le problème. Est-ce qu'il était dû à la marque du téléphone ? Ou à une erreur de code ? 
   \section{NFC}
     \subsection{Historique}
      \paragraph{}
@@ -151,10 +148,10 @@ Enfin nous tenions à remercier Google Internship \todo{ça a un nom spécial ce
      Le NFC permet l'échange d'informations sur de très courtes distances. Il permet de se faire passer pour une carte à puce face à un lecteur, de faire office de terminal pour lire des cartes, mais possède également un mode pair à pair pour l'échange d'informations entre deux terminaux mobiles. C'est ce mode qui nous intéressait.
     \subsection{Avantages}
     \paragraph{}
-    Le NFC dispose de nombreux avantages comme des fréquences très basse (13.56Mhz contre 2.5Ghz pour le Wifi b/g/n) permettant de \todo{demander a celia ce que ca fait}et un mode de communication full duplex permettant des communications dans les deux sens en même temps.
+    Le NFC dispose de nombreux avantages comme des fréquences très basse (13.56Mhz contre 2.4Ghz pour le Wifi b/g/n/ac) permettant de \todo{demander a celia ce que ca fait, TAIN MAIS VOUS ETES SERIEUX ?}et un mode de communication full duplex permettant des communications dans les deux sens en même temps.
     \subsection{Inconvénients}
     \paragraph{}
-    Le principal inconvénient de cette technologie est la distance, en effet elle ne fonctionne qu'avec un espacement de quelques centimètres entre les deux terminaux. Cela ne convenait pas à la constructions d'un grand réseau de téléphones portables.
+    Le principal inconvénient de cette technologie est la distance, en effet elle ne fonctionne qu'avec un espacement de quelques centimètres entre les deux terminaux. \todo{idem, à mettre dans le choix} Cela ne convenait pas à la constructions d'un grand réseau de téléphones portables.
   \section{Choix de la technologie}
   
 %   \section{Comparaison Bluetooth/Wifi} \todo{virer cette partie}
@@ -174,7 +171,7 @@ Enfin nous tenions à remercier Google Internship \todo{ça a un nom spécial ce
   
   \section{Couche bas niveau}
     \paragraph{}
-    La couche bas niveau de notre application permet la communication entre plusieurs appareils et va servir de support à l'implémentation des algorithmes distribués. Elle est constituée des mécaniques de connexion, de routage et d'échange de paquets sur le réseau afin de permettre une mise en place simple des algorithmes. C'est elle qui a été conçue en premier car elle est le soubassement de toutes les Fonctionnalités de notre application.
+    La couche bas niveau de notre application permet la communication entre plusieurs appareils et va servir de support à l'implémentation des algorithmes distribués. Elle est constituée des mécaniques de connexion, de routage et d'échange de paquets sur le réseau afin de permettre une mise en place simple des algorithmes. C'est elle qui a été conçue en premier car elle est le soubassement de toutes les fonctionnalités de notre application.
   
     \subsection{Fonctionnement de base}
     \paragraph{}
@@ -222,8 +219,8 @@ Enfin nous tenions à remercier Google Internship \todo{ça a un nom spécial ce
   \section{Couche haut niveau}
     \subsection{API sur le modèle de Visidia}
     \paragraph{}
-    Afin de pouvoir utiliser le couche bas niveau et intermédiaire de l'application, une API a été codée et réalisera le lien avec les algorithme qu'un développeur voudra mettre en place.
-    Elle permet d'envoyer des messages entre différents appareils et la réception de ceux-ci. L'implémentation de l'API a été réalisé en suivant le modèle utilisé par Visidia vu en Synchronisation distribué durant ce semestre en Master. Des fonctions ont été créées afin de permettre d'utiliser les informations de la table de routage et le lien pour accéder aux appareils.
+    Afin de pouvoir utiliser les couches de niveau inférieur de l'application, une API a été développée et réalisera le lien avec les algorithme qu'un développeur voudra mettre en place.
+    Elle permet d'envoyer des messages entre différents appareils et la réception de ceux-ci. L'implémentation de l'API a été réalisée en suivant le modèle utilisé par le logiciel Visidia étudié en module de Synchronisation Distribuée durant ce semestre de Master. Des fonctions ont été créées afin de permettre l'utilisation des informations de la table de routage et du lien pour accéder aux appareils.
     \subsection{Algorithmes} \todo{Implémentabilité}
 %   \section{Fonctionnalités de base / connexion}
 %     \paragraph{}
@@ -261,11 +258,9 @@ Enfin nous tenions à remercier Google Internship \todo{ça a un nom spécial ce
 
 \chapter{Algorithme distribué implémenté}
 \paragraph{}
-Afin de démontrer les fonctionnalités de l'application nous avons réalisés un algorithme distribué ayant  pour but la gestion d'un chat entre plusieurs téléphones mobiles. L'écriture dans le chat représente la section critique (deux appareils ne doivent pas pouvoir écrire en même temps).
+Afin de démontrer les fonctionnalités de l'application, nous avons réalisé un algorithme distribué ayant pour but la gestion d'un chat entre plusieurs téléphones mobiles. L'écriture dans le chat représente la section critique (deux appareils ne doivent pas pouvoir écrire \todo{pas plutôt envoyer ? parce que empêcher d'écrire je pense pas que ça va être possible, ni intéressant} en même temps).
 
-Principe:
-
-Lorsqu'une personne souhaite écrire dans le chat elle clique sur le bouton "Demander l'accès" puis attend la notification d'accès.
+Le principe de l'algorithme est le suivant : lorsqu'une personne souhaite écrire dans le chat elle clique sur le bouton "Demander l'accès" puis attend la notification d'accès.
 Elle peut écrire autant qu'elle veut.
 Quand elle à fini d'écrire il lui suffit de cliquer sur le bouton "fin de transmission" pour libérer la section critique et permettre à quelqu'un d'autre de prendre la main.
 
