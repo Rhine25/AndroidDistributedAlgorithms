@@ -127,4 +127,12 @@ public class Utils {
         return null;
     }
 
+    static int byteToInt(byte[] b){
+        int res = 0;
+        for(int i=0; i<b.length; i++){
+            res += ((b[i] & 0xFF) << (8*(3-i)));
+        }
+        return res;
+    }
+
 }

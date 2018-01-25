@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mBluetoothService = new MyBluetoothService(this, mHandler);
-
+        
         if(mBluetoothAdapter == null){
             //device does not support bluetooth
             //TODO display text error message

@@ -17,6 +17,7 @@ public class AlgoLamportChat {
         return -1;
     }
 
+    API api = new API(this);
 
     public int numProc;
     public int nbVoisins;
@@ -45,12 +46,15 @@ public class AlgoLamportChat {
 
         clock = 0;
 
-        macTable = new String[];
+        nbNeigbours = api.getNbEntries();
+
+        macTable = api.getDevicesMACs();
+        macTable = new String[nbNeigbours];
 
         //TODO à trouver
         // procId = ;
 
-        nbNeigbours = macTable.length;
+
 
 
 
@@ -64,16 +68,21 @@ public class AlgoLamportChat {
 
         clock += 1;
         for(int i=0 ; i<nbNeigbours ; i++){
-            sendMessage(macTable[i], API.MessageTypes.REQ, clock);
+            api.sendMessage(macTable[i], API.MessageTypes.REQ, clock);
         }
         F_H[procId]=clock;
         F_M[procId]= API.MessageTypes.REQ;
 
         int neigbourId = 0;
-        for(int j=0 ; j<nbNeigbours ; j++){
-            inCriticalSection &= ( (F_H[procId] < F_H[j]) || ((F_H[procId] == F_H[j])&& procId < j));
+
+        while(!inCriticalSection){
+            for(int j=0 ; j<nbNeigbours ; j++){
+                inCriticalSection &= ( (F_H[procId] < F_H[j]) || ((F_H[procId] == F_H[j])&& procId < j));
+            }
         }
-        //try { this.wait(); } catch( InterruptedException ie) {}
+
+        //Log.e(TAG, "Couldn't convert object to byte array " + e);
+
     }
 
     public void receiveREQ(int rClock, String emmet){
@@ -83,7 +92,7 @@ public class AlgoLamportChat {
         F_H[idEmmet] = rClock;
         F_M[idEmmet] = API.MessageTypes.REQ;
 
-        sendMessage(emmet, API.MessageTypes.ACK, clock);
+        api.sendMessage(emmet, API.MessageTypes.ACK, clock);
 
         // envoyer ACK à emmet
     }
@@ -102,17 +111,17 @@ public class AlgoLamportChat {
     public void freeSC(){
         clock++;
         for(int i=0 ; i<nbNeigbours ; i++){
-            sendMessage(macTable[i], API.MessageTypes.REL, clock);
+            api.sendMessage(macTable[i], API.MessageTypes.REL, clock);
         }
         F_H[procId] = clock;
         F_M[procId] = API.MessageTypes.REL;
     }
 
     public void receiveREL(int rClock, String emmet){
+        int idEmmet = getIdByMAC(emmet, macTable, nbNeigbours);
         clock = Math.max(clock, rClock) + 1;
-        F_H[emmet] = rClock;
-        F_M[emmet] = API.MessageTypes.REL;
-        //notify
+        F_H[idEmmet] = rClock;
+        F_M[idEmmet] = API.MessageTypes.REL;
     }
 
 
