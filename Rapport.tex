@@ -61,13 +61,13 @@
 \end{titlepage}
 \chapter*{Remerciements}
 %Table des matières
-\begin{changemargin}{0cm}{0cm}{-10cm}{0cm}
+\begin{changemargin}
 \tableofcontents
 \end{changemargin}
 
 \chapter{Introduction}
   \paragraph{}
-  Différents projets ont été proposés aux élèves de deuxième année de Master pour cette année 2018. Dans notre cas nous avons choisi le sujet suivant : "Développement d’un environnement pour les algorithmes distribués sur Android".
+  Différents projets ont été proposés aux étudiants de deuxième année de Master pour cette année 2018. Dans notre cas nous avons choisi le sujet suivant : "Développement d’un environnement pour les algorithmes distribués sur Android".
   
   Ce projet nous a intéressé car il mélangeait différents domaines appréciés par les membres de notre trinome soit la synchronisation distribuée et le développement Android.
   L'aspect distribué permet aux utilisateurs d'avoir leur application sur leur téléphone qui partage des données avec les autres terminaux mobiles inter-connectés.
@@ -157,9 +157,21 @@
   
   \section{Couche intermédiaire}
     \subsection{Implémentation d'un anneau}
+    \paragraph{}
+    Afin de permettre l'implémentation d'algorithmes à base d'anneau, nous avons souhaité mettre en place un anneau. Nous avons tout d'abord tenté de construire un anneau dans la couche haute de l'application, au niveau développeur, mais la construction d'un anneau à ce niveau était complexe notemment au niveau de l'initiation de la construction de l'anneau. Nous avons alors décidé qu'il serait plus simple de créer l'anneau dans une couche plus basse, juste au-dessus de la couche de routage, de façon systématique, quitte à ce que l'anneau ne soit pas utilisé par le développeur.
+    
       \subsubsection{Création de l'anneau}
+      \paragraph{}
+      La création de l'anneau est donc réalisée en même temps que la connexion à un appareil. Lorsqu'un appareil se connecte au réseau, il demande à être inséré dans l'anneau du serveur. Plusieurs cas différents s'appliquent. Soit cette connexion est la première connexion du réseau, un anneau est donc créé avec l'appareil initial et le nouvel appareil, chacun étant le suivant de l'autre. Soit la connexion concerne un nouvel appareil qui s'implante dans un anneau déjà construit, auquel cas l'appareil est inséré dans l'anneau par son serveur. Soit la connexion est faite entre deux appareils qui se trouvent chacun déjà dans un anneau, ce qui peut amener à une fusion des anneaux.
+      
       \subsubsection{Insertion dans un anneau}
+      \paragraph{}
+      Lorsqu'un nouvel appareil se connecte au réseau, il doit être inséré dans l'anneau. Ce qui se passe est que l'appareil qui a accepté la connexion va envoyer son suivant au nouvel appareil et garder le nouvel appareil comme suivant.
+      
       \subsubsection{Fusion des anneaux}
+      \paragraph{}
+      Lorsque deux appareils se connectent entre eux tout en faisant chacun déjà partie d'un réseau, deux cas sont possibles. Dans la majorité des cas, cette connexion est réalisée par deux appareils faisant partie du même réseau, lors de la phase de construction d'un réseau complet. Dans ce cas aucune modification n'a besoin d'être effectué sur l'anneau : celui-ci est déjà construit et contient déjà les deux appareils. Cependant dans une petite minorité des cas, il est possible que les deux appareils fassent chacun partie d'un réseau distinct. Cela se produit lorsque deux réseaux éloignés spacialement se rapprochent et que deux appareils se retrouvent dans la portée Bluetooth. Dans ce cas deux anneaux distincts sont construits, il est alors nécessaire de les fusionner. 
+      
   \section{Couche haut niveau}
     \subsection{API sur le modèle de Visidia}
     \subsection{Algorithmes} \todo{Implémentabilité}
