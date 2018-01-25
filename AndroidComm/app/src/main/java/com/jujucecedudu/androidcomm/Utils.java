@@ -46,6 +46,13 @@ public class Utils {
         return null;
     }
 
+    static MessagePacket getMessagePacketFromByteMessage(byte[] message){
+        byte[] m = new byte[message.length];
+        for(int i=1;i<message.length;i++)
+            m[i-1]=message[i];
+        return Utils.deserializeMessage(m);
+    }
+    
     private byte[] getMACBytes(String deviceMAC){
         Log.i(TAG, "String MAC address : " + deviceMAC);
         Log.i(TAG, "Bytes MAC address : " + deviceMAC.getBytes());
