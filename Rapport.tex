@@ -11,7 +11,7 @@
 
 % Title Page
 \title{Développement d'un environnement pour algorithmes distribués sur Android}
-\author{Célia Dehors, Vincent Durand, Justine Romero}
+\author{Célia Dehors \\Vincent Durand \\Justine Romero}
 \date{Année 2017-2018}
 
 \makeatletter
@@ -132,7 +132,6 @@ Visidia : c'est un logiciel permettant de visualiser la simulation d'algorithmes
   La troisième est la mise en place d'une API* permettant aux développeurs de mettre en place les algorithmes souhaités, en l'occurrence des algorithmes distribués, sur l'application créée.
   Afin de compléter l'étude des différentes technologies et confirmer notre choix, nous avons décidé de développer en parallèle plusieurs applications supportant chacune une des technologies de communication. Ceci afin de pouvoir comparer les performances de chacune des technologies ainsi que leurs limites et leur souplesse.
   \section{Bluetooth}
-  \todo{La première fois que tu utilise le mot Bluetooth met un petit * à droite du mot pour dire que c'est défini dans le glossaire}
     \subsection{Historique}
     \paragraph{}
     Le Bluetooth* est un standard de communication apparu sur les appareil mobiles au début des années 2000. La norme Bluetooth a été créée par Ericsson en 1994. Le premier téléphone équipé d'une connectivité Bluetooth est commercialisé en 1999. En 2004 la norme 2.0 apparait, suivie des normes 3.0, 4.0 et 4.1 respectivement en 2009, 2010 et 2013.
@@ -266,22 +265,26 @@ Visidia : c'est un logiciel permettant de visualiser la simulation d'algorithmes
       Soit la connexion concerne un nouvel appareil qui s'implante dans un anneau déjà construit, auquel cas l'appareil est inséré dans l'anneau par son serveur.
       \paragraph{}
       Soit la connexion est faite entre deux appareils qui se trouvent chacun déjà dans un anneau, ce qui peut amener à une fusion des anneaux. La fusion est initiée par un des deux appareils qui va prendre en suivant l'autre appareil et qui va donner comme suivant son ancien suivant au précédant du deuxième appareil. De cette façon on casse les anneaux pour les reformer en un seul anneau unique.
-      
+      \newpage
       \subsubsection{Insertion dans un anneau}
       \paragraph{}
       Lorsqu'un nouvel appareil se connecte au réseau, il doit être inséré dans l'anneau. Ce qui se passe est que l'appareil qui a accepté la connexion va envoyer son suivant au nouvel appareil et garder le nouvel appareil comme suivant.
+      \\ \\
+      \includegraphics[scale=0.50]{juju.png}
+      \caption{Connexion d'un appareil : routage et anneau}
+      
       
       \subsubsection{Fusion des anneaux}
       \paragraph{}
       Lorsque deux appareils se connectent entre eux tout en faisant chacun déjà partie d'un réseau, deux cas sont possibles. Dans la majorité des cas, cette connexion est réalisée par deux appareils faisant partie du même réseau, lors de la phase de construction d'un réseau complet. Dans ce cas aucune modification n'a besoin d'être effectué sur l'anneau : celui-ci est déjà construit et contient déjà les deux appareils. Cependant dans une petite minorité des cas, il est possible que les deux appareils fassent chacun partie d'un réseau distinct. Cela se produit lorsque deux réseaux éloignés spécialement se rapprochent et que deux appareils se retrouvent dans la portée Bluetooth. Dans ce cas deux anneaux distincts sont construits, il est alors nécessaire de les fusionner. 
+      
+      
       
   \section{Couche haut niveau}
     \subsection{API sur le modèle de Visidia}
     \paragraph{}
     Afin de pouvoir utiliser les couches de niveau inférieur de l'application, une API a été développée et réalisera le lien avec les algorithmes qu'un développeur voudra mettre en place.
     Elle permet d'envoyer des messages entre différents appareils et la réception de ceux-ci. L'implémentation de l'API a été réalisée en suivant le modèle utilisé par le logiciel Visidia* étudié en module de Synchronisation Distribuée durant ce semestre de Master. Des fonctions ont été créées afin de permettre l'utilisation des informations de la table de routage permettant la communication avec d'autres appareils.
-    
-    \subsection{Algorithmes}
 %   \section{Fonctionnalités de base / connexion}
 %     \paragraph{}
 %     Création d'un UUID afin d'identifier les connexions Bluetooth
@@ -410,7 +413,8 @@ La principale difficulté que nous avons eue est la découverte du fonctionnemen
 
  [7]http://www.phonandroid.com/bluetooth-google-fast-pair-systeme-simplifier-appairage-smartphone.html (31/10/2017)
  
- \chapter*{Résumé}
+ \chapter*{}
+ \section*{Résumé}
  Dans le cadre du Master Informatique de l'Université de Franche-Comte, les étudiants ont comme mission de réaliser un projet tuteuré. Ce rapport vous présentera notre projet de développement d'une application Android permettant la création et exécution d'un algorithme distribué.
  
  Ce rapport présentera le sujet et ses problématiques, la conception et la réalisation du dit projet.
@@ -421,7 +425,7 @@ La principale difficulté que nous avons eue est la découverte du fonctionnemen
  
  Mots-clés : Android, API, Bluetooth, Wi-Fi Direct, NFC, Algorithme distribué, Visidia
  
- \chapter*{Abstract}
+ \section*{Abstract}
  \todo{Doit être sur la même page que le résumé}
  As part of the Master's degree in Computer Science at the University of Franche-Comte, the students have to carry out a tutored project. This project report presents the subject and its problematic, the conception and realisation of said project.
  
