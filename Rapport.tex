@@ -63,7 +63,7 @@
 \paragraph{}
 Nous tenons à adresser nos sincères remerciements à plusieurs personnes qui nous ont aidées à la réalisation de ce projet ainsi qu'à l'élaboration de ce mémoire.
 
-En premier lieu nous remercions M. Laurent Philippe, notre tuteur, pour son aide dans les choix que nous avons eu à prendre, et pour le temps qu'il nous à consacré tout au long de ce projet.
+En premier lieu nous remercions M. Laurent Philippe, notre tuteur, pour son aide dans les choix que nous avons eu à effectuer, et pour le temps qu'il nous à consacré tout au long de ce projet.
 
 Nous remercions également les personnes qui nous ont aidés à la relecture du mémoire.
 
@@ -73,19 +73,26 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
 \tableofcontents
 \end{changemargin}
 \chapter*{Glossaire}
-\todo{A remplir}
+\paragraph{}
+Android : Android est le système d'exploitation mobile de Google open-source qui équipe la majorité des smartphones et tablettes du marché.
+\paragraph{}
+API (Application Programming Interface) : c'est un ensemble normalisé de classes, de méthodes ou de fonctions qui sert de façade par laquelle un logiciel offre des services à d'autres logiciels.
+\paragraph{}
+Algorithme distribue : un algorithme réparti (ou distribué) est une suite d'instruction réparti sur plusieurs sites.
+\paragraph{}
+Visidia : c'est un logiciel permettant de visualiser la simulation d'algorithmes distribués, en utilisant des règles de réécriture de graphes ainsi que des agents ou des capteurs mobiles. 
 
 \chapter{Introduction}
 \sloppy
   \paragraph{}
-  Différents projets ont été proposés aux étudiants de deuxième année de Master pour cette année 2018. Dans notre cas nous avons choisi le sujet suivant : "Développement d’un environnement pour les algorithmes distribués sur Android".
+  Différents projets ont été proposés aux étudiants de deuxième année de Master pour cette année 2018. Dans notre cas nous avons choisi le sujet suivant : "Développement d’un environnement pour les algorithmes distribués sur Android*".
   \paragraph{}
-  Ce projet nous a intéressé car il mélangeait différents domaines appréciés par les membres de notre trinôme soit la synchronisation distribuée et le développement Android.
+  Ce projet nous a intéressé car il mélangeait différents domaines appréciés par les membres de notre trinôme, soit la synchronisation distribuée et le développement Android.
   L'aspect distribué permet aux utilisateurs d'avoir leur application sur leur téléphone qui partage des données avec les autres terminaux mobiles inter-connectés.
   \paragraph{}
-  Quelles sont les solutions et les méthodes que nous avons appliquées pour réaliser ce projet ?
+  Quelles sont les solutions et les méthodes que nous avons appliqué pour réaliser ce projet ?
   \paragraph{}
-  Ce rapport se compose de cinq grands axes. Nous étudions tout d'abord le sujet du projet en détail puis nous développons les recherches préliminaires au développement. 	Par la suite nous présentons les outils de développement utilisés puis décrivons l'architecture du projet avec ses différentes couches d'implémentation. Enfin nous expliquons l'algorithme que nous voulons implémenter afin de tester les fonctionnalités crées.
+  Ce rapport se compose de cinq grands axes. Nous étudions tout d'abord le sujet du projet en détail puis nous développons les recherches préliminaires au développement. 	Par la suite nous présentons les outils de développement utilisés puis décrivons l'architecture du projet avec ses différentes couches d'implémentation. Enfin nous expliquons l'algorithme que nous voulons implémenter afin de tester les fonctionnalités créées.
 
 \chapter{Présentation du projet}
   \section{Sujet}
@@ -105,7 +112,7 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
   
   \section{Problématiques}
   \paragraph{}
-  Après la première réunion de travail avec notre tueur, nous avons pu identifier les problématiques posées par notre projet, qui sont les suivantes :
+  Après la première réunion de travail avec notre tuteur, nous avons pu identifier les problématiques posées par notre projet, qui sont les suivantes :
 \paragraph{}
   \begin{itemize}
     \item Quelles sont les technologies dont nous disposons pour faire communiquer nos appareils Android ensemble ?
@@ -122,9 +129,10 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
   Notre travail se découpe en plusieurs phases :
   La première est l'étude des différentes technologies de communications disponibles sur les appareils Android.
   La deuxième est l'implémentation du système de communication dans la technologie choisie.
-  La troisième est la mise en place d'une API permettant aux développeurs de mettre en place les algorithmes souhaités, en l'occurence des algorithmes distribués, sur l'application créée.
+  La troisième est la mise en place d'une API* permettant aux développeurs de mettre en place les algorithmes souhaités, en l'occurrence des algorithmes distribués, sur l'application créée.
   Afin de compléter l'étude des différentes technologies et confirmer notre choix, nous avons décidé de développer en parallèle plusieurs applications supportant chacune une des technologies de communication. Ceci afin de pouvoir comparer les performances de chacune des technologies ainsi que leurs limites et leur souplesse.
   \section{Bluetooth}
+  \todo{La première fois que tu utilise le mot Bluetooth met un petit * à droite du mot pour dire que c'est défini dans le glossaire}
     \subsection{Historique}
     \subsection{Fonctionnement} \todo{pap}
     \subsection{Avantages}
@@ -132,10 +140,10 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
   \section{Wifi Direct}
     \subsection{Historique}
       \paragraph{}
-      Créé par la Wifi Alliance, le Wifi Direct permet le partage de données entre différents appareils grâce à leur connexion Wifi sans avoir besoin d'une liaison avec d'un point d'accès intermédiaire.
+      Créé par la Wifi Alliance, le Wifi Direct permet le partage de données entre différents appareils grâce à leur connexion Wifi sans avoir besoin d'une liaison avec un point d'accès intermédiaire.
     \subsection{Fonctionnement}
      \paragraph{}
-    L'activation du Wifi Direct sur les appareils ne nécessite d'activer qu'une option dans les paramètres du Wifi, grâce aux options avancés. Une fois ceci fait, l'envoi des fichiers est possible.
+    L'activation du Wifi Direct sur les appareils ne nécessite d'activer qu'une seule option dans les paramètres du Wifi, grâce aux options avancées. Une fois ceci fait, l'envoi des fichiers est possible.
     \paragraph{}
     Si la technologie n'est pas activée au lancement d'une application, il est possible de mettre en place une autorisation d'activation dans le code afin de mettre en marche le Wifi Direct. En revanche ce n'est utilisable que sur des dispositifs sous Android 2.3 minimum.
     \subsection{Avantages}
@@ -144,7 +152,7 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
      Il est aussi possible d'utiliser cette technologie entre différents types de dispositifs, entre autres : smartphones, télévisions, ordinateurs, tablettes. Cela permet une utilisation large des applications grâce à une connectivité plus simple et plus rapide que le Bluetooth. Un autre avantage est la compatibilité : tout appareil utilisant le Wifi classique sera en mesure de répondre à une communication avec un dispositif utilisant le Wifi Direct.
     \subsection{Inconvénients}
     \paragraph{}
-    D'après certains retours, l'activation du Wifi Direct peut entraîner des soucis sur certains modèles de télépones et de tablettes. De plus certains dispositifs ne fonctionnent qu'avec des appareils de la même marque, ce qui complique la mise en place d'un algorithme distribué.
+    D'après certains retours, l'activation du Wifi Direct peut entraîner des soucis sur certains modèles de télépones et de tablettes. De plus certains dispositifs ne fonctionnent qu'avec des appareils de la même marque, ce qui complique la mise en place d'un algorithme distribué*.
     L'écriture du code du Wifi Direct n'est pas aisée à cause du manque de documentation et du fait que cette technologie n'est pas encore très répendue.
   \section{NFC}
     \subsection{Historique}
@@ -155,7 +163,7 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
      Le NFC permet l'échange d'informations sur de très courtes distances [1]. Il permet de se faire passer pour une carte à puce face à un lecteur, de faire office de terminal pour lire des cartes, mais possède également un mode pair à pair pour l'échange d'informations entre deux terminaux mobiles. C'est ce mode qui nous intéressait.
     \subsection{Avantages}
     \paragraph{}
-    Le NFC dispose de certains avantages comme d'une vitesse de transfert pouvant aller jusqu'à 424kbit/s [2] (une grande valeur sachant que la taille des messages envoyés est d'une dizaine d'octet) et d'un mode de communication full duplex permettant des échanges dans les deux sens en même temps.
+    Le NFC dispose de certains avantages comme d'une vitesse de transfert pouvant aller jusqu'à 424kbit/s [2] (un grand intérêt sachant que la taille des messages envoyés est d'une dizaine d'octet) et d'un mode de communication full duplex permettant des échanges dans les deux sens en même temps.
     \subsection{Inconvénients}
     \paragraph{}
     Le principal inconvénient de cette technologie est la distance, en effet elle ne fonctionne qu'avec un espacement de quelques centimètres entre les deux terminaux.
@@ -169,7 +177,7 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
   \paragraph{}
   Concernant le Bluetooth, l'avancée de l'application était plutôt rapide, grâce à des tutoriels Android mis à disposition par Google. Cependant pour le Wifi Direct, l'écriture du code a été plus compliquée à réaliser, lorsque des erreurs étaient rencontrées lors de l'écriture de l'application, il était difficile de savoir d'où provenait le problème. Est-ce qu'il était dû à la marque du téléphone ? Ou à une erreur de code ? 
   \paragraph{} 
-  L'application Bluetooth étant terminée et fonctionnelle contrairement à celle utilisant le Wifi, il a donc été décidé pour une bonne avancé du projet de choisir la première option pour notre application.
+  L'application Bluetooth étant terminée et fonctionnelle contrairement à celle utilisant le Wifi, il a donc été décidé pour une bonne avancée du projet de choisir la première option pour notre application.
   
 %   \section{Comparaison Bluetooth/Wifi} \todo{virer cette partie}
 %     \paragraph{}
@@ -217,8 +225,8 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
     \subsection{Communication}
     \paragraph{}
     Le mécanisme de communication est implémenté dans un nouveau thread pour permettre le maintien de plusieurs connexions simultanées. Ce thread va constamment attendre qu'un flux de données arrive en entrée sur la socket. Il va bien évidemment aussi être capable d'écrire sur cette socket.
-    Tous les messages échangés adoptent la même forme : un expéditeur, un destinataire et le contenu du message constitué lui-même d'un octet correspondant au type de message et d'un tableau d'octets correspondant aux données du message. Le type de message peut être soit un type de message de bas niveau permettant la mise en place des mécanismes de bas niveau de la communication soit un type de message correspondant aux messages de l'algorithme distribué implémenté.
-    Lors de la réception d'un message sur la socket, nous récupérons le type de message envoyé et effectuons les traitements adpatés en fonction de celui-ci.
+    Tous les messages échangés adoptent la même forme : un expéditeur, un destinataire et le contenu du message constitué lui-même d'un octet correspondant au type de message et d'un tableau d'octets correspondant aux données du message. Le type de message peut être soit un type de message de bas niveau, permettant la mise en place des mécanismes de bas niveau de la communication, soit un type de message correspondant aux messages de l'algorithme distribué implémenté.
+    Lors de la réception d'un message sur la socket, nous récupérons le type de message envoyé et effectuons les traitements adaptés en fonction de celui-ci.
     
     \subsection{Routage}
     \paragraph{}
@@ -232,7 +240,7 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
   \section{Couche intermédiaire}
     \subsection{Implémentation d'un anneau}
     \paragraph{}
-    Afin de permettre l'implémentation d'algorithmes à base d'anneau, nous avons souhaité mettre en place un anneau. Nous avons tout d'abord tenté de construire un anneau dans la couche haute de l'application, au niveau développeur, mais la construction d'un anneau à ce niveau était complexe notemment au niveau de l'initiation de la construction de l'anneau. Nous avons alors décidé qu'il serait plus simple de créer l'anneau dans une couche plus basse, juste au-dessus de la couche de routage, de façon systématique, quitte à ce que l'anneau ne soit pas utilisé par le développeur.
+    Afin de permettre l'implémentation d'algorithmes à base d'anneau, nous avons souhaité mettre en place un anneau. Nous avons tout d'abord tenté de construire un anneau dans la couche haute de l'application, au niveau développeur, mais la construction d'un anneau à ce niveau était complexe notamment au niveau de l'initiation de la construction de l'anneau. Nous avons alors décidé qu'il serait plus simple de créer l'anneau dans une couche plus basse, juste au-dessus de la couche de routage, de façon systématique, quitte à ce que l'anneau ne soit pas utilisé par le développeur.
     
       \subsubsection{Création de l'anneau}
       \paragraph{}
@@ -244,13 +252,13 @@ Enfin nous tenons à remercier Udacity et Google pour le Google Developer Challe
       
       \subsubsection{Fusion des anneaux}
       \paragraph{}
-      Lorsque deux appareils se connectent entre eux tout en faisant chacun déjà partie d'un réseau, deux cas sont possibles. Dans la majorité des cas, cette connexion est réalisée par deux appareils faisant partie du même réseau, lors de la phase de construction d'un réseau complet. Dans ce cas aucune modification n'a besoin d'être effectué sur l'anneau : celui-ci est déjà construit et contient déjà les deux appareils. Cependant dans une petite minorité des cas, il est possible que les deux appareils fassent chacun partie d'un réseau distinct. Cela se produit lorsque deux réseaux éloignés spacialement se rapprochent et que deux appareils se retrouvent dans la portée Bluetooth. Dans ce cas deux anneaux distincts sont construits, il est alors nécessaire de les fusionner. 
+      Lorsque deux appareils se connectent entre eux tout en faisant chacun déjà partie d'un réseau, deux cas sont possibles. Dans la majorité des cas, cette connexion est réalisée par deux appareils faisant partie du même réseau, lors de la phase de construction d'un réseau complet. Dans ce cas aucune modification n'a besoin d'être effectué sur l'anneau : celui-ci est déjà construit et contient déjà les deux appareils. Cependant dans une petite minorité des cas, il est possible que les deux appareils fassent chacun partie d'un réseau distinct. Cela se produit lorsque deux réseaux éloignés spécialement se rapprochent et que deux appareils se retrouvent dans la portée Bluetooth. Dans ce cas deux anneaux distincts sont construits, il est alors nécessaire de les fusionner. 
       
   \section{Couche haut niveau}
     \subsection{API sur le modèle de Visidia}
     \paragraph{}
     Afin de pouvoir utiliser les couches de niveau inférieur de l'application, une API a été développée et réalisera le lien avec les algorithmes qu'un développeur voudra mettre en place.
-    Elle permet d'envoyer des messages entre différents appareils et la réception de ceux-ci. L'implémentation de l'API a été réalisée en suivant le modèle utilisé par le logiciel Visidia étudié en module de Synchronisation Distribuée durant ce semestre de Master. Des fonctions ont été créées afin de permettre l'utilisation des informations de la table de routage permettant la communication avec d'autres appareils.
+    Elle permet d'envoyer des messages entre différents appareils et la réception de ceux-ci. L'implémentation de l'API a été réalisée en suivant le modèle utilisé par le logiciel Visidia* étudié en module de Synchronisation Distribuée durant ce semestre de Master. Des fonctions ont été créées afin de permettre l'utilisation des informations de la table de routage permettant la communication avec d'autres appareils.
     
     \subsection{Algorithmes} \todo{Implémentabilité}
 %   \section{Fonctionnalités de base / connexion}
@@ -389,9 +397,8 @@ La principale difficulté que nous avons eue est la découverte du fonctionnemen
  
  Programmé en Java \todo{Ajouter la version} pour des appareils Android version \todo{AJOUTER LA VERSION ANDROID}
  
- Mots-clés : Android, Bluetooth, Wifi-Direct, NFC, Algorithme distriué, Visidia \todo{Parler de visidia qqpart}
+ Mots-clés : Android, API, Bluetooth, Wifi-Direct, NFC, Algorithme distribue, Visidia
  
  \chapter*{Abstract}
- \todo{Doit être sur la même page que le résumé
- }
+ \todo{Doit être sur la même page que le résumé}
 \end{document}          
