@@ -51,13 +51,6 @@
             android:layout_height="wrap_content"
             android:onClick="clearMessages"
             android:text="Clear msg" />
-
-        <Button
-            android:id="@+id/bt_change-activity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="changeActivity"
-            android:text="Change activity" />
     </LinearLayout>
 
     <LinearLayout

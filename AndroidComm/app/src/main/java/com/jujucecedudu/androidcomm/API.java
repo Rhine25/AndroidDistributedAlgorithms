@@ -32,19 +32,24 @@ public class API {
     public static void onMessage(byte[] message){
         byte messageType = message[0];
         MessagePacket mp = Utils.getMessagePacketFromByteMessage(message);
-        byte[] data = Utils.getObjectDataFromMessage(mp.getData()); //get data field of mp
+        byte[] data; //get data field of mp
         switch(messageType){
             case API_INIT:
                 //TODO init l'algo
+                mAlgo = new AlgoLamportChat();
+                mAlgo.init();
             case REQ:
+                data = Utils.getObjectDataFromMessage(mp.getData());
                 mAlgo.receiveREQ(Utils.byteToInt(data), mp.getExpMAC());
                 Log.i(TAG, "Received message REQ from"+mp.getExpMAC()+"at clock "+Utils.byteToInt(data));
                 break;
             case ACK:
+                data = Utils.getObjectDataFromMessage(mp.getData());
                 mAlgo.receiveACK(Utils.byteToInt(data), mp.getExpMAC());
                 Log.i(TAG, "Received message ACK from"+mp.getExpMAC()+"at clock "+Utils.byteToInt(data));
                 break;
             case REL:
+                data = Utils.getObjectDataFromMessage(mp.getData());
                 mAlgo.receiveREL(Utils.byteToInt(data), mp.getExpMAC());
                 Log.i(TAG, "Received message REL from"+mp.getExpMAC()+"at clock "+Utils.byteToInt(data));
                 break;

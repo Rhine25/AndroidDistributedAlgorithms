@@ -1,5 +1,7 @@
 package com.jujucecedudu.androidcomm;
 
+import android.util.Log;
+
 /**
  * Created by vincent on 24/01/18.
  */
@@ -24,11 +26,12 @@ public class AlgoLamportChat{
         return true;
     }
 
+    API api;
+
     public AlgoLamportChat(){
         super();
     }
 
-    API api = new API(this);
 
 
     public String[] macTable;
@@ -56,6 +59,8 @@ public class AlgoLamportChat{
 
     public void init(){
 
+        api = new API(this-èyj);
+        Log.i("LOGS FROM PRECESSUS ", "I AM INIT");
         clock = 0;
 
         nbNeigbours = api.getNbDevicesConnected();
