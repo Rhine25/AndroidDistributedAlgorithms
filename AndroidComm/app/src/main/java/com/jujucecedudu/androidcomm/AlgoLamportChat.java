@@ -1,13 +1,11 @@
 package com.jujucecedudu.androidcomm;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Created by vincent on 24/01/18.
  */
 
-public class AlgoLamportChat implements Serializable{
+public class AlgoLamportChat{
 
     public int getIdByMAC(String mac, String[] macTable, int size){
         for(int i = 0 ; i < size ; i++){

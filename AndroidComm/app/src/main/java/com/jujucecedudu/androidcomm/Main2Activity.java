@@ -13,12 +13,10 @@ public class Main2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-
-        Intent intent = getIntent();
+        
 
         Log.i(TAG, "activity 2 started");
 
-        algo = (AlgoLamportChat) intent.getSerializableExtra("ALGO");
 
         algo.init();
 

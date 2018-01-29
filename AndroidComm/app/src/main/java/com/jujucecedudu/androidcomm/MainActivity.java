@@ -467,7 +467,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
     public void changeActivity(View view){
         Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-        intent.putExtra("ALGO", algo);
         startActivity(intent);
     }
 }
