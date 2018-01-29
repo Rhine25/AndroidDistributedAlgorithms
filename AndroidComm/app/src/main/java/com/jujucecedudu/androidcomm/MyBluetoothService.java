@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.Pair;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -22,7 +21,6 @@ import java.util.UUID;
 
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.FROM;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_DISCONNECTION;
-import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.MESSAGE_READ;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_FOR_NEXT;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_RING_FUSION;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_RING_STATUS;
@@ -220,8 +218,8 @@ public class MyBluetoothService {
         return mRoutingTable.getDevicesMACs();
     }
     
-    public int getNbEntries(){
-        return mRoutingTable.getNbEntries();
+    public int getNbDevicesConnected(){
+        return mRoutingTable.getNbDevicesConnected();
     }
 
     class AcceptThread extends Thread {

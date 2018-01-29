@@ -1,7 +1,5 @@
 package com.jujucecedudu.androidcomm;
 
-import java.util.ArrayList;
-
 /**
  * Created by vincent on 24/01/18.
  */
@@ -46,7 +44,7 @@ public class AlgoLamportChat {
 
         clock = 0;
 
-        nbNeigbours = api.getNbEntries();
+        nbNeigbours = api.getNbDevicesConnected();
 
         macTable = api.getDevicesMACs();
         macTable = new String[nbNeigbours];

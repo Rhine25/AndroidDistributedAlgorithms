@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                             if(table != null) {
                                 Log.i(TAG, "Received routing table " + table);
                                 RoutingTable newEntries = mBluetoothService.updateRoutingFrom(msg.getData().getString(FROM), table);
-                                if(newEntries.getNbEntries() > 0){
+                                if(newEntries.getNbDevicesConnected() > 0){
                                     //update others about the new entry(ies) in the routing table
                                     byte[] data = Utils.getConstructedMessage(TYPE_ROUTING_TABLE, Utils.serializeRoutingTable(newEntries));
                                     MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), ALL, data);

@@ -167,18 +167,18 @@ public class RoutingTable implements Serializable{
         return mMACToName;
     }
 
-    public int getNbEntries(){
-        return table.size();
+    public int getNbDevicesConnected(){
+        return mMACToName.size();
     }
 
     public String[] getDevicesMACs(){
-        String[] str = new String[table.size()];
-        int i =0;
-        for (Object[] entry : table) {
-            str[i] = getTargetMAC(entry);
+        String[] MACsStr = new String[mMACToName.size()];
+        int i = 0;
+        for (Pair<String, String> pair : mMACToName) {
+            MACsStr[i] = pair.first;
             i++;
         }
-        return str;
+        return MACsStr;
     }
 
     @Override

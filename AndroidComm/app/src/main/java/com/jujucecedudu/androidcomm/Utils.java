@@ -47,9 +47,10 @@ public class Utils {
     }
 
     static MessagePacket getMessagePacketFromByteMessage(byte[] message){
-        byte[] m = new byte[message.length];
-        for(int i=1;i<message.length;i++)
-            m[i-1]=message[i];
+        byte[] m = new byte[message.length-1];
+        for(int i = 1; i < message.length;i++) {
+            m[i - 1] = message[i];
+        }
         return Utils.deserializeMessage(m);
     }
     

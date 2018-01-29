@@ -1,10 +1,6 @@
 package com.jujucecedudu.androidcomm;
 
 import android.util.Log;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.nio.ByteBuffer;
 
 import static com.jujucecedudu.androidcomm.API.MessageTypes.*;
 
@@ -14,10 +10,10 @@ import static com.jujucecedudu.androidcomm.API.MessageTypes.*;
 
 public class API {
 
-    private AlgoLamportChat algo;
+    private static AlgoLamportChat mAlgo;
 
     public API(AlgoLamportChat a){
-        algo = a;
+        mAlgo = a;
     }
 
     private static final String TAG = "BLUETOOTH_TEST_API";
@@ -33,7 +29,7 @@ public class API {
         byte REL = 0x15;
     }
 
-    public static void onMessage(byte[] message, AlgoLamportChat a){
+    public static void onMessage(byte[] message){
         byte messageType = message[0];
         MessagePacket mp = Utils.getMessagePacketFromByteMessage(message);
         byte[] data = mp.getData(); //get data field of mp
@@ -53,15 +49,15 @@ public class API {
                 Log.i(TAG, " message");
                 break;
             case REQ:
-                a.receiveREQ(Utils.byteToInt(data2), mp.getExpMAC());
+                mAlgo.receiveREQ(Utils.byteToInt(data2), mp.getExpMAC()); //mAlgo.clock ?
                 Log.i(TAG, "Received message example 3");
                 break;
             case ACK:
-                a.receiveACK(Utils.byteToInt(data2), mp.getExpMAC());
+                mAlgo.receiveACK(Utils.byteToInt(data2), mp.getExpMAC());
                 Log.i(TAG, "Received message example 3");
                 break;
             case REL:
-                a.receiveREL(Utils.byteToInt(data2), mp.getExpMAC());
+                mAlgo.receiveREL(Utils.byteToInt(data2), mp.getExpMAC());
                 Log.i(TAG, "Received message example 3");
                 break;
             default:
@@ -73,8 +69,9 @@ public class API {
         byte[] d = Utils.convertObjectToByteArray(data);
         byte[] data_b = new byte[d.length+1];
         data_b[0] = tMess;
-        for(int i=1;i<data_b.length;i++)
-            data_b[i]=d[i-1];
+        for(int i = 1;i < data_b.length;i++) {
+            data_b[i] = d[i-1];
+        }
         MessagePacket mp = new MessagePacket(myBluetoothService.getMyMAC(),dest,data_b);
         myBluetoothService.sendMessage(mp);
     }
@@ -83,8 +80,8 @@ public class API {
         return myBluetoothService.getAllDevicesMACs();
     }
     
-    public int getNbEntries(){
-        return myBluetoothService.getNbEntries();
+    public int getNbDevicesConnected(){
+        return myBluetoothService.getNbDevicesConnected();
     }
 
     public String getMyMACAddres(){
