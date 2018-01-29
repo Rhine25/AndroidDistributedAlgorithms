@@ -11,7 +11,7 @@
 
 % Title Page
 \title{Développement d'un environnement pour algorithmes distribués sur Android}
-\author{Célia Dehors, Vincent Durand, Justine Romero}
+\author{Célia Dehors \\Vincent Durand \\Justine Romero}
 \date{Année 2017-2018}
 
 \makeatletter
@@ -132,28 +132,35 @@ Visidia : c'est un logiciel permettant de visualiser la simulation d'algorithmes
   La troisième est la mise en place d'une API* permettant aux développeurs de mettre en place les algorithmes souhaités, en l'occurrence des algorithmes distribués, sur l'application créée.
   Afin de compléter l'étude des différentes technologies et confirmer notre choix, nous avons décidé de développer en parallèle plusieurs applications supportant chacune une des technologies de communication. Ceci afin de pouvoir comparer les performances de chacune des technologies ainsi que leurs limites et leur souplesse.
   \section{Bluetooth}
-  \todo{La première fois que tu utilise le mot Bluetooth met un petit * à droite du mot pour dire que c'est défini dans le glossaire}
     \subsection{Historique}
-    \subsection{Fonctionnement} \todo{pap}
-    \subsection{Avantages}
-    \subsection{Inconvénients}
-  \section{Wifi Direct}
+    \paragraph{}
+    Le Bluetooth* est un standard de communication apparu sur les appareil mobiles au début des années 2000. La norme Bluetooth a été créée par Ericsson en 1994. Le premier téléphone équipé d'une connectivité Bluetooth est commercialisé en 1999. En 2004 la norme 2.0 apparait, suivie des normes 3.0, 4.0 et 4.1 respectivement en 2009, 2010 et 2013.
+     \subsection{Fonctionnement}
+    \paragraph{}
+    Le Bluetooth fonctionne par la connexion d'appareils clients sur des appareils serveurs. Chaque appareil peut jouer le rôle de client et de serveur simultanément mais une connexion n'est possible qu'entre un client et un serveur. Le Bluetooth est donc une technologie de communication excliusivement point à point. Seuls 6 clients peuvent être connectés à un serveur simultanément.
+     \subsection{Avantages}
+    \paragraph{}
+    Cette technologie est très répandue, compatible avec l'ensemble des appareils Android du marché. La documentation et les API pour le Bluetooth sont complètes.
+     \subsection{Inconvénients}
+    \paragraph{}
+     Les connexions sont de manière générale plus lentes et moins stables que des connexions réalisées en Wi-Fi. Le Bluetooth est aussi plus consommateur en énergie que le Wi-Fi.
+  \section{Wi-Fi Direct}
     \subsection{Historique}
       \paragraph{}
-      Créé par la Wifi Alliance, le Wifi Direct permet le partage de données entre différents appareils grâce à leur connexion Wifi sans avoir besoin d'une liaison avec un point d'accès intermédiaire.
+      Créé par la Wi-Fi Alliance, le Wi-Fi Direct permet le partage de données entre différents appareils grâce à leur connexion Wi-Fi sans avoir besoin d'une liaison avec un point d'accès intermédiaire.
     \subsection{Fonctionnement}
      \paragraph{}
-    L'activation du Wifi Direct sur les appareils ne nécessite d'activer qu'une seule option dans les paramètres du Wifi, grâce aux options avancées. Une fois ceci fait, l'envoi des fichiers est possible.
+    L'activation du Wi-Fi Direct sur les appareils ne nécessite d'activer qu'une seule option dans les paramètres du Wi-Fi, grâce aux options avancées. Une fois ceci fait, l'envoi des fichiers est possible.
     \paragraph{}
-    Si la technologie n'est pas activée au lancement d'une application, il est possible de mettre en place une autorisation d'activation dans le code afin de mettre en marche le Wifi Direct. En revanche ce n'est utilisable que sur des dispositifs sous Android 2.3 minimum.
+    Si la technologie n'est pas activée au lancement d'une application, il est possible de mettre en place une autorisation d'activation dans le code afin de mettre en marche le Wi-Fi Direct. En revanche ce n'est utilisable que sur des dispositifs sous Android 2.3 minimum.
     \subsection{Avantages}
      \paragraph{}
-     L'avantage principal de l'utilisation du Wifi Direct est la vitesse d'envoi des fichiers entre les appareils, surtout lorsque de lourds fichiers sont en jeu. 
-     Il est aussi possible d'utiliser cette technologie entre différents types de dispositifs, entre autres : smartphones, télévisions, ordinateurs, tablettes. Cela permet une utilisation large des applications grâce à une connectivité plus simple et plus rapide que le Bluetooth. Un autre avantage est la compatibilité : tout appareil utilisant le Wifi classique sera en mesure de répondre à une communication avec un dispositif utilisant le Wifi Direct.
+     L'avantage principal de l'utilisation du Wi-Fi Direct est la vitesse d'envoi des fichiers entre les appareils, surtout lorsque de lourds fichiers sont en jeu. 
+     Il est aussi possible d'utiliser cette technologie entre différents types de dispositifs, entre autres : smartphones, télévisions, ordinateurs, tablettes. Cela permet une utilisation large des applications grâce à une connectivité plus simple et plus rapide que le Bluetooth. Un autre avantage est la compatibilité : tout appareil utilisant le Wi-Fi classique sera en mesure de répondre à une communication avec un dispositif utilisant le Wi-Fi Direct.
     \subsection{Inconvénients}
     \paragraph{}
-    D'après certains retours, l'activation du Wifi Direct peut entraîner des soucis sur certains modèles de télépones et de tablettes. De plus certains dispositifs ne fonctionnent qu'avec des appareils de la même marque, ce qui complique la mise en place d'un algorithme distribué*.
-    L'écriture du code du Wifi Direct n'est pas aisée à cause du manque de documentation et du fait que cette technologie n'est pas encore très répendue.
+    D'après certains retours, l'activation du Wi-Fi Direct peut entraîner des soucis sur certains modèles de télépones et de tablettes. De plus certains dispositifs ne fonctionnent qu'avec des appareils de la même marque, ce qui complique la mise en place d'un algorithme distribué*.
+    L'écriture du code du Wi-Fi Direct n'est pas aisée à cause du manque de documentation et du fait que cette technologie n'est pas encore très répandue.
   \section{NFC}
     \subsection{Historique}
      \paragraph{}
@@ -173,17 +180,17 @@ Visidia : c'est un logiciel permettant de visualiser la simulation d'algorithmes
   \paragraph{}
   En ce qui concerne le NFC, il a été décidé de ne pas retenir cette solution en raison de la faible distance requise entre deux appareils pour son fonctionnement (environ 10cm maximum).
   \paragraph{}
-  Pour départager le Bluetooth et le Wifi Direct, il a été décidé de développer deux applications utilisant chacune une des technologies et de les comparer directement grâce aux implémentations réalisées.
+  Pour départager le Bluetooth et le Wi-Fi Direct, il a été décidé de développer deux applications utilisant chacune une des technologies et de les comparer directement grâce aux implémentations réalisées.
   \paragraph{}
-  Concernant le Bluetooth, l'avancée de l'application était plutôt rapide, grâce à des tutoriels Android mis à disposition par Google. Cependant pour le Wifi Direct, l'écriture du code a été plus compliquée à réaliser, lorsque des erreurs étaient rencontrées lors de l'écriture de l'application, il était difficile de savoir d'où provenait le problème. Est-ce qu'il était dû à la marque du téléphone ? Ou à une erreur de code ? 
-  \paragraph{} 
-  L'application Bluetooth étant terminée et fonctionnelle contrairement à celle utilisant le Wifi, il a donc été décidé pour une bonne avancée du projet de choisir la première option pour notre application.
+  Concernant le Bluetooth, l'avancée de l'application était plutôt rapide, grâce à des tutoriels Android mis à disposition par Google. Cependant pour le Wi-Fi Direct, l'écriture du code a été plus compliquée à réaliser, lorsque des erreurs étaient rencontrées lors de l'écriture de l'application, il était difficile de savoir d'où provenait le problème. Est-ce qu'il était dû à la marque du téléphone ? Ou à une erreur de code ? 
+  \paragraph{}
+  L'application Bluetooth étant terminée et fonctionnelle contrairement à celle utilisant le Wi-Fi, il a donc été décidé pour une bonne avancée du projet de choisir la première option pour notre application.
   
-%   \section{Comparaison Bluetooth/Wifi} \todo{virer cette partie}
+%   \section{Comparaison Bluetooth/Wi-Fi} \todo{virer cette partie}
 %     \paragraph{}
-%     Notre première étape est l'étude des différentes technologies disponibles. Notre attention se porte sur deux technologies principales bien connues : Bluetooth et Wifi.
+%     Notre première étape est l'étude des différentes technologies disponibles. Notre attention se porte sur deux technologies principales bien connues : Bluetooth et Wi-Fi.
 %     Nous recherchons tout d'abord des informations sur le web.
-%     Wifi semble être davantage adapté à notre usage. Il est plus rapide, stable, fiable, accepte plus de connexions.
+%     Wi-Fi semble être davantage adapté à notre usage. Il est plus rapide, stable, fiable, accepte plus de connexions.
 %     Bluetooth est quant à lui plus léger.
 %     Puis afin d'avoir une comparaison plus tangible des deux technologies, nous décidons d'implémenter deux applications distinctes utilisant chacune une des technologies. Cela dans le but de comparer autant les performances/limites des technologies que leur facilité de mise en place.
 %     -> Conclusion
@@ -194,18 +201,20 @@ Visidia : c'est un logiciel permettant de visualiser la simulation d'algorithmes
   Pour ce projet nous avons libre choix des outils à utiliser. Nous avons besoin d'un IDE pour le développement de l'application ainsi qu'un outil de gestion de version.
 
   \section{Android Studio}
-  Nous devons développer sous Android, nous avons donc le choix entre plusieurs IDE (Android Studio et Éclipse). Ayant l'habitude de travailler avec les outils JetBrains pendant notre cursus c'est tout naturellement que notre choix se porte sur Android Studio. De plus, depuis 2014, cet IDE est devenu l'outil officiel de Google pour le développement Android et est régulièrement mis à jour dû à la perpétuelle évolution de ce système d'exploitation.
+  Nous devons développer sous Android, nous utilisons donc Android Studio, l'outil officiel pour Android développé par Google à partir d'un fork d'IntelliJ, que nous avons l'habitude d'utiliser pour nos projets en Java. L'ancien outil de développement pour applications Android était Eclipse avec le plugin ADT développé par Google, mais son support a été abandonné au profit d'Android Studio en 2015, pour se focaliser sur la mise à disposition aux développeurs d'un outil plus puissant. Nous aurions pu aussi utiliser un simple éditeur de texte tel que VI, mais cela aurait inutilement ralenti le développement.
   \paragraph{}
-  Cet outil permet la création d'une application Android basique très facilement grâce à la gestion des classes Java et des fichiers de paramétrages de l'interface graphique. Il permet de concentrer en un endroit tous les composants nécessaires au fonctionnement d'une application.
+  Cet outil permet la création d'une application Android très facilement grâce à la gestion des classes Java, des fichiers de paramétrages de l'interface graphique et de tous les outils spécifiques au développement sous Android. Il permet de concentrer en un endroit tous les composants nécessaires à la création d'une application, du développement au test en passant par le débogage.
   \section{Gitlab}
-  \todo{A toi de jouer Celia}
-  %besoin de versionner
-  %on disposait de serveurs gitlab chez nous
-
+  \paragraph{}
+  Afin de pouvoir facilement travailler en équipe, nous avons décidé de versionner notre travail. Cela nous a permis de travailler tous en même temps sur le projet sans soucis. Cela nous a aussi permis de remonter dans l'historique des commits afin de reconstituer facilement les étapes qui nous ont permis d'arriver à l'application que nous avons aujourd'hui.
+  \paragraph{}
+  De plus, un membre de l'équipe disposant d'un serveur Gitlab, nous avons pu centraliser notre travail sur ce serveur, pour pouvoir à tout moment et sur n'importe quelle machine accéder au projet et suivre son avancement.
+  
 \chapter{Développement de l'architecture de l'application}
-\todo{dire pourqoi on a choisit ça en fonction des besoins de production qu'on avait}
   \paragraph{}
   Dans cette partie nous allons présenter la façon dont l'application a été conçue et expliquer le fonctionnement de celle-ci. L'application a été architecturée en plusieurs couches pour introduire plusieurs niveaux d'abstraction, séparer les rôles et simplifier le développement.
+  \paragraph{}
+  Notre sujet étant destiné à l'implémentation d'un algorithme distribué par un développeur tiers, nous avons voulu séparer les différentes fonctionnalités de notre application afin que les mécanismes inutiles à ce développeur lui soient totalement transparentes. Nous avons donc architecturé notre application en couches de niveau d'abstraction. Chaque couche communiquant directement et uniquement avec la couche au-dessus et en-dessous d'elle.
   
   \section{Couche bas niveau}
     \paragraph{}
@@ -218,24 +227,29 @@ Visidia : c'est un logiciel permettant de visualiser la simulation d'algorithmes
     \subsection{Connexion}
     \paragraph{}
     La connexion en Bluetooth entre plusieurs appareils nécessite la création d'un UUID. Un UUID est un identifiant unique composé de 128 bits. Sa taille est telle que l'on considère qu'il n'est pas possible d'avoir de collision en choisissant un UUID au hasard. Dans notre application, cela va permettre de ne pas tenter de se connecter à un appareil qui serait visible en Bluetooth mais qui n'utiliserait pas l'application, et qui par conséquent n'est pas souhaité dans notre réseau.
+    \paragraph{}
     Pour qu'une connexion soit réalisée en Bluetooth il est nécessaire d'avoir un client et un serveur. Le serveur va ouvrir une socket sur laquelle le client va venir initier une connexion à partir de l'adresse MAC du serveur.
     La connexion entre plusieurs appareils est gérée par le service Bluetooth. Chaque appareil peut être indistinctement client ou serveur. Pour cela, les mécanismes de connexions sont divisés en deux threads : un thread ayant le rôle de serveur et un thread ayant le rôle de client.
+    \paragraph{}
     Lorsque qu'un client et un serveur se sont connectés, un canal RFCOMM est créé permettant la communication des deux appareils, chacun pouvant lire et écrire sur la socket correspondant à la connexion indistinctement du rôle qu'il a joué lors de la phase de connexion.
     
     \subsection{Communication}
     \paragraph{}
     Le mécanisme de communication est implémenté dans un nouveau thread pour permettre le maintien de plusieurs connexions simultanées. Ce thread va constamment attendre qu'un flux de données arrive en entrée sur la socket. Il va bien évidemment aussi être capable d'écrire sur cette socket.
+    \paragraph{}
     Tous les messages échangés adoptent la même forme : un expéditeur, un destinataire et le contenu du message constitué lui-même d'un octet correspondant au type de message et d'un tableau d'octets correspondant aux données du message. Le type de message peut être soit un type de message de bas niveau, permettant la mise en place des mécanismes de bas niveau de la communication, soit un type de message correspondant aux messages de l'algorithme distribué implémenté.
+    \paragraph{}
     Lors de la réception d'un message sur la socket, nous récupérons le type de message envoyé et effectuons les traitements adaptés en fonction de celui-ci.
     
     \subsection{Routage}
     \paragraph{}
     La mécanique de bas niveau la plus complexe et sophistiquée est le routage. C'est lui qui va permettre à des appareils qui ne sont pas connectés directement de pouvoir tout de même communiquer entre eux. Cela est nécessaire du fait de la faible portée du Bluetooth afin de pouvoir faire partie du réseau sans pour autant être à portée de tous les autres appareils du réseau.
-    
-    //table de routage
-    //gestion des entrées de la table
-    //recherche de chemin vers
-    //communication avec un appareil distant
+    \paragraph{}
+    La table de routage est contituée de plusieurs entrées composées chacune de trois éléments : l'appareil que l'on souhaite atteindre, le cout en nombre de passerelles pour l'atteindre et la passerelle par qui passer.
+    \paragraph{}
+    Chaque fois qu'un nouvel appareil se connecte au réseau, l'entrée de la table de routage lui correspondant est diffusée à tous les autres appareils du réseau.
+    \paragraph{}
+    Lorsqu'un appareil souhaite communiquer avec un autre appareil avec qui il n'est pas connecté directement, il va chercher le chemin le moins coûteux vers sa cible, et envoie son message à la passerelle correspondante. Lorsqu'un appareil reçoit un message, si celui-ci ne lui est pas adressé, il se contente de le transmettre de la même façon.
   
   \section{Couche intermédiaire}
     \subsection{Implémentation d'un anneau}
@@ -244,23 +258,33 @@ Visidia : c'est un logiciel permettant de visualiser la simulation d'algorithmes
     
       \subsubsection{Création de l'anneau}
       \paragraph{}
-      La création de l'anneau est donc réalisée en même temps que la connexion à un appareil. Lorsqu'un appareil se connecte au réseau, il demande à être inséré dans l'anneau du serveur. Plusieurs cas différents s'appliquent. Soit cette connexion est la première connexion du réseau, un anneau est donc créé avec l'appareil initial et le nouvel appareil, chacun étant le suivant de l'autre. Soit la connexion concerne un nouvel appareil qui s'implante dans un anneau déjà construit, auquel cas l'appareil est inséré dans l'anneau par son serveur. Soit la connexion est faite entre deux appareils qui se trouvent chacun déjà dans un anneau, ce qui peut amener à une fusion des anneaux.
-      
+      La création de l'anneau est donc réalisée en même temps que la connexion à un appareil. Lorsqu'un appareil se connecte au réseau, il demande à être inséré dans l'anneau du serveur. Plusieurs cas différents s'appliquent. 
+      \paragraph{}
+      Soit cette connexion est la première connexion du réseau, un anneau est donc créé avec l'appareil initial et le nouvel appareil, chacun étant le suivant de l'autre.
+      \paragraph{}
+      Soit la connexion concerne un nouvel appareil qui s'implante dans un anneau déjà construit, auquel cas l'appareil est inséré dans l'anneau par son serveur.
+      \paragraph{}
+      Soit la connexion est faite entre deux appareils qui se trouvent chacun déjà dans un anneau, ce qui peut amener à une fusion des anneaux. La fusion est initiée par un des deux appareils qui va prendre en suivant l'autre appareil et qui va donner comme suivant son ancien suivant au précédant du deuxième appareil. De cette façon on casse les anneaux pour les reformer en un seul anneau unique.
+      \newpage
       \subsubsection{Insertion dans un anneau}
       \paragraph{}
       Lorsqu'un nouvel appareil se connecte au réseau, il doit être inséré dans l'anneau. Ce qui se passe est que l'appareil qui a accepté la connexion va envoyer son suivant au nouvel appareil et garder le nouvel appareil comme suivant.
+      \\ \\
+      \includegraphics[scale=0.50]{juju.png}
+      \caption{Connexion d'un appareil : routage et anneau}
+      
       
       \subsubsection{Fusion des anneaux}
       \paragraph{}
       Lorsque deux appareils se connectent entre eux tout en faisant chacun déjà partie d'un réseau, deux cas sont possibles. Dans la majorité des cas, cette connexion est réalisée par deux appareils faisant partie du même réseau, lors de la phase de construction d'un réseau complet. Dans ce cas aucune modification n'a besoin d'être effectué sur l'anneau : celui-ci est déjà construit et contient déjà les deux appareils. Cependant dans une petite minorité des cas, il est possible que les deux appareils fassent chacun partie d'un réseau distinct. Cela se produit lorsque deux réseaux éloignés spécialement se rapprochent et que deux appareils se retrouvent dans la portée Bluetooth. Dans ce cas deux anneaux distincts sont construits, il est alors nécessaire de les fusionner. 
+      
+      
       
   \section{Couche haut niveau}
     \subsection{API sur le modèle de Visidia}
     \paragraph{}
     Afin de pouvoir utiliser les couches de niveau inférieur de l'application, une API a été développée et réalisera le lien avec les algorithmes qu'un développeur voudra mettre en place.
     Elle permet d'envoyer des messages entre différents appareils et la réception de ceux-ci. L'implémentation de l'API a été réalisée en suivant le modèle utilisé par le logiciel Visidia* étudié en module de Synchronisation Distribuée durant ce semestre de Master. Des fonctions ont été créées afin de permettre l'utilisation des informations de la table de routage permettant la communication avec d'autres appareils.
-    
-    \subsection{Algorithmes} \todo{Implémentabilité}
 %   \section{Fonctionnalités de base / connexion}
 %     \paragraph{}
 %     Création d'un UUID afin d'identifier les connexions Bluetooth
@@ -315,7 +339,7 @@ La première représente notre processus et contient :
     \item Les différentes règles de l'algorithme (ce sont les fonctions des processus, par exemple comment réagir à la réception d'une demande d'accès à la section critique)
 \end{itemize}
 \paragraph{}
-La seconde est l'API qui nous permet de gérer les action à effectuer lors de la réception d'un message en fonction de son type (grâce à la fonction onMessage).
+La seconde est l'API qui nous permet de gérer les actions à effectuer lors de la réception d'un message en fonction de son type (grâce à la fonction onMessage).
 \newpage
 \paragraph{}
 Voici un exemple de règle pour la réception d'un message de type REQ représentant la demande d'un autre processus pour entrer en section critique :
@@ -345,11 +369,10 @@ On remarque ici, pour notre cas de réception de demande d'accès à la section 
 \chapter{Déroulement du projet}
  \section{Partage des tâches}
  \paragraph{}
- Dans ce projet chacun avait des affinités, Celia par exemple est douée en développement Android c'est donc elle qui s'est chargée de la création de l'application et de la majeure partie du développement. Justine quand à elle a une bonne vision du fonctionnement de l'outil ainsi qu'un bon esprit de synthèse elle s'est donc occupée de la création de l'API et des fonctions dites "haut niveau" qui facilitent l'utilisation de l'application. Vincent préfère la partie théorique et la modélisation algorithmique, il a donc été actif lors des discussions sur les choix d'implémentations lors des réunions de groupe et a développé l'algorithme de test.
+ Dans ce projet chacun avait des affinités, Célia par exemple est douée en développement Android c'est donc elle qui s'est chargée de la création de l'application et de la majeure partie du développement. Justine quant à elle a une bonne vision du fonctionnement de l'outil ainsi qu'un bon esprit de synthèse elle s'est donc occupée de la création de l'API et des fonctions dites "haut niveau" qui facilitent l'utilisation de l'application. Vincent préfère la partie théorique et la modélisation algorithmique, il a donc été actif lors des discussions sur les choix d'implémentations lors des réunions de groupe et a développé l'algorithme de test.
  \section{Rétrospective sur le travail d'équipe}
  \paragraph{}
- Le travail d'équipe s'est bien réparti, chacun avait ses taches à réaliser que ce soit de la recherche, du développement ou encore de la modélisation. Toute l'équipe participait activement aux discussions lorsqu'il y avait des décisions à prendre ou lorsqu'un membre de l'équipe était en difficulté.
-
+ Le travail d'équipe s'est bien réparti, chacun avait ses tâches à réaliser que ce soit de la recherche, du développement ou encore de la modélisation. Toute l'équipe participait activement aux discussions lorsqu'il y avait des décisions à prendre ou lorsqu'un membre de l'équipe était en difficulté.
 \chapter{Conclusion}
 \section{État d'avancement}
 \paragraph{}
@@ -361,7 +384,7 @@ Nous avons cependant pris du retard sur l'implémentation de l'algorithme de dé
 \paragraph{}
 \section{difficultés rencontrées}
 \paragraph{}
-La principale difficulté que nous avons eue est la découverte du fonctionnement d'Android, c'est à dire comprendre l'architecture et l'articulation de toutes les parties d'une application. C'est en partie du à cela que nous n'avons pas pu mettre mettre en place l'algorithme.
+La principale difficulté que nous avons eue est la découverte du fonctionnement d'Android, c'est à dire comprendre l'architecture et l'articulation de toutes les parties d'une application. C'est en partie dû à cela que nous n'avons pas pu mettre en place l'algorithme.
 \todo{ajouter des difficultés si il y en a eu}
 \newpage
 \listoffigures  % table des figures
@@ -378,7 +401,7 @@ La principale difficulté que nous avons eue est la découverte du fonctionnemen
  
  
 \newline
- Wifi-Direct :
+ Wi-Fi Direct :
 
  [3]http://www.techradar.com/news/phone-and-communications/mobile-phones/wi-fi-direct-what-it-is-and-why-you-should-care-1065449 (16/10/2017)
  [4]https://www.androidpit.com/what-is-wifi-direct (16/10/2017)
@@ -390,17 +413,25 @@ La principale difficulté que nous avons eue est la découverte du fonctionnemen
 
  [7]http://www.phonandroid.com/bluetooth-google-fast-pair-systeme-simplifier-appairage-smartphone.html (31/10/2017)
  
- \chapter*{Résumé}
+ \chapter*{}
+ \section*{Résumé}
  Dans le cadre du Master Informatique de l'Université de Franche-Comte, les étudiants ont comme mission de réaliser un projet tuteuré. Ce rapport vous présentera notre projet de développement d'une application Android permettant la création et exécution d'un algorithme distribué.
  
  Ce rapport présentera le sujet et ses problématiques, la conception et la réalisation du dit projet.
  
  La technologie utilisée pour la communication est le Bluetooth ce qui nous permet de construire un grand réseau de communication inter appareils sans limite de nombre.
  
- Programmé en Java \todo{Ajouter la version} pour des appareils Android version \todo{AJOUTER LA VERSION ANDROID}
+ Programmé en Java 8 pour des appareils Android depuis la version 4.4 KitKat.
  
- Mots-clés : Android, API, Bluetooth, Wifi-Direct, NFC, Algorithme distribue, Visidia
+ Mots-clés : Android, API, Bluetooth, Wi-Fi Direct, NFC, Algorithme distribué, Visidia
  
- \chapter*{Abstract}
+ \section*{Abstract}
  \todo{Doit être sur la même page que le résumé}
-\end{document}          
+ As part of the Master's degree in Computer Science at the University of Franche-Comte, the students have to carry out a tutored project. This project report presents the subject and its problematic, the conception and realisation of said project.
+ 
+ The technology used for the communication is Bluetooth, which allows for the contruction of a large inter-device communication network, with an unlimited number of devices.
+ 
+ Developped in Java 8 for Android devices in version 4.4 KitKat or newer.
+ 
+ Keywords : Android, API, Bluetooth, Wi-Fi Direct, NFC, Distributed Algorithm, Visidia
+\end{document} 
