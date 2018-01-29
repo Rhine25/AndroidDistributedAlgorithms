@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private Button mToken;
+    private Button mChangeActivity;
     private TextView mMessagesTextView;
     private TextView mConnectionsTextView;
     private TextView mRoutingTableTextView;
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private BluetoothDevice mPrevious;
     private boolean mInRing;
     private boolean autoConnect;
+    private AlgoLamportChat algo;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -230,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                         default:
                             readableMsgR = "Developer message type";
                             Log.d(TAG, "Read message from API, transmitting it");
-                            API.onMessage(byteMsgR);
+                            API.onMessage(byteMsgR, algo);
                             break;
                     }
                     Log.i(TAG, "Read " + Arrays.toString(dataR) + "/" + dataR.length + " from " + expedMAC);
@@ -268,6 +270,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        algo =new AlgoLamportChat();
+
         autoConnect = false;
         mInRing = false;
         mNext = null;
@@ -276,6 +280,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         mProgressBar = (ProgressBar) findViewById(R.id.pb_progress_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_available_devices);
         mToken = (Button) findViewById(R.id.bt_token);
+        mChangeActivity = (Button) findViewById(R.id.bt_change_activity);
         mMessagesTextView = (TextView) findViewById(R.id.tv_messages);
         mConnectionsTextView = (TextView) findViewById(R.id.tv_connections);
         mRoutingTableTextView = (TextView) findViewById(R.id.tv_routing_table);
@@ -458,5 +463,11 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
 
     private void setNext(BluetoothDevice device) {
         mNext = device;
+    }
+
+    public void changeActivity(View view){
+        Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+        intent.putExtra("ALGO", algo);
+        startActivity(intent);
     }
 }

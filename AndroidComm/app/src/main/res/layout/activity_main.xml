@@ -6,96 +6,116 @@
     android:orientation="vertical"
     android:paddingTop="16dp"
     tools:context="com.jujucecedudu.androidcomm.MainActivity">
+
     <Button
         android:id="@+id/bt_token"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="sendToken"
         android:text="TOKEN"
-        android:visibility="gone"
-        android:onClick="sendToken"/>
+        android:visibility="gone" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_available_devices"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+
     <ProgressBar
         android:id="@+id/pb_progress_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/bt_toggle_bluetooth"
-            android:text="Toggle BT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="toggleBluetooth"/>
+            android:onClick="toggleBluetooth"
+            android:text="Toggle BT" />
+
         <Button
             android:id="@+id/bt_write"
-            android:text="Say hello"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="sayHello"/>
+            android:onClick="sayHello"
+            android:text="Say hello" />
+
         <Button
             android:id="@+id/bt_clear_messages"
-            android:text="Clear msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="clearMessages"/>
+            android:onClick="clearMessages"
+            android:text="Clear msg" />
+
+        <Button
+            android:id="@+id/bt_change-activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="changeActivity"
+            android:text="Change activity" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:orientation="horizontal">
+
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
+
             <TextView
+                android:id="@+id/tv_messages"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tv_messages"/>
+                android:layout_height="wrap_content" />
         </ScrollView>
+
         <TextView
             android:id="@+id/tv_connections"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="40dp"/>
+            android:paddingLeft="40dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
+
             <TextView
+                android:id="@+id/tv_routing_table"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tv_routing_table"/>
+                android:layout_height="wrap_content" />
         </ScrollView>
+
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingLeft="40dp">
+
             <TextView
+                android:id="@+id/tv_routing_bindings"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tv_routing_bindings"/>
+                android:layout_height="wrap_content" />
         </ScrollView>
+
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingLeft="40dp">
+
             <TextView
+                android:id="@+id/tv_connected_threads"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tv_connected_threads"/>
+                android:layout_height="wrap_content" />
         </ScrollView>
     </LinearLayout>
 </LinearLayout>

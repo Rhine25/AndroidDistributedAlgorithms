@@ -127,6 +127,14 @@ public class Utils {
         return null;
     }
 
+    static byte[] getObjectDataFromMessage(byte[] data){
+        byte[] data2 = new byte[data.length-1]; //get object field from data
+        for(int i=0;i<data2.length;i++){
+            data2[i]=data[i+1];
+        }
+        return data2;
+    }
+
     static int byteToInt(byte[] b){
         int res = 0;
         for(int i=0; i<b.length; i++){

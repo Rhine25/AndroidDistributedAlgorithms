@@ -33,7 +33,7 @@ public class API {
         byte REL = 0x15;
     }
 
-    public static void onMessage(byte[] message, AlgoLamportChat a){
+    /*public static void onMessage(byte[] message, AlgoLamportChat a){
         byte messageType = message[0];
         MessagePacket mp = Utils.getMessagePacketFromByteMessage(message);
         byte[] data = mp.getData(); //get data field of mp
@@ -63,6 +63,28 @@ public class API {
             case REL:
                 a.receiveREL(Utils.byteToInt(data2), mp.getExpMAC());
                 Log.i(TAG, "Received message example 3");
+                break;
+            default:
+                Log.i(TAG, "onMessage, message type is not handled : " + messageType);
+        }
+    }*/
+
+    public static void onMessage(byte[] message, AlgoLamportChat a){
+        byte messageType = message[0];
+        MessagePacket mp = Utils.getMessagePacketFromByteMessage(message);
+        byte[] data = Utils.getObjectDataFromMessage(mp.getData()); //get data field of mp
+        switch(messageType){
+            case REQ:
+                a.receiveREQ(Utils.byteToInt(data), mp.getExpMAC());
+                Log.i(TAG, "Received message REQ from"+mp.getExpMAC()+"at clock "+Utils.byteToInt(data));
+                break;
+            case ACK:
+                a.receiveACK(Utils.byteToInt(data), mp.getExpMAC());
+                Log.i(TAG, "Received message ACK from"+mp.getExpMAC()+"at clock "+Utils.byteToInt(data));
+                break;
+            case REL:
+                a.receiveREL(Utils.byteToInt(data), mp.getExpMAC());
+                Log.i(TAG, "Received message REL from"+mp.getExpMAC()+"at clock "+Utils.byteToInt(data));
                 break;
             default:
                 Log.i(TAG, "onMessage, message type is not handled : " + messageType);
