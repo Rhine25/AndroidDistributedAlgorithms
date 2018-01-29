@@ -302,7 +302,10 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
             askForPermission(Manifest.permission.ACCESS_COARSE_LOCATION, LOCATION);
             enableBluetooth();
             registerForDiscoveryInfo();
+            while(!mBluetoothAdapter.isEnabled()){}
             mBluetoothService.accept();
+            byte[] triggerInit = {API.MessageTypes.API_INIT};
+            API.onMessage(triggerInit);
         }
     }
 
@@ -403,10 +406,11 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     }
 
     public void sayHello(View view){
+        Log.d(TAG, "HELLO");
         byte[] str = "Hello !".getBytes();
         byte[] data = Utils.getConstructedMessage(TYPE_STRING, str);
         MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), ALL, data);
-        mBluetoothService.sendMessageBroadcast(messagePacket);
+        mBluetoothService.sendMessage(messagePacket);
         //TODO CHECK THIS, CLICKING HELLO DOES NOT DO ANYTHING :/
         //TODO display routing table (should already be dsplayed ?)
         //TODO swipe tabs ! \0/
@@ -421,9 +425,10 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     }
 
     public void sendToken(View view){
+        Log.d(TAG, "TOKEN");
         byte[] token = new byte[]{TYPE_TOKEN};
         MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), mNext.getAddress(), token);
-        mBluetoothService.sendMessage(messagePacket);
+        //mBluetoothService.sendMessage(messagePacket);
         makeTokenInvisible();
     }
 

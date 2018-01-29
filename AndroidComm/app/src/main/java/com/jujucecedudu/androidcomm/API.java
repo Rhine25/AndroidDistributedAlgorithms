@@ -22,7 +22,7 @@ public class API {
 
     public interface MessageTypes{
         byte SEND_MESSAGE = 0x10;
-        byte type2 = 0x11;
+        byte API_INIT = 0x11;
         byte type3 = 0x12;
         byte REQ = 0x13;
         byte ACK = 0x14;
@@ -34,6 +34,8 @@ public class API {
         MessagePacket mp = Utils.getMessagePacketFromByteMessage(message);
         byte[] data = Utils.getObjectDataFromMessage(mp.getData()); //get data field of mp
         switch(messageType){
+            case API_INIT:
+                //TODO init l'algo
             case REQ:
                 mAlgo.receiveREQ(Utils.byteToInt(data), mp.getExpMAC());
                 Log.i(TAG, "Received message REQ from"+mp.getExpMAC()+"at clock "+Utils.byteToInt(data));

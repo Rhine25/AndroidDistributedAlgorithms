@@ -119,8 +119,11 @@ public class MyBluetoothService {
     }
 
     void sendMessage(MessagePacket message){ //TODO faire les petites fonctions
+        Log.d(TAG, "SEND MESSAGE");
         if(message.getDest().equals(ALL)){ //send message to all directly connected devices
+            Log.d(TAG, "TO ALL");
             for(ConnectedThread connectedThread : mConnectedThreads) {
+                Log.d(TAG, "TO " + connectedThread.mmDevice.getName());
                 if (connectedThread == null) {
                     Log.d(TAG, "connected thread is null");
                 } else {
