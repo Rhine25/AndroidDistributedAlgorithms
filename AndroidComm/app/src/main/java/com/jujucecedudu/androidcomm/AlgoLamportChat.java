@@ -4,7 +4,7 @@ package com.jujucecedudu.androidcomm;
  * Created by vincent on 24/01/18.
  */
 
-public class AlgoLamportChat {
+public class AlgoLamportChat{
 
     public int getIdByMAC(String mac, String[] macTable, int size){
         for(int i = 0 ; i < size ; i++){
@@ -15,16 +15,30 @@ public class AlgoLamportChat {
         return -1;
     }
 
+    public boolean amITheLowerMAC(String myMac, String[] neighbours){
+        for(int i = 0 ; i < neighbours.length ; i++){
+            if(myMac.compareTo(neighbours[i]) > 0){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public AlgoLamportChat(){
+        super();
+    }
+
     API api = new API(this);
 
-    public int numProc;
-    public int nbVoisins;
+
     public String[] macTable;
     public int nbNeigbours;
     public int procId;
 
-    public boolean inCriticalSection = false;
+    public boolean inCriticalSection;
 
+    public boolean amITheLowerMac;
+    public boolean gotCriticalSection;
 
     public int clock;
 
@@ -49,12 +63,15 @@ public class AlgoLamportChat {
         macTable = api.getDevicesMACs();
         macTable = new String[nbNeigbours];
 
-        //TODO à trouver
-        // procId = ;
+        amITheLowerMac = amITheLowerMAC(api.getMyMACAddres(), macTable);
 
 
 
-
+        if(amITheLowerMac){
+            inCriticalSection = true;
+        }else{
+            inCriticalSection = false;
+        }
 
 
         F_H = new int[nbNeigbours+1];
@@ -75,39 +92,41 @@ public class AlgoLamportChat {
 
         while(!inCriticalSection){
             for(int j=0 ; j<nbNeigbours ; j++){
-                inCriticalSection &= ( (F_H[procId] < F_H[j]) || ((F_H[procId] == F_H[j])&& procId < j));
+                inCriticalSection = ( (F_H[procId] < F_H[j]) || ((F_H[procId] == F_H[j])&& procId < j));
             }
         }
+    }
+    
+    public void receiveREQ(int rClock, String emitt){
+        //clock increment
+        clock = Math.max(clock, rClock) + 1;
+        //get the emitter ID from the MAC/ID table
+        int idEmitt = getIdByMAC(emitt, macTable, nbNeigbours);
 
-        //Log.e(TAG, "Couldn't convert object to byte array " + e);
+        //update request clock array
+        F_H[idEmitt] = rClock;
+        //update message received array
+        F_M[idEmitt] = API.MessageTypes.REQ;
+
+        //send message to the emitter
+        api.sendMessage(emitt, API.MessageTypes.ACK, clock);
 
     }
 
-    public void receiveREQ(int rClock, String emmet){
-        clock = Math.max(clock, rClock) + 1;
-
-        int idEmmet = getIdByMAC(emmet, macTable, nbNeigbours);
-        F_H[idEmmet] = rClock;
-        F_M[idEmmet] = API.MessageTypes.REQ;
-
-        api.sendMessage(emmet, API.MessageTypes.ACK, clock);
-
-        // envoyer ACK à emmet
-    }
-
-    public void receiveACK(int rClock, String emmet){
-        int idEmmet = getIdByMAC(emmet, macTable, nbNeigbours);
+    public void receiveACK(int rClock, String emitt){
+        int idEmitt = getIdByMAC(emitt, macTable, nbNeigbours);
 
         clock = Math.max(clock, rClock) + 1;
 
-        if(F_M[idEmmet] != API.MessageTypes.REQ){
-            F_H[idEmmet] = rClock;
-            F_M[idEmmet] = API.MessageTypes.ACK;
+        if(F_M[idEmitt] != API.MessageTypes.REQ){
+            F_H[idEmitt] = rClock;
+            F_M[idEmitt] = API.MessageTypes.ACK;
         }
     }
 
     public void freeSC(){
         clock++;
+        inCriticalSection = false;
         for(int i=0 ; i<nbNeigbours ; i++){
             api.sendMessage(macTable[i], API.MessageTypes.REL, clock);
         }
@@ -115,11 +134,11 @@ public class AlgoLamportChat {
         F_M[procId] = API.MessageTypes.REL;
     }
 
-    public void receiveREL(int rClock, String emmet){
-        int idEmmet = getIdByMAC(emmet, macTable, nbNeigbours);
+    public void receiveREL(int rClock, String emitt){
+        int idEmitt = getIdByMAC(emitt, macTable, nbNeigbours);
         clock = Math.max(clock, rClock) + 1;
-        F_H[idEmmet] = rClock;
-        F_M[idEmmet] = API.MessageTypes.REL;
+        F_H[idEmitt] = rClock;
+        F_M[idEmitt] = API.MessageTypes.REL;
     }
 
 

@@ -32,33 +32,19 @@ public class API {
     public static void onMessage(byte[] message){
         byte messageType = message[0];
         MessagePacket mp = Utils.getMessagePacketFromByteMessage(message);
-        byte[] data = mp.getData(); //get data field of mp
-        byte[] data2 = new byte[data.length-1]; //get object field from data
-        for(int i=0;i<data2.length;i++){
-            data2[i]=data[i+1];
-        }
+        byte[] data = Utils.getObjectDataFromMessage(mp.getData()); //get data field of mp
         switch(messageType){
-            case SEND_MESSAGE:
-                //MET TA PUTAIN DE FONCTION ICI
-                Log.i(TAG, "Send message");
-                break;
-            case type2:
-                Log.i(TAG, " message");
-                break;
-            case type3:
-                Log.i(TAG, " message");
-                break;
             case REQ:
-                mAlgo.receiveREQ(Utils.byteToInt(data2), mp.getExpMAC()); //mAlgo.clock ?
-                Log.i(TAG, "Received message example 3");
+                mAlgo.receiveREQ(Utils.byteToInt(data), mp.getExpMAC());
+                Log.i(TAG, "Received message REQ from"+mp.getExpMAC()+"at clock "+Utils.byteToInt(data));
                 break;
             case ACK:
-                mAlgo.receiveACK(Utils.byteToInt(data2), mp.getExpMAC());
-                Log.i(TAG, "Received message example 3");
+                mAlgo.receiveACK(Utils.byteToInt(data), mp.getExpMAC());
+                Log.i(TAG, "Received message ACK from"+mp.getExpMAC()+"at clock "+Utils.byteToInt(data));
                 break;
             case REL:
-                mAlgo.receiveREL(Utils.byteToInt(data2), mp.getExpMAC());
-                Log.i(TAG, "Received message example 3");
+                mAlgo.receiveREL(Utils.byteToInt(data), mp.getExpMAC());
+                Log.i(TAG, "Received message REL from"+mp.getExpMAC()+"at clock "+Utils.byteToInt(data));
                 break;
             default:
                 Log.i(TAG, "onMessage, message type is not handled : " + messageType);
