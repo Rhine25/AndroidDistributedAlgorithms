@@ -128,7 +128,7 @@ public class RoutingTable implements Serializable{
                 return getNextHopMAC(entry);
             }
         }
-        return null;
+        return targetMAC;
     }
 
     public String getMACToNameBindings(){

@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                                     mNext = expeditor;
                                 }
                             }
-                            else{
+                            else{ //in RING
                                 if(mInRing == false){
                                     //nothing to do here, it's done in your next reception
                                 }
@@ -239,16 +239,22 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                 case MESSAGE_CONNECTION:
                     BluetoothDevice device = (BluetoothDevice)msg.obj;
                     String deviceName = device.getName();
-                    Log.i(TAG, "Connected to " + deviceName);
+                    Log.i(TAG, "Connected to " + deviceName + " " + device.getAddress());
                     mConnectionsTextView.append(deviceName + "\n");
                     Log.d(TAG, "My initial routing : \n'" + mBluetoothService.getRoutingTableStr() + "'");
                     mBluetoothService.sendRoutingTable(device);
                     mConnectedThreadsTextView.setText(mBluetoothService.getConnectedThreadsStr());
                     if (!mBluetoothService.knowMyMAC()){
+                        Log.d(TAG, "Asked for my MAC");
                         byte[] request = new byte[]{TYPE_WHATS_MY_MAC};
                         MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), device.getAddress(), request);
                         mBluetoothService.sendMessage(messagePacket);
                     }
+                    //send ring status request
+                    Log.d(TAG, "Asked for ring status");
+                    byte[] request = new byte[]{TYPE_RING_STATUS};
+                    MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), device.getAddress(), request);
+                    mBluetoothService.sendMessage(messagePacket);
                     break;
                 case MESSAGE_DISCONNECTION:
                     Log.i(TAG, msg.obj + " disconnected ");

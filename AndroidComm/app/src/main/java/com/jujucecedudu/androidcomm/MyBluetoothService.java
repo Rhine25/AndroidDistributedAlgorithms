@@ -119,7 +119,7 @@ public class MyBluetoothService {
     }
 
     void sendMessage(MessagePacket message){ //TODO faire les petites fonctions
-        Log.d(TAG, "SEND MESSAGE");
+        Log.d(TAG, "SEND MESSAGE " + message.getData()[0] + " to " + message.getDest() + " (as " + message.getExpMAC() +")");
         if(message.getDest().equals(ALL)){ //send message to all directly connected devices
             Log.d(TAG, "TO ALL");
             for(ConnectedThread connectedThread : mConnectedThreads) {
@@ -134,7 +134,9 @@ public class MyBluetoothService {
             }
         }
         else{ //send message to a specific device
+            Log.d(TAG, "TO SPECIFIC ONE");
             String nextHop = mRoutingTable.getNextHopMAC(message.getDest());
+            Log.d(TAG, "Sending to next hop : " + nextHop);
             for(ConnectedThread connectedThread : mConnectedThreads) {
                 if (connectedThread == null) {
                     Log.d(TAG, "connected thread is null");
@@ -145,6 +147,7 @@ public class MyBluetoothService {
                         getInfoToUIThread(MessageConstants.MESSAGE_WRITE, out, "to", connectedThread.mmDevice.getName());
                         return;
                     }
+                    Log.e(TAG, "Couldn't find next hop in connectedThreads lists :/");
                 }
             }
         }
@@ -365,7 +368,9 @@ public class MyBluetoothService {
             while (true) try {
                 mmInStream.read(mmBuffer);
                 MessagePacket message = Utils.deserializeMessage(mmBuffer); //TODO check if should pass mmBuffer length too
-                if(!message.getDest().equals(getMyMAC())){ //transfer message
+                Log.d(TAG, "RECEIVED MESSAGE " + message.getData()[0] + " from " + message.getExpMAC() + "( to " + message.getDest() + ")");
+                if(!message.getDest().equals(getMyMAC()) && !message.getDest().equals(ALL) && !getMyMAC().equals("")){ //transfer message
+                    Log.d(TAG, "Message is not for me");
                     sendMessage(message);
                 }
                 else { //message is for me, treat it
@@ -375,6 +380,7 @@ public class MyBluetoothService {
                     System.arraycopy(message.getData(), 0, data, 0, numBytes);
                     switch (msgType) {
                         case TYPE_STRING:
+                            Log.d(TAG, "STRING");
                             getInfoToUIThread(MessageConstants.MESSAGE_READ, data, FROM, mmDevice.getName());
                             break;
                         case TYPE_ROUTING_TABLE:
