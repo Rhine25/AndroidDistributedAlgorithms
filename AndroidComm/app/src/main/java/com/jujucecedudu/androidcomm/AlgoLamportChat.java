@@ -2,6 +2,8 @@ package com.jujucecedudu.androidcomm;
 
 import android.util.Log;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Created by vincent on 24/01/18.
  */
@@ -67,14 +69,20 @@ public class AlgoLamportChat{
         macTable = API.getDevicesMACs();
         macTable = new String[nbNeigbours];
 
+        Log.d(TAG, "I HAVE "+ nbNeigbours + " NEIGHBOURS");
+
         amITheLowerMac = amITheLowerMAC(API.getMyMACAddres(), macTable);
 
 
 
         if(amITheLowerMac){
             inCriticalSection = true;
+            try {sleep(10000);} catch (InterruptedException e) {e.printStackTrace();}
+            freeSC();
         }else{
             inCriticalSection = false;
+            try {sleep(3000);} catch (InterruptedException e) {e.printStackTrace();}
+            askForSC();
         }
 
 
@@ -84,10 +92,11 @@ public class AlgoLamportChat{
     }
 
     public void askForSC(){
-
+        Log.d(TAG, "I ASK FOR SC");
         clock += 1;
         for(int i=0 ; i<nbNeigbours ; i++){
             API.sendMessage(macTable[i], API.MessageTypes.REQ, clock);
+            Log.d(TAG, "I SEND REQ( "+ clock + " ) to "+macTable[i]);
         }
         F_H[procId]=clock;
         F_M[procId]= API.MessageTypes.REQ;
@@ -102,6 +111,7 @@ public class AlgoLamportChat{
     }
     
     public void receiveREQ(int rClock, String emitt){
+        Log.d(TAG, "I RECEIVE REQ( "+ rClock + " ) from "+emitt);
         //clock increment
         clock = Math.max(clock, rClock) + 1;
         //get the emitter ID from the MAC/ID table
@@ -114,10 +124,11 @@ public class AlgoLamportChat{
 
         //send message to the emitter
         API.sendMessage(emitt, API.MessageTypes.ACK, clock);
-
+        Log.d(TAG, "I SEND ACK( "+ clock + " ) to "+emitt);
     }
 
     public void receiveACK(int rClock, String emitt){
+        Log.d(TAG, "I RECEIVE ACK( "+ rClock + " ) from "+emitt);
         int idEmitt = getIdByMAC(emitt, macTable, nbNeigbours);
 
         clock = Math.max(clock, rClock) + 1;
@@ -129,16 +140,19 @@ public class AlgoLamportChat{
     }
 
     public void freeSC(){
+        Log.d(TAG, "I FREE SC");
         clock++;
         inCriticalSection = false;
         for(int i=0 ; i<nbNeigbours ; i++){
             API.sendMessage(macTable[i], API.MessageTypes.REL, clock);
+            Log.d(TAG, "I SEND REL( "+ clock + " ) to "+macTable[i]);
         }
         F_H[procId] = clock;
         F_M[procId] = API.MessageTypes.REL;
     }
 
     public void receiveREL(int rClock, String emitt){
+        Log.d(TAG, "I RECEIVE REL( "+ rClock + " ) from "+emitt);
         int idEmitt = getIdByMAC(emitt, macTable, nbNeigbours);
         clock = Math.max(clock, rClock) + 1;
         F_H[idEmitt] = rClock;

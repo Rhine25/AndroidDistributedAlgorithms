@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private Button mToken;
+    private Button mRunAlgo;
     private TextView mMessagesTextView;
     private TextView mConnectionsTextView;
     private TextView mRoutingTableTextView;
@@ -283,6 +284,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         mProgressBar = (ProgressBar) findViewById(R.id.pb_progress_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_available_devices);
         mToken = (Button) findViewById(R.id.bt_token);
+        mRunAlgo = (Button) findViewById(R.id.bt_run_algo);
         mMessagesTextView = (TextView) findViewById(R.id.tv_messages);
         mConnectionsTextView = (TextView) findViewById(R.id.tv_connections);
         mRoutingTableTextView = (TextView) findViewById(R.id.tv_routing_table);
@@ -309,11 +311,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
             registerForDiscoveryInfo();
             while(!mBluetoothAdapter.isEnabled()){}
             mBluetoothService.accept();
-            AlgoLamportChat algo = new AlgoLamportChat();
-            new API(algo, mBluetoothService);
-            algo.init();
-            API.getNbDevicesConnected();
-            Log.d(TAG, "Test api service");
         }
     }
 
@@ -478,4 +475,9 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         mNext = device;
     }
 
+    public void runAlgo(View view){
+        AlgoLamportChat algo = new AlgoLamportChat();
+        new API(algo, mBluetoothService);
+        algo.init();
+    }
 }
