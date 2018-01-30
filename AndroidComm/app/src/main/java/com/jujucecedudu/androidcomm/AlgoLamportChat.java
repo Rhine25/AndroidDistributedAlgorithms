@@ -84,10 +84,11 @@ public class AlgoLamportChat{
     }
 
     public void askForSC(){
-
+        Log.d(TAG, "I ASK FOR SC");
         clock += 1;
         for(int i=0 ; i<nbNeigbours ; i++){
             API.sendMessage(macTable[i], API.MessageTypes.REQ, clock);
+            Log.d(TAG, "I SEND REQ( "+ clock + " ) to "+macTable[i]);
         }
         F_H[procId]=clock;
         F_M[procId]= API.MessageTypes.REQ;
@@ -102,6 +103,7 @@ public class AlgoLamportChat{
     }
     
     public void receiveREQ(int rClock, String emitt){
+        Log.d(TAG, "I RECEIVE REQ( "+ rClock + " ) from "+emitt);
         //clock increment
         clock = Math.max(clock, rClock) + 1;
         //get the emitter ID from the MAC/ID table
@@ -114,10 +116,11 @@ public class AlgoLamportChat{
 
         //send message to the emitter
         API.sendMessage(emitt, API.MessageTypes.ACK, clock);
-
+        Log.d(TAG, "I SEND ACK( "+ clock + " ) to "+emitt);
     }
 
     public void receiveACK(int rClock, String emitt){
+        Log.d(TAG, "I RECEIVE ACK( "+ rClock + " ) from "+emitt);
         int idEmitt = getIdByMAC(emitt, macTable, nbNeigbours);
 
         clock = Math.max(clock, rClock) + 1;
@@ -129,16 +132,19 @@ public class AlgoLamportChat{
     }
 
     public void freeSC(){
+        Log.d(TAG, "I FREE SC");
         clock++;
         inCriticalSection = false;
         for(int i=0 ; i<nbNeigbours ; i++){
             API.sendMessage(macTable[i], API.MessageTypes.REL, clock);
+            Log.d(TAG, "I SEND REL( "+ clock + " ) to "+macTable[i]);
         }
         F_H[procId] = clock;
         F_M[procId] = API.MessageTypes.REL;
     }
 
     public void receiveREL(int rClock, String emitt){
+        Log.d(TAG, "I RECEIVE REL( "+ rClock + " ) from "+emitt);
         int idEmitt = getIdByMAC(emitt, macTable, nbNeigbours);
         clock = Math.max(clock, rClock) + 1;
         F_H[idEmitt] = rClock;
