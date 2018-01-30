@@ -46,7 +46,7 @@ public class RoutingTable implements Serializable{
     public RoutingTable updateFrom(String neighbourMAC, ArrayList<Object[]> neighbourTable){
         RoutingTable newEntriesTable = new RoutingTable();
         if(!knownPathToHost(neighbourMAC)) {
-            Log.d(TAG, "Don't know a path to connected host : " + neighbourMAC);
+            Log.d(TAG, "Don't know a path to connected host : " + neighbourMAC + ", adding it");
             addEntry(neighbourMAC, 1, neighbourMAC);
             newEntriesTable.addEntry(neighbourMAC, 1, neighbourMAC);
         }

@@ -9,8 +9,8 @@
 
     <Button
         android:id="@+id/bt_token"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:onClick="sendToken"
         android:text="TOKEN"
         android:visibility="gone" />
@@ -31,12 +31,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <!--<Button
             android:id="@+id/bt_toggle_bluetooth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="toggleBluetooth"
-            android:text="Toggle BT" />
+            android:text="Toggle BT" />-->
 
         <Button
             android:id="@+id/bt_write"

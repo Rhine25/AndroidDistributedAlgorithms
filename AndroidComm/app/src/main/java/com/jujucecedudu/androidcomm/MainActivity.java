@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                             }
                             break;
                         case TYPE_TOKEN:
+                            mDeviceAdapter.clearDevices();
                             readableMsgR = "token";
                             makeTokenVisible();
                             break;
@@ -450,6 +451,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     }
 
     private void initRing(){
+        mDeviceAdapter.clearDevices();
         createToken();
     }
 
