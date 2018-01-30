@@ -2,6 +2,8 @@ package com.jujucecedudu.androidcomm;
 
 import android.util.Log;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Created by vincent on 24/01/18.
  */
@@ -67,14 +69,20 @@ public class AlgoLamportChat{
         macTable = API.getDevicesMACs();
         macTable = new String[nbNeigbours];
 
+        Log.d(TAG, "I HAVE "+ nbNeigbours + " NEIGHBOURS");
+
         amITheLowerMac = amITheLowerMAC(API.getMyMACAddres(), macTable);
 
 
 
         if(amITheLowerMac){
             inCriticalSection = true;
+            try {sleep(10000);} catch (InterruptedException e) {e.printStackTrace();}
+            freeSC();
         }else{
             inCriticalSection = false;
+            try {sleep(3000);} catch (InterruptedException e) {e.printStackTrace();}
+            askForSC();
         }
 
 
