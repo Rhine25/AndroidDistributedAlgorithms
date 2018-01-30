@@ -4,6 +4,9 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
+\usepackage{todonotes}
+
+\usepackage{lmodern}
 
 \usetheme{Warsaw}
 
@@ -25,10 +28,21 @@
     \logo{\includegraphics[height=5mm]{logo_univ.png}}
 	\begin{frame}
 	  \frametitle{Sujet}
-	  \includegraphics[height=45mm]{android.jpg}
-	  Développement d’un environnement pour algorithmes distribués sur Android.
-	  \\Réalisation d’une plateforme qui permet de programmer facilement un algorithme distribué
+	  \begin{wrapfigure}
+      \begin{center}
+        \includegraphics[height=45mm]{android.jpg}
+      \end{center}
+      \end{wrapfigure}
+	  Réalisation d’une application Android qui permet de programmer facilement un algorithme distribué
         \end{frame}
+    \begin{frame}
+	  \frametitle{Algorithme distribué}
+	  \includegraphics[scale=0.3]{debut_algo.png}
+	  \end{frame}
+	\begin{frame}
+	  \frametitle{Algorithme distribué}
+	  \includegraphics[scale=0.4]{fin_algo.png}
+	  \end{frame}
     \begin{frame}
         \tableofcontents
     \end{frame}
@@ -86,7 +100,7 @@
 	  \end{block}
 	  \begin{block}{Inconvénients :}
 	  \begin{itemize}
-	   \item Combatibilité non assurée entre les marques
+	   \item Compatibilité non assurée entre les marques
 	   \item Peu de documentation
 	  \end{itemize}
 	  \end{block}
@@ -167,16 +181,37 @@
     \end{frame}
     \section{Bilan}
     \begin{frame}{Bilan}
-        Difficultés rencontrées:
-        \begin{itemize}
-            \item Intégration de l'algorithme
-            \item Découverte d'Android
-        \end{itemize}
-        Améliorations possibles :
-        \begin{itemize}
-            \item Application multi-plateforme
-            \item Affichage du contenu des variables dans l'application
-        \end{itemize}
+
+	  \begin{block}{Difficultés rencontrées :}
+	  \begin{itemize}
+	   \item Intégration de l'algorithme
+       \item Découverte d'Android
+	  \end{itemize}
+	  \end{block}
+	  \begin{block}{Améliorations possibles :}
+	  \begin{itemize}
+	   \item Application multi-plateforme
+       \item Affichage du contenu des variables dans l'application
+       \item Attribuer des numéros uniques à chacun des processus
+	  \end{itemize}
+	  \end{block}
+    \end{frame}
+
+    \begin{frame}{Bilan}
+    \todo{items à renommer}
+	  \begin{block}{Connaissances appliquées :}
+	  \begin{itemize}
+	   \item Développement Java
+       \item Notions en développement Android
+       \item Algorithmes distribuées
+	  \end{itemize}
+	  \end{block}
+	  \begin{block}{Ce que ça nous a apporté :}
+	  \begin{itemize}
+	   \item Meilleure connaissance d’Android
+       \item Une meilleure réflexion sur la conception
+	  \end{itemize}
+	  \end{block}
     \end{frame}
 \end{document}
 
