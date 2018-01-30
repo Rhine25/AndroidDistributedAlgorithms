@@ -66,8 +66,17 @@ public class AlgoLamportChat{
 
         nbNeigbours = API.getNbDevicesConnected();
 
-        macTable = API.getDevicesMACs();
+        if(nbNeigbours==2){
+            nbNeigbours--;
+        }
+
+
         macTable = new String[nbNeigbours];
+        F_H = new int[nbNeigbours+1];
+        F_M = new byte[nbNeigbours+1];
+
+        macTable = API.getDevicesMACs();
+
 
         Log.d(TAG, "I HAVE "+ nbNeigbours + " NEIGHBOURS");
 
@@ -86,8 +95,7 @@ public class AlgoLamportChat{
         }
 
 
-        F_H = new int[nbNeigbours+1];
-        F_M = new byte[nbNeigbours+1];
+
 
     }
 
@@ -101,7 +109,6 @@ public class AlgoLamportChat{
         F_H[procId]=clock;
         F_M[procId]= API.MessageTypes.REQ;
 
-        int neigbourId = 0;
 
         while(!inCriticalSection){
             for(int j=0 ; j<nbNeigbours ; j++){
