@@ -10,19 +10,19 @@ import static com.jujucecedudu.androidcomm.API.MessageTypes.*;
 
 public class API {
 
-    private static AlgoLamportChat mAlgo;
-
-    public API(AlgoLamportChat a){
-        mAlgo = a;
-    }
-
     private static final String TAG = "BLUETOOTH_TEST_API";
 
+    private static AlgoLamportChat mAlgo;
     private static MyBluetoothService myBluetoothService;
+
+    public API(AlgoLamportChat a, MyBluetoothService bluetoothService){
+        mAlgo = a;
+        myBluetoothService = bluetoothService;
+    }
 
     public interface MessageTypes{
         byte SEND_MESSAGE = 0x10;
-        byte API_INIT = 0x11;
+        byte type2 = 0x11;
         byte type3 = 0x12;
         byte REQ = 0x13;
         byte ACK = 0x14;
@@ -34,10 +34,6 @@ public class API {
         MessagePacket mp = Utils.getMessagePacketFromByteMessage(message);
         byte[] data; //get data field of mp
         switch(messageType){
-            case API_INIT:
-                //TODO init l'algo
-                mAlgo = new AlgoLamportChat();
-                mAlgo.init();
             case REQ:
                 data = Utils.getObjectDataFromMessage(mp.getData());
                 mAlgo.receiveREQ(Utils.byteToInt(data), mp.getExpMAC());
@@ -58,7 +54,7 @@ public class API {
         }
     }
 
-    public void sendMessage(String dest, byte tMess, Object data){
+    public static void sendMessage(String dest, byte tMess, Object data){
         byte[] d = Utils.convertObjectToByteArray(data);
         byte[] data_b = new byte[d.length+1];
         data_b[0] = tMess;
@@ -69,15 +65,15 @@ public class API {
         myBluetoothService.sendMessage(mp);
     }
 
-    public String[] getDevicesMACs(){
+    public static String[] getDevicesMACs(){
         return myBluetoothService.getAllDevicesMACs();
     }
     
-    public int getNbDevicesConnected(){
+    public static int getNbDevicesConnected(){
         return myBluetoothService.getNbDevicesConnected();
     }
 
-    public String getMyMACAddres(){
+    public static String getMyMACAddres(){
         return myBluetoothService.getMyMAC();
     }
 

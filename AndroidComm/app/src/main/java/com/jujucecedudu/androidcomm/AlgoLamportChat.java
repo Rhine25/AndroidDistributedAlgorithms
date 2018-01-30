@@ -7,6 +7,7 @@ import android.util.Log;
  */
 
 public class AlgoLamportChat{
+    private static final String TAG = "BLUETOOTH_TEST_ALGO";
 
     public int getIdByMAC(String mac, String[] macTable, int size){
         for(int i = 0 ; i < size ; i++){
@@ -26,7 +27,7 @@ public class AlgoLamportChat{
         return true;
     }
 
-    API api;
+    //API api;
 
     public AlgoLamportChat(){
         super();
@@ -58,17 +59,15 @@ public class AlgoLamportChat{
 
 
     public void init(){
-
-        api = new API(this-èyj);
-        Log.i("LOGS FROM PRECESSUS ", "I AM INIT");
+        Log.d(TAG, "I AM INIT");
         clock = 0;
 
-        nbNeigbours = api.getNbDevicesConnected();
+        nbNeigbours = API.getNbDevicesConnected();
 
-        macTable = api.getDevicesMACs();
+        macTable = API.getDevicesMACs();
         macTable = new String[nbNeigbours];
 
-        amITheLowerMac = amITheLowerMAC(api.getMyMACAddres(), macTable);
+        amITheLowerMac = amITheLowerMAC(API.getMyMACAddres(), macTable);
 
 
 
@@ -88,7 +87,7 @@ public class AlgoLamportChat{
 
         clock += 1;
         for(int i=0 ; i<nbNeigbours ; i++){
-            api.sendMessage(macTable[i], API.MessageTypes.REQ, clock);
+            API.sendMessage(macTable[i], API.MessageTypes.REQ, clock);
         }
         F_H[procId]=clock;
         F_M[procId]= API.MessageTypes.REQ;
@@ -114,7 +113,7 @@ public class AlgoLamportChat{
         F_M[idEmitt] = API.MessageTypes.REQ;
 
         //send message to the emitter
-        api.sendMessage(emitt, API.MessageTypes.ACK, clock);
+        API.sendMessage(emitt, API.MessageTypes.ACK, clock);
 
     }
 
@@ -133,7 +132,7 @@ public class AlgoLamportChat{
         clock++;
         inCriticalSection = false;
         for(int i=0 ; i<nbNeigbours ; i++){
-            api.sendMessage(macTable[i], API.MessageTypes.REL, clock);
+            API.sendMessage(macTable[i], API.MessageTypes.REL, clock);
         }
         F_H[procId] = clock;
         F_M[procId] = API.MessageTypes.REL;

@@ -302,8 +302,11 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
             registerForDiscoveryInfo();
             while(!mBluetoothAdapter.isEnabled()){}
             mBluetoothService.accept();
-            byte[] triggerInit = {API.MessageTypes.API_INIT};
-            API.onMessage(triggerInit);
+            AlgoLamportChat algo = new AlgoLamportChat();
+            new API(algo, mBluetoothService);
+            algo.init();
+            API.getNbDevicesConnected();
+            Log.d(TAG, "Test api service");
         }
     }
 
