@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     private Toast mToast;
     private BluetoothDevice mNext;
     private BluetoothDevice mPrevious;
-    private boolean mInRing;
+    private byte mRingStatus;
     private boolean autoConnect;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                         case TYPE_RING_STATUS:
                             BluetoothDevice expeditor = mBluetoothService.getDeviceFromMAC(expedMAC);
                             if(dataR[0] == NO_RING){
-                                if(mInRing == false){
+                                if(mRingStatus == NO_RING){
                                     mNext = expeditor;
                                     mPrevious = expeditor;
                                 }
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                                 }
                             }
                             else{ //in RING
-                                if(mInRing == false){
+                                if(mRingStatus == NO_RING){
                                     //nothing to do here, it's done in your next reception
                                 }
                                 else{
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     }
                     //send ring status request
                     Log.d(TAG, "Asked for ring status");
-                    byte[] request = new byte[]{TYPE_RING_STATUS};
+                    byte[] request = new byte[]{TYPE_RING_STATUS, mRingStatus};
                     MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), device.getAddress(), request);
                     mBluetoothService.sendMessage(messagePacket);
                     break;
@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         setContentView(R.layout.activity_main);
 
         autoConnect = false;
-        mInRing = false;
+        mRingStatus = NO_RING;
         mNext = null;
         mPrevious = null;
 
@@ -432,11 +432,13 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
     }
 
     public void sendToken(View view){
-        Log.d(TAG, "TOKEN");
-        byte[] token = new byte[]{TYPE_TOKEN};
-        MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), mNext.getAddress(), token);
-        //mBluetoothService.sendMessage(messagePacket);
-        makeTokenInvisible();
+        if(mNext != null) {
+            Log.d(TAG, "TOKEN SENT");
+            byte[] token = new byte[]{TYPE_TOKEN};
+            MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), mNext.getAddress(), token);
+            mBluetoothService.sendMessage(messagePacket);
+            makeTokenInvisible();
+        }
     }
 
     private void makeTokenVisible(){
