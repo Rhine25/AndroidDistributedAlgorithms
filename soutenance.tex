@@ -1,0 +1,176 @@
+\documentclass{beamer}
+
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+
+\usetheme{Warsaw}
+
+\title{Développement d’un environnement pour algorithmes distribués sur Android}
+\author{Célia Dehors, Justine Romero, Vincent Durand}
+\institute{Université de Franche-Comté}
+\date{Année 2017-2018}
+
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}[frame number]
+
+\centering
+\includegraphics[height=20mm]{logo_univ.png}
+
+\begin{document}
+    \begin{frame}[plain]
+        \titlepage
+    \end{frame}
+    \logo{\includegraphics[height=5mm]{logo_univ.png}}
+	\begin{frame}
+	  \frametitle{Sujet}
+	  \includegraphics[height=45mm]{android.jpg}
+	  Développement d’un environnement pour algorithmes distribués sur Android.
+	  \\Réalisation d’une plateforme qui permet de programmer facilement un algorithme distribué
+        \end{frame}
+    \begin{frame}
+        \tableofcontents
+    \end{frame}
+    \section{Présentation du projet}
+      \subsection{Problématiques}
+        \begin{frame}
+	  \frametitle{Problématiques}
+	  \begin{itemize}
+	   \item Quelles technologies pour la communication ?
+	   \item Quelle architecture pour l'application ?
+	   \item Comment rendre le fonctionnement transparent au développeur ?
+	  \end{itemize}
+
+        \end{frame}
+    
+    \section{Recherche des technologies de communication}
+      \begin{frame}
+	\frametitle{Les technologies}
+	\includegraphics[height=40mm]{technologies.png}
+      \end{frame}
+      \subsection{Bluetooth}
+      \begin{frame}
+	  \frametitle{Bluetooth}
+	  \begin{block}{Avantages :}
+	  \begin{itemize}
+	   \item Compatibilité
+	   \item Documentation exhaustive
+	  \end{itemize}
+	  \end{block}
+	  \begin{block}{Inconvénients :}
+	  \begin{itemize}
+	   \item Consommation d'énergie
+	   \item Plus lent, moins stable que le Wi-Fi
+	  \end{itemize}
+	  \end{block}
+      \end{frame}
+      \subsection{Wi-Fi}
+      \begin{frame}
+	  \frametitle{Wi-Fi}
+	  \begin{block}{Avantages :}
+	  \begin{itemize}
+	   \item Vitesse
+	   \item Compatibilité entre différents appareils
+	  \end{itemize}
+	  \end{block}
+	  \begin{block}{Inconvénients :}
+	  \begin{itemize}
+	   \item Combatibilité non assurée entre les marques
+	   \item Peu de documentation
+	  \end{itemize}
+	  \end{block}
+      \end{frame}
+      \subsection{NFC}
+      \begin{frame}
+	  \frametitle{NFC}
+	  \begin{block}{Avantages :}
+	  \begin{itemize}
+	   \item Communication Full Duplex
+	   \item Vitesse
+	  \end{itemize}
+	  \end{block}
+	  \begin{block}{Inconvénients :}
+	  \begin{itemize}
+	   \item Faible distance requise entre appareils
+	  \end{itemize}
+	  \end{block}
+      \end{frame}
+      \subsection{Choix}
+      \begin{frame}
+	  \frametitle{Choix de la technologie}
+	  \begin{center}
+	     \includegraphics[height=70mm]{bluetooth.jpg}
+      \end{center}
+      \end{frame}
+    \section{Conception}
+    \begin{frame}{Conception}
+        \begin{itemize}
+            \item Couche bas niveau
+            \item Couche intermédiaire
+            \item Couche haut niveau
+        \end{itemize}
+    \end{frame}
+      \subsection{Couche bas niveau}
+          \begin{frame}
+    	    \frametitle{Couche bas niveau}
+    	    \begin{itemize}
+    	        \item Connexion
+    	        \item Routage
+    	        \item Communication
+    	    \end{itemize}
+          \end{frame}
+      \subsection{Couche intermédiaire}
+      \begin{frame}
+	  \frametitle{Couche intermédiaire}
+	  \begin{itemize}
+	      \item Election
+	      \item Anneau
+	  \end{itemize}
+      \end{frame}
+      \subsection{Couche haut niveau}
+      \begin{frame}
+	  \frametitle{Couche haut niveau}
+	  \begin{itemize}
+	      \item Liaison entre les couches inférieures et l'algorithme distribué
+	      \item Environnement mis à disposition du développeur
+	      \item Permet l'envoi et la réception de messages : onMessage() et sendMessage()
+	      \item API basée sur le modèle de ViSiDiA
+	  \end{itemize}
+      \end{frame}
+    \section{Algorithme distribué implémenté}
+    \begin{frame}{Algorithme distribué implémenté}
+    Lamport avec estampilles pour une simulation de demande d’entrée en section critique :
+        \begin{itemize}
+            \item Demande d'accès en section critique
+            \item Gestion des demandes
+            \item Libération de section critique
+        \end{itemize}
+    \end{frame}
+    \begin{frame}{Algorithme}
+        \includegraphics[scale=0.3]{regle.png}
+    \end{frame}
+    \section{Bilan}
+    \begin{frame}{Bilan}
+        Difficultés rencontrées:
+        \begin{itemize}
+            \item Intégration de l'algorithme
+            \item Découverte d'Android
+        \end{itemize}
+        Améliorations possibles :
+        \begin{itemize}
+            \item Application multi-plateforme
+            \item Affichage du contenu des variables dans l'application
+        \end{itemize}
+    \end{frame}
+\end{document}
+
+
+%Contexte
+    %Cahier des charges
+    %Besoin
+%Ce qu'on a fait
+%Pourquoi comme ça
+%Comment au niveau Organisation
+%Conclusion
+%Bilan
