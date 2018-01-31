@@ -52,12 +52,12 @@
             android:onClick="clearMessages"
             android:text="Clear msg" />
 
-        <Button
+        <!--<Button
             android:id="@+id/bt_run_algo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="runAlgo"
-            android:text="Run Algo" />
+            android:text="Run Algo" />-->
     </LinearLayout>
 
     <LinearLayout

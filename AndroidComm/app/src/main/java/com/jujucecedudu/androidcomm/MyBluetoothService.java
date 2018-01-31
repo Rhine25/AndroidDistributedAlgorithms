@@ -121,7 +121,6 @@ public class MyBluetoothService {
     void sendMessage(MessagePacket message){ //TODO faire les petites fonctions
         Log.d(TAG, "SEND MESSAGE " + message.getData()[0] + " to " + message.getDest() + " (as " + message.getExpMAC() +")");
         if(message.getDest().equals(ALL)){ //send message to all directly connected devices
-            Log.d(TAG, "TO ALL");
             for(ConnectedThread connectedThread : mConnectedThreads) {
                 Log.d(TAG, "TO " + connectedThread.mmDevice.getName());
                 if (connectedThread == null) {
@@ -134,7 +133,6 @@ public class MyBluetoothService {
             }
         }
         else{ //send message to a specific device
-            Log.d(TAG, "TO SPECIFIC ONE");
             String nextHop = mRoutingTable.getNextHopMAC(message.getDest());
             Log.d(TAG, "Sending to next hop : " + nextHop);
             for(ConnectedThread connectedThread : mConnectedThreads) {
@@ -401,11 +399,12 @@ public class MyBluetoothService {
                         case TYPE_YOUR_MAC:
                             mRoutingTable.setMyMAC(new String(Utils.extractDataFromMessage(data)));
                             Log.d(TAG, "Received my mac from " + mmDevice.getName() + " : " + mRoutingTable.getMyMAC());
+                            break;
                         case TYPE_RING_STATUS:
                             mmDeviceRingStatus = data[1];
                             getInfoToUIThread(MessageConstants.MESSAGE_READ, data
                                     , FROM, mmDevice.getAddress());
-                            Log.d(TAG, "Received ring status from " + mmDevice.getName());
+                            Log.d(TAG, "service switch Received ring status (" + Arrays.toString(data) + ") from " + mmDevice.getName());
                             break;
                         case TYPE_YOUR_NEXT:
                             getInfoToUIThread(MessageConstants.MESSAGE_READ, data, FROM, mmDevice.getAddress());
@@ -430,6 +429,7 @@ public class MyBluetoothService {
                                 }
                                 getInfoToUIThread(MessageConstants.MESSAGE_READ, messageByte);
                             }
+                            break;
                         default:
                             Log.e(TAG, "received unkwown message type " + msgType);
                             break;

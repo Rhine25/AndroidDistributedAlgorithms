@@ -44,6 +44,7 @@ import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.T
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_STRING;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_TOKEN;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_WHATS_MY_MAC;
+import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_YOUR_MAC;
 import static com.jujucecedudu.androidcomm.MyBluetoothService.MessageConstants.TYPE_YOUR_NEXT;
 
 public class MainActivity extends AppCompatActivity implements DeviceAdapter.ListItemClickListener{
@@ -126,11 +127,26 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                         case TYPE_TOKEN:
                             readableMsgW = "token";
                             break;
+                        case TYPE_WHATS_MY_MAC:
+                            readableMsgW = "mac request";
+                            break;
+                        case TYPE_YOUR_MAC:
+                            readableMsgW = "mac answer";
+                            break;
+                        case TYPE_RING_STATUS:
+                            readableMsgW = "ring status";
+                            break;
+                        case TYPE_YOUR_NEXT:
+                            readableMsgW = "next";
+                            break;
+                        case TYPE_SEARCH_IN_RING:
+                            readableMsgW = "analyse ring";
+                            break;
                         default:
                             readableMsgW = "";
                             break;
                     }
-                    Log.i(TAG, "Sent : " + Arrays.toString(dataW) + "/" + dataW.length + " to " + dest);
+                    Log.i(TAG, "Sent : " + readableMsgW/*Arrays.toString(dataW)*/ + "/" + dataW.length + " to " + dest);
                     mMessagesTextView.append("Sent : " + readableMsgW + " to " + dest + "\n");
                     break;
                 case MESSAGE_READ:
@@ -173,13 +189,18 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                             makeTokenVisible();
                             break;
                         case TYPE_RING_STATUS:
+                            Log.d(TAG, "TREATING RING STATUS");
                             BluetoothDevice expeditor = mBluetoothService.getDeviceFromMAC(expedMAC);
                             if(dataR[0] == NO_RING){
+                                Log.d(TAG, "He's not in a ring");
                                 if(mRingStatus == NO_RING){
+                                    Log.d(TAG, "I'm not in a ring either");
                                     mNext = expeditor;
                                     mPrevious = expeditor;
+                                    Log.d(TAG, "My next is now " + mNext.getName());
                                 }
                                 else{
+                                    Log.d(TAG, "I'm already in a ring, I'll invite him in");
                                     byte[] data = Utils.getConstructedMessage(TYPE_YOUR_NEXT, mNext.getAddress().getBytes());
                                     MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), expeditor.getAddress(), data);
                                     mBluetoothService.sendMessage(messagePacket);
@@ -187,10 +208,13 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                                 }
                             }
                             else{ //in RING
+                                Log.d(TAG, "He's already in a ring");
                                 if(mRingStatus == NO_RING){
+                                    Log.d(TAG, "I'm alone and sad, he surely is going to invite me in");
                                     //nothing to do here, it's done in your next reception
                                 }
                                 else{
+                                    Log.d(TAG, "I'm in a ring too, maybe we're already part of the same ring party ?");
                                     if(mBluetoothService.getMyMAC().compareTo(expedMAC) > 0){
                                         byte[] byteTargetMAC = expedMAC.getBytes();
                                         byte[] msgData = new byte[byteTargetMAC.length + 1];
@@ -201,9 +225,8 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                                         mBluetoothService.sendMessage(messagePacket);
                                     }
                                     else{
-                                        //balec, on est déjà dans le même ring, tu veux te battre ?
+                                        //je suis le maillon faible, pas à moi de check
                                     }
-                                    //TODO FUCK FUCK FUCK (pas du tout)
                                 }
                             }
                             readableMsgR = "ring status";
@@ -243,20 +266,24 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
                     String deviceName = device.getName();
                     Log.i(TAG, "Connected to " + deviceName + " " + device.getAddress());
                     mConnectionsTextView.append(deviceName + "\n");
-                    Log.d(TAG, "My initial routing : \n'" + mBluetoothService.getRoutingTableStr() + "'");
-                    mBluetoothService.sendRoutingTable(device);
-                    mConnectedThreadsTextView.setText(mBluetoothService.getConnectedThreadsStr());
+
                     if (!mBluetoothService.knowMyMAC()){
                         Log.d(TAG, "Asked for my MAC");
                         byte[] request = new byte[]{TYPE_WHATS_MY_MAC};
                         MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), device.getAddress(), request);
                         mBluetoothService.sendMessage(messagePacket);
                     }
+                    while(!mBluetoothService.knowMyMAC()){} //WARNING this is gonna freeze the app, but it's a little patchup
+
+                    Log.d(TAG, "My initial routing : \n'" + mBluetoothService.getRoutingTableStr() + "'");
+                    mBluetoothService.sendRoutingTable(device);
+                    mConnectedThreadsTextView.setText(mBluetoothService.getConnectedThreadsStr());
                     //send ring status request
                     Log.d(TAG, "Asked for ring status");
                     byte[] request = new byte[]{TYPE_RING_STATUS, mRingStatus};
                     MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), device.getAddress(), request);
                     mBluetoothService.sendMessage(messagePacket);
+                    Log.d(TAG, "RING STATUS sent : " + Arrays.toString(messagePacket.getData()));
                     break;
                 case MESSAGE_DISCONNECTION:
                     Log.i(TAG, msg.obj + " disconnected ");
@@ -284,7 +311,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         mProgressBar = (ProgressBar) findViewById(R.id.pb_progress_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_available_devices);
         mToken = (Button) findViewById(R.id.bt_token);
-        mRunAlgo = (Button) findViewById(R.id.bt_run_algo);
         mMessagesTextView = (TextView) findViewById(R.id.tv_messages);
         mConnectionsTextView = (TextView) findViewById(R.id.tv_connections);
         mRoutingTableTextView = (TextView) findViewById(R.id.tv_routing_table);
@@ -416,8 +442,7 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
         byte[] data = Utils.getConstructedMessage(TYPE_STRING, str);
         MessagePacket messagePacket = new MessagePacket(mBluetoothService.getMyMAC(), ALL, data);
         mBluetoothService.sendMessage(messagePacket);
-        //TODO CHECK THIS, CLICKING HELLO DOES NOT DO ANYTHING :/
-        //TODO display routing table (should already be dsplayed ?)
+        //TODO CHECK THIS, CLICKING HELLO DOES NOT DO ANYTHING in broadcast :/
         //TODO swipe tabs ! \0/
     }
 
@@ -463,8 +488,9 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.Lis
             mBluetoothService.connect(device);
         }
         else{
-            text = device.getName() + " " + device.getAddress() + " set as next";
-            setNext(device);
+            text = "Good try :p";
+            /*text = device.getName() + " " + device.getAddress() + " set as next";
+            setNext(device);*/
         }
 
         mToast = Toast.makeText(this, text, Toast.LENGTH_LONG);
